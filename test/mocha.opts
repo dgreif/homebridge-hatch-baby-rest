@@ -1,0 +1,6 @@
+--check-leaks
+--reporter list
+--require ts-node/register
+--watch-extensions ts
+--recursive
+--exit

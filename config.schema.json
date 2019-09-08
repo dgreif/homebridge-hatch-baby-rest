@@ -1,0 +1,167 @@
+{
+  "pluginAlias": "HatchBabyRest",
+  "pluginType": "accessory",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Light Name",
+        "type": "string",
+        "placeholder": "Light Name",
+        "required": true
+      },
+      "macAddress": {
+        "title": "MAC Address",
+        "type": "string",
+        "description": "Found in device settings in the Hatch Baby Rest app",
+        "placeholder": "MAC Address",
+        "required": true
+      },
+      "volume": {
+        "title": "Volume",
+        "type": "integer",
+        "default": 50,
+        "minimum": 0,
+        "maximum": 100,
+        "required": true
+      },
+      "audioTrack": {
+        "title": "Audio Track",
+        "type": "integer",
+        "default": 0,
+        "required": true,
+        "oneOf": [
+          {
+            "title": "None",
+            "enum": [
+              0
+            ]
+          },
+          {
+            "title": "Stream",
+            "enum": [
+              2
+            ]
+          },
+          {
+            "title": "Pink Noise",
+            "enum": [
+              3
+            ]
+          },
+          {
+            "title": "Dryer",
+            "enum": [
+              4
+            ]
+          },
+          {
+            "title": "Ocean",
+            "enum": [
+              5
+            ]
+          },
+          {
+            "title": "Wind",
+            "enum": [
+              6
+            ]
+          },
+          {
+            "title": "Rain",
+            "enum": [
+              7
+            ]
+          },
+          {
+            "title": "Bird",
+            "enum": [
+              9
+            ]
+          },
+          {
+            "title": "Crickets",
+            "enum": [
+              10
+            ]
+          },
+          {
+            "title": "Brahms",
+            "enum": [
+              11
+            ]
+          },
+          {
+            "title": "Twinkle Twinkle",
+            "enum": [
+              13
+            ]
+          },
+          {
+            "title": "Rock-A-Bye",
+            "enum": [
+              14
+            ]
+          }
+        ]
+      },
+      "color": {
+        "type": "object",
+        "properties": {
+          "r": {
+            "title": "Color - Red Value",
+            "type": "integer",
+            "default": 254,
+            "minimum": 0,
+            "maximum": 255,
+            "description": "Set red, green and blue all to 254 for random colors"
+          },
+          "g": {
+            "title": "Color - Green Value",
+            "type": "integer",
+            "default": 254,
+            "minimum": 0,
+            "maximum": 255
+          },
+          "b": {
+            "title": "Color - Blue Value",
+            "type": "integer",
+            "default": 254,
+            "minimum": 0,
+            "maximum": 255
+          },
+          "a": {
+            "title": "Light Brightness",
+            "type": "integer",
+            "default": 128,
+            "minimum": 0,
+            "maximum": 255
+          }
+        }
+      }
+    },
+    "oneOf": [
+      {
+        "required": [
+          "volume",
+          "audioTrack"
+        ]
+      }
+    ]
+  },
+  "layout": [
+    {
+      "type": "fieldset",
+      "items": [
+        "name",
+        "macAddress",
+        "volume",
+        "audioTrack",
+        "color.r",
+        "color.g",
+        "color.b",
+        "color.a"
+      ]
+    }
+  ]
+}
