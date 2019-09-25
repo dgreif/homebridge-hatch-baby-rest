@@ -1,0 +1,10 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## 1.1.0 (2019-09-25)
+
+
+### Features
+
+* hatch baby rest homebridge plugin ([956c56f](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/956c56f))
