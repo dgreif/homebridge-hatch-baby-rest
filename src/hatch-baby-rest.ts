@@ -15,7 +15,7 @@ import {
   startWith,
   take
 } from 'rxjs/operators'
-import { kebabCaseAddress, stripUuid } from './util'
+import { stripMacAddress, stripUuid } from './util'
 import {
   AudioTrack,
   Color,
@@ -42,8 +42,7 @@ const enum CharacteristicUuid {
 }
 
 export class HatchBabyRest {
-  address = kebabCaseAddress(this.macAddress)
-  peripheralPromise = this.getPeripheralByAddress(this.address)
+  peripheralPromise = this.getPeripheralByAddress(this.macAddress)
 
   onFeedback = new BehaviorSubject<Feedback>({
     time: 0,
@@ -88,6 +87,7 @@ export class HatchBabyRest {
 
     process.on('SIGINT', () => {
       this.disconnect()
+      process.exit()
     })
   }
 
@@ -102,12 +102,15 @@ export class HatchBabyRest {
       )
       .toPromise()
 
-    const peripheralPromise = fromEvent<Peripheral>(noble, 'discover')
-      .pipe(
-        filter(peripheral => peripheral.address === address),
-        take(1)
-      )
-      .toPromise()
+    const stripedAddress = stripMacAddress(address),
+      peripheralPromise = fromEvent<Peripheral>(noble, 'discover')
+        .pipe(
+          filter(peripheral => {
+            return stripMacAddress(peripheral.address) === stripedAddress
+          }),
+          take(1)
+        )
+        .toPromise()
 
     this.logger.info('Scanning for device')
     noble.startScanning(['180a'])
@@ -161,14 +164,16 @@ export class HatchBabyRest {
   }
 
   async getService(serviceUuid: string) {
-    const services = await this.getServices()
-    return services.find(service => service.uuid === stripUuid(serviceUuid))!
+    const services = await this.getServices(),
+      targetUuid = stripUuid(serviceUuid)
+    return services.find(service => stripUuid(service.uuid) === targetUuid)!
   }
 
   async getCharacteristic(characteristicUuid: string, serviceUuid: string) {
-    const service = await this.getService(serviceUuid)
-    return service.characteristics.find(characteristic =>
-      stripUuid(characteristic.uuid)
+    const service = await this.getService(serviceUuid),
+      targetUuid = stripUuid(characteristicUuid)
+    return service.characteristics.find(
+      characteristic => stripUuid(characteristic.uuid) === targetUuid
     )!
   }
 
