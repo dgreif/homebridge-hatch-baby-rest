@@ -24,11 +24,11 @@ export class HatchBabyRestAccessory {
     const powerCharacteristic = this.service.getCharacteristic(
         hap.Characteristic.On
       ),
-      { name, volume, audioTrack, color } = config,
+      { volume, audioTrack, color } = config,
       audioSupplied = Boolean(audioTrack && volume)
 
     if (!audioSupplied && !color) {
-      log.error('You must set color or volume and audioTrack for light ' + name)
+      log.error('You must set color or volume and audioTrack')
       throw new Error('Incomplete Hatch Baby Rest Configuration')
     }
 
@@ -36,7 +36,7 @@ export class HatchBabyRestAccessory {
       .on('set', async (value: boolean, callback: any) => {
         callback()
 
-        log.info(`Turning ${name} ${value ? 'on' : 'off'}`)
+        log.info(`Turning ${value ? 'on' : 'off'}`)
         await this.hbr.setPower(value)
 
         if (!value) {
@@ -61,7 +61,7 @@ export class HatchBabyRestAccessory {
       })
 
     this.hbr.onPower.pipe(skip(1)).subscribe((power: boolean) => {
-      log.info(`${name} turned ${power ? 'on' : 'off'}`)
+      log.info(`Turned ${power ? 'on' : 'off'}`)
       powerCharacteristic.updateValue(power)
     })
 

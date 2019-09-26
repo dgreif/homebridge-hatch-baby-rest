@@ -92,6 +92,8 @@ export class HatchBabyRest {
   }
 
   async getPeripheralByAddress(address: string) {
+    this.logger.info('Waiting for bluetooth to power on')
+
     await fromEvent(noble, 'stateChange')
       .pipe(
         startWith(noble.state),
@@ -107,7 +109,7 @@ export class HatchBabyRest {
       )
       .toPromise()
 
-    this.logger.info('Scanning for ' + this.name)
+    this.logger.info('Scanning for device')
     noble.startScanning(['180a'])
 
     return peripheralPromise
@@ -120,8 +122,9 @@ export class HatchBabyRest {
       return device
     }
 
+    this.logger.info('Connecting...')
     await promisify(device.connect.bind(device) as any)()
-    this.logger.info('Connected to ' + this.name)
+    this.logger.info('Connected')
     return device
   }
 
@@ -134,11 +137,11 @@ export class HatchBabyRest {
     if (this.device) {
       this.device.disconnect()
     }
-    this.logger.info('Disconnected from ' + this.name)
+    this.logger.info('Disconnected')
   }
 
   reconnect() {
-    this.logger.info('Reconnecting to ' + this.name)
+    this.logger.info('Reconnecting...')
     this.discoverServicesPromise = undefined
     this.disconnect()
     this.connect()
