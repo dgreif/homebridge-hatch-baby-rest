@@ -4,13 +4,14 @@
  * can be used by other projects, but didn't want to go to the work until there was a need.
  */
 
-import { BehaviorSubject, fromEvent, Subject, Subscription } from 'rxjs'
+import { BehaviorSubject, fromEvent, Subscription } from 'rxjs'
 import {
   debounceTime,
   distinctUntilChanged,
   filter,
   map,
   share,
+  skip,
   startWith,
   take
 } from 'rxjs/operators'
@@ -70,7 +71,6 @@ export class HatchBabyRest {
     distinctUntilChanged(),
     share()
   )
-  onUsingConnection = new Subject()
 
   reconnectSubscription?: Subscription
 
@@ -88,10 +88,6 @@ export class HatchBabyRest {
     process.on('SIGINT', () => {
       this.disconnect()
       process.exit()
-    })
-
-    this.onUsingConnection.pipe(debounceTime(2000)).subscribe(() => {
-      this.disconnect()
     })
   }
 
@@ -147,6 +143,13 @@ export class HatchBabyRest {
     this.logger.info('Disconnected')
   }
 
+  reconnect() {
+    this.logger.info('Reconnecting...')
+    this.discoverServicesPromise = undefined
+    this.disconnect()
+    this.connect()
+  }
+
   discoverServicesPromise?: Promise<Service[]>
   getServices() {
     if (!this.discoverServicesPromise) {
@@ -169,8 +172,6 @@ export class HatchBabyRest {
   async getCharacteristic(characteristicUuid: string, serviceUuid: string) {
     const service = await this.getService(serviceUuid),
       targetUuid = stripUuid(characteristicUuid)
-
-    this.onUsingConnection.next()
     return service.characteristics.find(
       characteristic => stripUuid(characteristic.uuid) === targetUuid
     )!
@@ -241,9 +242,17 @@ export class HatchBabyRest {
         this.logger.error('Failed to subscribe to feedback events', err)
       }
     })
+
+    this.reconnectSubscription = this.onFeedback
+      .pipe(
+        skip(1),
+        debounceTime(5000)
+      )
+      .subscribe(() => this.reconnect())
   }
 
   get currentFeedback() {
+    this.connect()
     return this.onFeedback.getValue()
   }
 }
