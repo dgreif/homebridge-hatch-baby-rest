@@ -4,14 +4,13 @@
  * can be used by other projects, but didn't want to go to the work until there was a need.
  */
 
-import { BehaviorSubject, fromEvent, Subscription } from 'rxjs'
+import { BehaviorSubject, fromEvent, Subject, Subscription } from 'rxjs'
 import {
   debounceTime,
   distinctUntilChanged,
   filter,
   map,
   share,
-  skip,
   startWith,
   take
 } from 'rxjs/operators'
@@ -71,6 +70,7 @@ export class HatchBabyRest {
     distinctUntilChanged(),
     share()
   )
+  onUsingConnection = new Subject()
 
   reconnectSubscription?: Subscription
 
@@ -88,6 +88,10 @@ export class HatchBabyRest {
     process.on('SIGINT', () => {
       this.disconnect()
       process.exit()
+    })
+
+    this.onUsingConnection.pipe(debounceTime(5000)).subscribe(() => {
+      this.disconnect()
     })
   }
 
@@ -140,14 +144,8 @@ export class HatchBabyRest {
     if (this.device) {
       this.device.disconnect()
     }
-    this.logger.info('Disconnected')
-  }
-
-  reconnect() {
-    this.logger.info('Reconnecting...')
     this.discoverServicesPromise = undefined
-    this.disconnect()
-    this.connect()
+    this.logger.info('Disconnected')
   }
 
   discoverServicesPromise?: Promise<Service[]>
@@ -169,6 +167,7 @@ export class HatchBabyRest {
       service = services.find(s => stripUuid(s.uuid) === targetUuid)
 
     if (!service) {
+      this.disconnect()
       throw new Error(`Service ${serviceUuid} not found!`)
     }
 
@@ -176,6 +175,8 @@ export class HatchBabyRest {
   }
 
   async getCharacteristic(characteristicUuid: string, serviceUuid: string) {
+    this.onUsingConnection.next()
+
     const service = await this.getService(serviceUuid),
       targetUuid = stripUuid(characteristicUuid),
       characteristic = service.characteristics.find(
@@ -183,9 +184,11 @@ export class HatchBabyRest {
       )
 
     if (!characteristic) {
+      this.disconnect()
       throw new Error(`Characteristic ${characteristicUuid} not found!`)
     }
 
+    this.onUsingConnection.next()
     return characteristic
   }
 
@@ -204,6 +207,8 @@ export class HatchBabyRest {
   }
 
   async setCommand(command: RestCommand, value: RestCommandValue) {
+    await this.connect()
+
     const writeCharacteristic = await this.getCharacteristic(
         CharacteristicUuid.Tx,
         ServiceUuid.Rest
@@ -214,6 +219,8 @@ export class HatchBabyRest {
       restCommand,
       false
     )
+
+    this.onUsingConnection.next()
   }
 
   setAudioTrack(track: AudioTrack) {
@@ -254,17 +261,9 @@ export class HatchBabyRest {
         this.logger.error('Failed to subscribe to feedback events', err)
       }
     })
-
-    this.reconnectSubscription = this.onFeedback
-      .pipe(
-        skip(1),
-        debounceTime(5000)
-      )
-      .subscribe(() => this.reconnect())
   }
 
   get currentFeedback() {
-    this.connect()
     return this.onFeedback.getValue()
   }
 }
