@@ -64,8 +64,6 @@ export class HatchBabyRestAccessory {
       log.info(`Turned ${power ? 'on' : 'off'}`)
       powerCharacteristic.updateValue(power)
     })
-
-    this.hbr.connect()
   }
 
   getServices() {

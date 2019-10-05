@@ -12,7 +12,8 @@ import {
   map,
   share,
   startWith,
-  take
+  take,
+  tap
 } from 'rxjs/operators'
 import { stripMacAddress, stripUuid } from './util'
 import {
@@ -112,7 +113,8 @@ export class HatchBabyRest {
           filter(peripheral => {
             return stripMacAddress(peripheral.address) === stripedAddress
           }),
-          take(1)
+          take(1),
+          tap(() => this.logger.info('Found device'))
         )
         .toPromise()
 
