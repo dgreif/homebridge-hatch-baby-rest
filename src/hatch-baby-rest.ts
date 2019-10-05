@@ -165,16 +165,28 @@ export class HatchBabyRest {
 
   async getService(serviceUuid: string) {
     const services = await this.getServices(),
-      targetUuid = stripUuid(serviceUuid)
-    return services.find(service => stripUuid(service.uuid) === targetUuid)!
+      targetUuid = stripUuid(serviceUuid),
+      service = services.find(s => stripUuid(s.uuid) === targetUuid)
+
+    if (!service) {
+      throw new Error(`Service ${serviceUuid} not found!`)
+    }
+
+    return service
   }
 
   async getCharacteristic(characteristicUuid: string, serviceUuid: string) {
     const service = await this.getService(serviceUuid),
-      targetUuid = stripUuid(characteristicUuid)
-    return service.characteristics.find(
-      characteristic => stripUuid(characteristic.uuid) === targetUuid
-    )!
+      targetUuid = stripUuid(characteristicUuid),
+      characteristic = service.characteristics.find(
+        c => stripUuid(c.uuid) === targetUuid
+      )
+
+    if (!characteristic) {
+      throw new Error(`Characteristic ${characteristicUuid} not found!`)
+    }
+
+    return characteristic
   }
 
   private device?: Peripheral
