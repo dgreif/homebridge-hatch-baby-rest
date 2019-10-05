@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.6](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v1.1.5...v1.1.6) (2019-10-05)
+
+
+### Bug Fixes
+
+* revert reconnect logic ([27c3c10](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/27c3c10))
+* throw error when service or characteristic is not found ([b50148d](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/b50148d))
+
 ### [1.1.5](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v1.1.4...v1.1.5) (2019-09-29)
 
 
