@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.8](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v1.1.7...v1.1.8) (2019-12-18)
+
+
+### Bug Fixes
+
+* **osx:** assume correct device if address is unknown ([1c892c5](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/1c892c5bcce13332dc215ed855a210ff23505b14)), closes [#4](https://github.com/dgreif/homebridge-hatch-baby-rest/issues/4)
+
 ### [1.1.7](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v1.1.6...v1.1.7) (2019-10-05)
 
 
