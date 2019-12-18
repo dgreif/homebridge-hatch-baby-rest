@@ -111,10 +111,11 @@ export class HatchBabyRest {
       peripheralPromise = fromEvent<Peripheral>(noble, 'discover')
         .pipe(
           filter(peripheral => {
-            return stripMacAddress(peripheral.address) === stripedAddress
+            return peripheral.addressType === 'unknown' || stripMacAddress(peripheral.address) === stripedAddress
           }),
           take(1),
-          tap(() => this.logger.info('Found device'))
+          tap(p => this.logger.info(`Found device ${p.advertisement.localName} with address ${p.address || p.addressType}`)),
+          tap(p => console.log(p))
         )
         .toPromise()
 
