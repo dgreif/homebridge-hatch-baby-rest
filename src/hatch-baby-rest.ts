@@ -29,6 +29,7 @@ import { colorsMatch, Feedback, parseFeedbackBuffer } from './feedback'
 import { HAP } from './hap'
 
 const noble = require('@abandonware/noble')
+const usedPeripheralIds: string[] = []
 
 const enum ServiceUuid {
   Advertising = '02260001-5efd-47eb-9c1a-de53f7a2b232',
@@ -111,10 +112,33 @@ export class HatchBabyRest {
       peripheralPromise = fromEvent<Peripheral>(noble, 'discover')
         .pipe(
           filter(peripheral => {
-            return stripMacAddress(peripheral.address) === stripedAddress
+            return (
+              stripMacAddress(peripheral.address) === stripedAddress ||
+              (peripheral.addressType === 'unknown' &&
+                !usedPeripheralIds.includes(peripheral.id))
+            )
           }),
           take(1),
-          tap(() => this.logger.info('Found device'))
+          tap(peripheral => {
+            usedPeripheralIds.push(peripheral.id)
+            this.logger.info(
+              `Found device ${
+                peripheral.advertisement.localName
+              } with address ${peripheral.address || peripheral.addressType}`
+            )
+
+            if (peripheral.addressType === 'unknown') {
+              this.logger.info(
+                `${peripheral.advertisement.localName} has an unknown address.  This happens on OSX when you discover a device which you have never connected to.  Once connected, OSX will remember the address of this device.  If this is not the correct device, please restart homebridge and this device should be skipped over.`
+              )
+
+              // Force the device to connect, which will load the address into OSX for the next run
+              this.getCharacteristic(
+                CharacteristicUuid.CurrentFeedback,
+                ServiceUuid.Advertising
+              )
+            }
+          })
         )
         .toPromise()
 
@@ -131,9 +155,9 @@ export class HatchBabyRest {
       return device
     }
 
-    this.logger.info('Connecting...')
+    this.logger.info(`Connecting to ${device.advertisement.localName}...`)
     await promisify(device.connect.bind(device) as any)()
-    this.logger.info('Connected')
+    this.logger.info(`Connected to ${device.advertisement.localName}`)
     return device
   }
 
@@ -145,18 +169,20 @@ export class HatchBabyRest {
 
     if (this.device) {
       this.device.disconnect()
+      this.logger.info(
+        `Disconnected from ${this.device.advertisement.localName}`
+      )
     }
     this.discoverServicesPromise = undefined
-    this.logger.info('Disconnected')
   }
 
   discoverServicesPromise?: Promise<Service[]>
   getServices() {
     if (!this.discoverServicesPromise) {
       this.discoverServicesPromise = this.connect().then(device =>
-        promisify(device.discoverAllServicesAndCharacteristics.bind(
-          device
-        ) as any)()
+        promisify(
+          device.discoverAllServicesAndCharacteristics.bind(device) as any
+        )()
       )
     }
 
