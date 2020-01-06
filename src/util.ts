@@ -1,20 +1,40 @@
-export function kebabCaseAddress(macAddress: string) {
-  const dashMac = macAddress
-    .replace(/[^0-9a-fA-F]/g, '')
-    .split('')
-    .reduce((mac, letter, index) => {
-      if (index % 2 === 0 && mac.length > 0) {
-        mac += '-'
-      }
-      return mac + letter
-    }, '')
-    .toLowerCase()
+interface Logger {
+  logInfo: (message: string) => void
+  logError: (message: string) => void
+}
 
-  if (dashMac.length !== 17) {
-    throw new Error('Invalid mac address ' + macAddress)
+let logger: Logger = {
+    logInfo(message) {
+      // eslint-disable-next-line no-console
+      console.info(message)
+    },
+    logError(message) {
+      // eslint-disable-next-line no-console
+      console.error(message)
+    }
+  },
+  debugEnabled = false
+
+export function logDebug(message: any) {
+  if (debugEnabled) {
+    logger.logInfo(message)
   }
+}
 
-  return dashMac
+export function logInfo(message: any) {
+  logger.logInfo(message)
+}
+
+export function logError(message: any) {
+  logger.logError(message)
+}
+
+export function useLogger(newLogger: Logger) {
+  logger = newLogger
+}
+
+export function enableDebug() {
+  debugEnabled = true
 }
 
 export function stripUuid(uuid: string) {

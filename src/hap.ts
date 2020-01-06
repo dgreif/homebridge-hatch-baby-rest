@@ -99,3 +99,6 @@ class Hap {
 }
 
 export const hap = new Hap()
+
+export const pluginName = 'homebridge-hatch-baby-rest'
+export const platformName = 'HatchBabyRest'

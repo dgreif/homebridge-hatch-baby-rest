@@ -17,7 +17,6 @@ import {
 } from 'rxjs/operators'
 import { stripMacAddress, stripUuid } from './util'
 import {
-  AudioTrack,
   Color,
   formatRestCommand,
   RestCommand,
@@ -27,6 +26,7 @@ import { Peripheral, Service } from 'noble'
 import { promisify } from 'util'
 import { colorsMatch, Feedback, parseFeedbackBuffer } from './feedback'
 import { HAP } from './hap'
+import { AudioTrack } from './hatch-baby-types'
 
 const noble = require('@abandonware/noble')
 const usedPeripheralIds: string[] = []

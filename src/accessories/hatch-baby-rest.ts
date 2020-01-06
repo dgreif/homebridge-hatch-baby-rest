@@ -1,7 +1,8 @@
-import { HatchBabyRest } from './hatch-baby-rest'
-import { hap, HAP } from './hap'
+import { HatchBabyRest } from '../hatch-baby-rest'
+import { hap, HAP } from '../hap'
 import { skip } from 'rxjs/operators'
-import { AudioTrack, Color } from './rest-commands'
+import { Color } from '../rest-commands'
+import { AudioTrack } from '../hatch-baby-types'
 
 export class HatchBabyRestAccessory {
   private hbr = new HatchBabyRest(

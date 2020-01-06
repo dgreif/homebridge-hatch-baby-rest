@@ -1,17 +1,37 @@
-# ring-client-api
- 
+# homebridge-hatch-baby-rest
+
 [![Actions Status](https://github.com/dgreif/homebridge-hatch-baby-rest/workflows/Node%20CI/badge.svg)](https://github.com/dgreif/homebridge-hatch-baby-rest/actions)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=HD9ZPB34FY428&currency_code=USD&source=url)
- 
-This homebridge plugin allows you to add the Hatch Baby Rest bluetooth night light to HomeKit.  It is intended to work with the original Hatch Baby Rest, and I cannot confirm whether or not it works with the newer Hatch Baby Rest Plus (which has wifi support and my not use bluetooth).  This plugin will only work if run on a device with Bluetooth LE (version 4+).  This includes the Raspberry Pi 3 b+ and newer, as well as most modern laptops.  Please check your device specifications to ensure it supports Bluetooth LE before trying to run the plugin or opening GitHub issues.
- 
+
+This homebridge plugin allows you to add the Hatch Baby Rest and the Hatch Baby Rest+ night lights to HomeKit.
+
 ## Installation
 
 `npm i -g homebridge-hatch-baby-rest`
 
-## Configuration
+## Configuration For Hatch Baby Rest+ (wifi night light)
 
-First, open the Hatch Baby Rest app on your smartphone or tablet.  In the device settings for your light, find the MAC address.  In the example below, it is `12:34:56:78:90:AB`.
+The Rest+ night light uses wifi to directly interact with Hatch Baby's api.  This allows you to access all of your Rest+ lights by simply providing your Hatch Baby email/password.
+
+ ```json
+{
+  "platforms": [
+    {
+      "platform": "HatchBabyRest",
+      "email": "someone@gmail.com",
+      "password": "secret password"
+    }
+  ]
+}
+```
+
+With this configuration in place, you should now be able to control all of your Rest+ lights from HomeKit.  Controls include on/off, brightness, volume (not available in the Home app, but in some 3rd party HomeKit apps).  You can also view the current battery level and firmware version of your lights.
+
+## Configuration For Hatch Baby Rest (bluetooth night light)
+
+The original Rest night light uses Bluetooth to control the light and change settings.  Because of this restriction, you must create an `accessories` entry for each light that you would like to add to HomeKit.  Please note that this plugin will only be able to connect to the Rest night light if run on a device with Bluetooth LE (version 4+).  This includes the Raspberry Pi 3 b+ and newer, as well as most modern laptops.  Please check your device specifications to ensure it supports Bluetooth LE before trying to run the plugin or opening GitHub issues.
+
+To add a Rest night light to your homebridge setup, first open the Hatch Baby Rest app on your smartphone or tablet.  In the device settings for your light, find the MAC address.  In the example below, it is `12:34:56:78:90:AB`.
 
  ```json
 {
@@ -28,7 +48,9 @@ First, open the Hatch Baby Rest app on your smartphone or tablet.  In the device
 }
 ```
 
-### Configuration Options
+### Rest Accessory Configuration Options
+
+The original Rest night light does not retain color/volume/audio track settings when turned off and back on.  Because of this, you will need to specify your desired settings in the configuration so that the light turns on with the correct settings
 
 Option | Required | Details
 --- | --- | ---

@@ -5,21 +5,6 @@ export const enum RestCommand {
   SetVolume = 'SV'
 }
 
-export const enum AudioTrack {
-  None = 0,
-  Stream = 2,
-  PinkNoise = 3,
-  Dryer = 4,
-  Ocean = 5,
-  Wind = 6,
-  Rain = 7,
-  Bird = 9,
-  Crickets = 10,
-  Brahms = 11,
-  Twinkle = 13,
-  RockABye = 14
-}
-
 export interface Color {
   r: number
   g: number
