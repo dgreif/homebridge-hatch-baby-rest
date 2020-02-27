@@ -1,7 +1,7 @@
 import { HatchBabyRestPlus } from '../hatch-baby-rest-plus'
 import { hap, HAP } from '../hap'
-import { distinctUntilChanged, map, take } from 'rxjs/operators'
-import { Observable } from 'rxjs'
+import { debounceTime, distinctUntilChanged, map, take } from 'rxjs/operators'
+import { combineLatest, Observable, Subject } from 'rxjs'
 
 export class HatchBabyRestAccessory {
   constructor(
@@ -12,7 +12,15 @@ export class HatchBabyRestAccessory {
       lightService = this.getService(Service.Lightbulb),
       batteryService = this.getService(Service.BatteryService),
       speakerService = this.getService(Service.Speaker),
-      accessoryInfoService = this.getService(Service.AccessoryInformation)
+      accessoryInfoService = this.getService(Service.AccessoryInformation),
+      onSetHue = new Subject<number>(),
+      onSetSaturation = new Subject<number>()
+
+    combineLatest([onSetHue, onSetSaturation])
+      .pipe(debounceTime(100))
+      .subscribe(([hue, saturation]) => {
+        light.setColorFromHueAndSaturation(hue, saturation)
+      })
 
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.On),
@@ -24,6 +32,16 @@ export class HatchBabyRestAccessory {
       lightService.getCharacteristic(Characteristic.Brightness),
       light.onBrightness,
       brightness => light.setBrightness(brightness)
+    )
+    this.registerCharacteristic(
+      lightService.getCharacteristic(Characteristic.Hue),
+      light.onHue,
+      hue => onSetHue.next(hue)
+    )
+    this.registerCharacteristic(
+      lightService.getCharacteristic(Characteristic.Saturation),
+      light.onSaturation,
+      sat => onSetSaturation.next(sat)
     )
 
     this.registerCharacteristic(

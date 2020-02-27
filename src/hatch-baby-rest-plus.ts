@@ -1,11 +1,12 @@
-import { AudioTrack, LightState, RestPlusInfo } from './hatch-baby-types'
+import { AudioTrack, Color, LightState, RestPlusInfo } from './hatch-baby-types'
 import { RestClient } from './rest-client'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { BehaviorSubject } from 'rxjs'
 import { distinctUntilChanged, filter, map, take } from 'rxjs/operators'
 import { logError } from './util'
 import { DeepPartial } from 'ts-essentials'
-import { Color } from './rest-commands'
+const rgb2hsv = require('pure-color/convert/rgb2hsv'),
+  hsv2rgb = require('pure-color/convert/hsv2rgb')
 
 const MAX_VALUE = 65535
 
@@ -15,6 +16,33 @@ function convertFromPercentage(percentage: number) {
 
 function convertToPercentage(value: number) {
   return Math.floor((value * 100) / MAX_VALUE)
+}
+
+function convertToHexRange(value: number) {
+  return Math.floor((value / MAX_VALUE) * 255)
+}
+
+function convertFromHexRange(value: number) {
+  return Math.floor((value * MAX_VALUE) / 255)
+}
+
+function colorToHsb({ r, g, b }: Color) {
+  const [h, s, v] = rgb2hsv([r, g, b].map(convertToHexRange))
+  return { h, s, b: v } as { h: number; s: number; b: number }
+}
+
+function assignState(previousState: any, changes: any): LightState {
+  const state = Object.assign({}, previousState)
+
+  for (const key in changes) {
+    if (typeof changes[key] === 'object') {
+      state[key] = Object.assign(previousState[key] || {}, changes[key])
+    } else {
+      state[key] = changes[key]
+    }
+  }
+
+  return state
 }
 
 export class HatchBabyRestPlus {
@@ -40,6 +68,18 @@ export class HatchBabyRestPlus {
 
   onBrightness = this.onState.pipe(
     map(state => convertToPercentage(state.c.i)),
+    distinctUntilChanged()
+  )
+
+  onHsb = this.onState.pipe(map(state => colorToHsb(state.c)))
+
+  onHue = this.onHsb.pipe(
+    map(({ h }) => h),
+    distinctUntilChanged()
+  )
+
+  onSaturation = this.onHsb.pipe(
+    map(({ s }) => s),
     distinctUntilChanged()
   )
 
@@ -77,9 +117,7 @@ export class HatchBabyRestPlus {
 
         const { state } = status
 
-        this.onCurrentState.next(
-          Object.assign({}, state.reported, state.desired)
-        )
+        this.onCurrentState.next(assignState(state.reported, state.desired))
       }
     )
 
@@ -90,7 +128,10 @@ export class HatchBabyRestPlus {
       }
 
       this.onCurrentState.next(
-        Object.assign(currentState, s.state.reported, s.state.desired)
+        assignState(
+          assignState(currentState, s.state.reported),
+          s.state.desired
+        )
       )
     })
 
@@ -141,6 +182,11 @@ export class HatchBabyRestPlus {
     this.update({
       c: color
     })
+  }
+
+  setColorFromHueAndSaturation(hue: number, saturation: number) {
+    const [r, g, b] = hsv2rgb([hue, saturation, 100]).map(convertFromHexRange)
+    this.setColor({ r, g, b, R: false, W: false })
   }
 
   setBrightness(percentage: number) {
