@@ -12,7 +12,7 @@ export class HatchBabyRestPlatform {
 
   constructor(
     public log: HAP.Log,
-    public config: ApiConfig,
+    public config: ApiConfig & { removeAll: boolean },
     public api: HAP.Platform
   ) {
     useLogger({
@@ -57,7 +57,14 @@ export class HatchBabyRestPlatform {
       activeAccessoryIds: string[] = [],
       debugPrefix = debug ? 'TEST ' : ''
 
-    this.log.info(`Configuring ${lights.length} Hatch Baby Rest+ lights`)
+    if (this.config.removeAll) {
+      this.log.info(
+        'REMOVING ALL Hatch Baby Rest+ lights.  You can now stop your homebridge server and restart it without removeAll set.'
+      )
+      lights.length = 0
+    } else {
+      this.log.info(`Configuring ${lights.length} Hatch Baby Rest+ lights`)
+    }
 
     lights.forEach(light => {
       const uuid = hap.UUIDGen.generate(debugPrefix + light.id),

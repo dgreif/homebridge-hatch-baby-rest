@@ -1,7 +1,7 @@
 import { HatchBabyRestPlus } from '../hatch-baby-rest-plus'
 import { hap, HAP } from '../hap'
 import { debounceTime, distinctUntilChanged, map, take } from 'rxjs/operators'
-import { combineLatest, Observable, Subject } from 'rxjs'
+import { combineLatest, Observable, of, Subject } from 'rxjs'
 
 export class HatchBabyRestAccessory {
   constructor(
@@ -87,7 +87,7 @@ export class HatchBabyRestAccessory {
     )
     this.registerCharacteristic(
       accessoryInfoService.getCharacteristic(Characteristic.Name),
-      light.onState.pipe(map(state => state.name))
+      of(light.name)
     )
   }
 
