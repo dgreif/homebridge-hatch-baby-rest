@@ -1,9 +1,10 @@
 import 'dotenv/config'
 import { HatchBabyRest } from '../src/hatch-baby-rest'
 import { delay } from '../src/util'
-import { AudioTrack, Color } from '../src/rest-commands'
+import { Color } from '../src/rest-commands'
 import { filter, take } from 'rxjs/operators'
 import { colorsMatch } from '../src/feedback'
+import { AudioTrack } from '../src/hatch-baby-types'
 
 async function example() {
   const macAddress = process.env.HBR_MAC_ADDRESS!,
