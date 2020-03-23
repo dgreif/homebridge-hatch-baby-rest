@@ -38,6 +38,7 @@ To add a Rest night light to your homebridge setup, first open the Hatch Baby Re
   "accessories": [
     {
       "accessory": "HatchBabyRest",
+      "service": "light",
       "name": "Kid's Night Light",
       "macAddress": "12:34:56:78:90:AB",
       "volume": 29,
@@ -55,6 +56,7 @@ The original Rest night light does not retain color/volume/audio track settings 
 Option | Required | Details
 --- | --- | ---
 accessory | `true` | _Must_ be `HatchBabyRest` to link it to this plugin
+service | `false` | Defines what type of service the Rest accessory uses.  Possible values are: `"switch"` for `Switch` and `"light"` for `LightBulb` (default)
 name | `true` | The name you want assigned to this light in HomeKit
 macAddress | `true` | The MAC address for the light, found in your Hatch Baby Rest app.  This is used to discover the light via bluetooth
 volume | `false` | The volume level to set the speaker of the light to when it is turned on.  Must be between 0 and 100.  If set to 0 or left blank, the speaker will not play music when turned on via HomeKit

@@ -4,6 +4,12 @@
   "schema": {
     "type": "object",
     "properties": {
+      "service": {
+        "title": "Service Type",
+        "type": "string",
+        "placeholder": "Service Type",
+        "required": false
+      },
       "name": {
         "title": "Light Name",
         "type": "string",

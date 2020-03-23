@@ -77,6 +77,7 @@ export class HatchBabyRest {
   reconnectSubscription?: Subscription
 
   constructor(
+    private service: string,
     private name: string,
     private macAddress: string,
     private logger: HAP.Log

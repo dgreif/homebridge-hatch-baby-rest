@@ -7,7 +7,7 @@ import { colorsMatch } from '../src/feedback'
 
 async function example() {
   const macAddress = process.env.HBR_MAC_ADDRESS!,
-    hbr = new HatchBabyRest('Test Night Light', macAddress, console),
+    hbr = new HatchBabyRest('light', 'Test Night Light', macAddress, console),
     waitForPower = (power: boolean) =>
       hbr.onPower
         .pipe(

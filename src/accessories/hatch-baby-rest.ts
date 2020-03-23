@@ -6,15 +6,17 @@ import { AudioTrack } from '../hatch-baby-types'
 
 export class HatchBabyRestAccessory {
   private hbr = new HatchBabyRest(
+    this.config.service,
     this.config.name,
     this.config.macAddress,
     this.log
   )
-  private service = new hap.Service.Lightbulb(this.config.name)
+  private service: HAP.Service
 
   constructor(
     public log: HAP.Log,
     public config: {
+      service: string
       name: string
       macAddress: string
       volume?: number
@@ -22,6 +24,8 @@ export class HatchBabyRestAccessory {
       color?: Color
     }
   ) {
+    this.service = this.config.service == 'switch' ? new hap.Service.Switch(this.config.name) : new hap.Service.Lightbulb(this.config.name)
+
     const powerCharacteristic = this.service.getCharacteristic(
         hap.Characteristic.On
       ),
