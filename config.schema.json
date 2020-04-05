@@ -138,6 +138,11 @@
             "maximum": 255
           }
         }
+      },
+      "showAsSwitch": {
+        "title": "Show As Switch",
+        "description": "Use this option if you would like this night light to show as a switch instead of a lightbulb in HomeKit",
+        "type": "boolean"
       }
     },
     "oneOf": [
@@ -160,7 +165,8 @@
         "color.r",
         "color.g",
         "color.b",
-        "color.a"
+        "color.a",
+        "showAsSwitch"
       ]
     }
   ]

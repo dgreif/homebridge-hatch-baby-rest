@@ -10,7 +10,9 @@ export class HatchBabyRestAccessory {
     this.config.macAddress,
     this.log
   )
-  private service = new hap.Service.Lightbulb(this.config.name)
+  private service = this.config.showAsSwitch
+    ? new hap.Service.Switch(this.config.name)
+    : new hap.Service.Lightbulb(this.config.name)
 
   constructor(
     public log: HAP.Log,
@@ -20,6 +22,7 @@ export class HatchBabyRestAccessory {
       volume?: number
       audioTrack?: AudioTrack
       color?: Color
+      showAsSwitch?: boolean
     }
   ) {
     const powerCharacteristic = this.service.getCharacteristic(

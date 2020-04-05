@@ -42,7 +42,8 @@ To add a Rest night light to your homebridge setup, first open the Hatch Baby Re
       "macAddress": "12:34:56:78:90:AB",
       "volume": 29,
       "audioTrack": 14,
-      "color": { "r": 254, "g": 254, "b": 254, "a": 83 }
+      "color": { "r": 254, "g": 254, "b": 254, "a": 83 },
+      "showAsSwitch": false
     }
   ]
 }
@@ -60,6 +61,7 @@ macAddress | `true` | The MAC address for the light, found in your Hatch Baby Re
 volume | `false` | The volume level to set the speaker of the light to when it is turned on.  Must be between 0 and 100.  If set to 0 or left blank, the speaker will not play music when turned on via HomeKit
 audioTrack | `false` | The audio track number to play when the light is turned on with HomeKit.  See the table below for the different track names/numbers
 color | `false` | The color and intensity to turn on the light. See below for more details
+showAsSwitch | `false` | The use a Switch instead of Lightbulb in HomeKit.  This is useful if you want to be able to say "turn off all lights", but not turn off the night light
 
 Please note, the light will do _nothing_ if you don't supply either `color` or `volume` and `audioTrack`.
 
