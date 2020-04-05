@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v1.3.1...v2.0.0) (2020-04-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* Node 10+ now required
+
+### Features
+
+* add `showAsSwitch` option to hbr accessory ([0f83328](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/0f833281ae06f50f031343dcae135bc4c53fd720)), closes [#11](https://github.com/dgreif/homebridge-hatch-baby-rest/issues/11)
+
+
+* update minimum node version to 10 ([ea1837e](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/ea1837e031f2324bc82b6e92fc47aafe70441351))
+
 ### [1.3.1](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v1.3.0...v1.3.1) (2020-02-29)
 
 
