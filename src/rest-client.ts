@@ -43,12 +43,12 @@ export class RestClient {
         url: apiPath('public/v1/login'),
         data: {
           email: this.authOptions.email,
-          password: this.authOptions.password
+          password: this.authOptions.password,
         },
         method: 'POST',
         headers: {
-          'content-type': 'application/json'
-        }
+          'content-type': 'application/json',
+        },
       })
 
       return resp
@@ -77,13 +77,13 @@ export class RestClient {
       const loginResponse = await this.loginPromise,
         headers: { [key: string]: string } = {
           'content-type': 'application/json',
-          'X-HatchBaby-Auth': loginResponse.token
+          'X-HatchBaby-Auth': loginResponse.token,
         },
         response = await requestWithRetry<{ payload: T }>({
           method: method || 'GET',
           url,
           data,
-          headers
+          headers,
         })
 
       return response.payload
@@ -110,6 +110,6 @@ export class RestClient {
   }
 
   getAccount() {
-    return this.loginPromise.then(l => l.payload)
+    return this.loginPromise.then((l) => l.payload)
   }
 }

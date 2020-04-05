@@ -2,7 +2,7 @@ export const enum RestCommand {
   SetPower = 'SI',
   SetColor = 'SC',
   SetTrackNumber = 'SN',
-  SetVolume = 'SV'
+  SetVolume = 'SV',
 }
 
 export interface Color {

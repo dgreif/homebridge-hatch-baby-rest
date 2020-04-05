@@ -15,9 +15,9 @@ describe('Feedback Parsing', () => {
         r: 0,
         g: 0,
         b: 0,
-        a: 0
+        a: 0,
       },
-      audioTrack: 0
+      audioTrack: 0,
     })
   })
 
@@ -34,9 +34,9 @@ describe('Feedback Parsing', () => {
         r: 254,
         g: 254,
         b: 254,
-        a: 83
+        a: 83,
       },
-      audioTrack: 14
+      audioTrack: 14,
     })
   })
 

@@ -86,7 +86,7 @@ export const enum AudioTrack {
   Crickets = 10,
   Brahms = 11,
   Twinkle = 13,
-  RockABye = 14
+  RockABye = 14,
 }
 
 export interface Color {

@@ -21,7 +21,7 @@ export class HatchBabyRestPlatform {
       },
       logError(message) {
         log.error(message)
-      }
+      },
     })
 
     if (!config) {
@@ -31,7 +31,7 @@ export class HatchBabyRestPlatform {
 
     this.api.on('didFinishLaunching', () => {
       this.log.debug('didFinishLaunching')
-      this.connectToApi().catch(e => {
+      this.connectToApi().catch((e) => {
         this.log.error('Error connecting to API')
         this.log.error(e)
       })
@@ -66,7 +66,7 @@ export class HatchBabyRestPlatform {
       this.log.info(`Configuring ${lights.length} Hatch Baby Rest+ lights`)
     }
 
-    lights.forEach(light => {
+    lights.forEach((light) => {
       const uuid = hap.UUIDGen.generate(debugPrefix + light.id),
         displayName = debugPrefix + light.name,
         createHomebridgeAccessory = () => {
@@ -99,10 +99,10 @@ export class HatchBabyRestPlatform {
     }
 
     const staleAccessories = cachedAccessoryIds
-      .filter(cachedId => !activeAccessoryIds.includes(cachedId))
-      .map(id => this.homebridgeAccessories[id])
+      .filter((cachedId) => !activeAccessoryIds.includes(cachedId))
+      .map((id) => this.homebridgeAccessories[id])
 
-    staleAccessories.forEach(staleAccessory => {
+    staleAccessories.forEach((staleAccessory) => {
       this.log.info(
         `Removing stale cached accessory ${staleAccessory.UUID} ${staleAccessory.displayName}`
       )

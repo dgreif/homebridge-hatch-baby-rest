@@ -21,7 +21,7 @@ describe('Feedback Parsing', () => {
         r: 1,
         g: 2,
         b: 3,
-        a: 200
+        a: 200,
       })
     ).to.eql(Buffer.from('SC010203C8'))
 
@@ -30,7 +30,7 @@ describe('Feedback Parsing', () => {
         r: 255,
         g: 255,
         b: 255,
-        a: 83
+        a: 83,
       })
     ).to.eql(Buffer.from('SCFFFFFF53'))
   })

@@ -52,26 +52,26 @@ export class HatchBabyRestPlus {
   )
 
   onVolume = this.onState.pipe(
-    map(state => convertToPercentage(state.a.v)),
+    map((state) => convertToPercentage(state.a.v)),
     distinctUntilChanged()
   )
 
   onAudioTrack = this.onState.pipe(
-    map(state => state.a.t),
+    map((state) => state.a.t),
     distinctUntilChanged()
   )
 
   onIsPowered = this.onState.pipe(
-    map(state => state.isPowered),
+    map((state) => state.isPowered),
     distinctUntilChanged()
   )
 
   onBrightness = this.onState.pipe(
-    map(state => convertToPercentage(state.c.i)),
+    map((state) => convertToPercentage(state.c.i)),
     distinctUntilChanged()
   )
 
-  onHsb = this.onState.pipe(map(state => colorToHsb(state.c)))
+  onHsb = this.onState.pipe(map((state) => colorToHsb(state.c)))
 
   onHue = this.onHsb.pipe(
     map(({ h }) => h),
@@ -84,7 +84,7 @@ export class HatchBabyRestPlus {
   )
 
   onBatteryLevel = this.onState.pipe(
-    map(state => state.deviceInfo.b),
+    map((state) => state.deviceInfo.b),
     distinctUntilChanged()
   )
 
@@ -139,7 +139,7 @@ export class HatchBabyRestPlus {
       logError('AWS Iot Timeout')
       logError(message)
     })
-    mqttClient.on('error', e => {
+    mqttClient.on('error', (e) => {
       logError('AWS Iot Error')
       logError(e)
     })
@@ -157,30 +157,30 @@ export class HatchBabyRestPlus {
   update(update: DeepPartial<LightState>) {
     this.mqttClient.update(this.info.thingName, {
       state: {
-        desired: update
-      }
+        desired: update,
+      },
     })
   }
 
   setVolume(percentage: number) {
     this.update({
       a: {
-        v: convertFromPercentage(percentage)
-      }
+        v: convertFromPercentage(percentage),
+      },
     })
   }
 
   setAudioTrack(audioTrack: AudioTrack) {
     this.update({
       a: {
-        t: audioTrack
-      }
+        t: audioTrack,
+      },
     })
   }
 
   setColor(color: Partial<Color>) {
     this.update({
-      c: color
+      c: color,
     })
   }
 
@@ -192,14 +192,14 @@ export class HatchBabyRestPlus {
   setBrightness(percentage: number) {
     this.update({
       c: {
-        i: convertFromPercentage(percentage)
-      }
+        i: convertFromPercentage(percentage),
+      },
     })
   }
 
   setPower(on: boolean) {
     this.update({
-      isPowered: on
+      isPowered: on,
     })
   }
 }

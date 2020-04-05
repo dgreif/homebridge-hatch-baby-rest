@@ -12,28 +12,28 @@ async function example() {
     waitForPower = (power: boolean) =>
       hbr.onPower
         .pipe(
-          filter(x => x === power),
+          filter((x) => x === power),
           take(1)
         )
         .toPromise(),
     waitForVolume = (volume: number) =>
       hbr.onVolume
         .pipe(
-          filter(x => x === volume),
+          filter((x) => x === volume),
           take(1)
         )
         .toPromise(),
     waitForAudioTrack = (audioTrack: number) =>
       hbr.onAudioTrack
         .pipe(
-          filter(x => x === audioTrack),
+          filter((x) => x === audioTrack),
           take(1)
         )
         .toPromise(),
     waitForColor = (color: Color) =>
       hbr.onColor
         .pipe(
-          filter(x => colorsMatch(x, color)),
+          filter((x) => colorsMatch(x, color)),
           take(1)
         )
         .toPromise()

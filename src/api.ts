@@ -3,7 +3,7 @@ import {
   IotCredentialsResponse,
   IotTokenResponse,
   MemberResponse,
-  RestPlusInfo
+  RestPlusInfo,
 } from './hatch-baby-types'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { logError } from './util'
@@ -21,13 +21,13 @@ export class HatchBabyApi {
 
   getMember() {
     return this.restClient.request<MemberResponse>({
-      url: apiPath('service/app/v2/member')
+      url: apiPath('service/app/v2/member'),
     })
   }
 
   async getRestPlusLightsInfo() {
     const hbrps = await this.restClient.request<RestPlusInfo[]>({
-      url: apiPath('service/app/restPlus/v1/fetch')
+      url: apiPath('service/app/restPlus/v1/fetch'),
     })
 
     return hbrps
@@ -35,7 +35,7 @@ export class HatchBabyApi {
 
   async createAwsIotClient() {
     const iotResponse = await this.restClient.request<IotTokenResponse>({
-        url: apiPath('service/app/restPlus/token/v1/fetch')
+        url: apiPath('service/app/restPlus/token/v1/fetch'),
       }),
       { Credentials: credentials } = await requestWithRetry<
         IotCredentialsResponse
@@ -44,24 +44,24 @@ export class HatchBabyApi {
         method: 'POST',
         headers: {
           'content-type': 'application/x-amz-json-1.1',
-          'X-Amz-Target': 'AWSCognitoIdentityService.GetCredentialsForIdentity'
+          'X-Amz-Target': 'AWSCognitoIdentityService.GetCredentialsForIdentity',
         },
         data: {
           IdentityId: iotResponse.identityId,
           Logins: {
-            'cognito-identity.amazonaws.com': iotResponse.token
-          }
-        }
+            'cognito-identity.amazonaws.com': iotResponse.token,
+          },
+        },
       }),
       mqttClient = new AwsIotDevice({
         protocol: 'wss',
         host: iotResponse.endpoint.replace('https://', ''),
         accessKeyId: credentials.AccessKeyId,
         secretKey: credentials.SecretKey,
-        sessionToken: credentials.SessionToken
+        sessionToken: credentials.SessionToken,
       })
 
-    mqttClient.on('error', error => {
+    mqttClient.on('error', (error) => {
       logError('MQTT Error:')
       logError(error)
     })
@@ -72,10 +72,10 @@ export class HatchBabyApi {
   async getRestPlusLights() {
     const [lights, mqttClient] = await Promise.all([
       this.getRestPlusLightsInfo(),
-      this.createAwsIotClient()
+      this.createAwsIotClient(),
     ])
 
-    return lights.map(info => {
+    return lights.map((info) => {
       return new HatchBabyRestPlus(info, this.restClient, mqttClient)
     })
   }

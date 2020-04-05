@@ -11,7 +11,7 @@ let logger: Logger = {
     logError(message) {
       // eslint-disable-next-line no-console
       console.error(message)
-    }
+    },
   },
   debugEnabled = false
 
@@ -46,7 +46,7 @@ export function stripMacAddress(uuid: string) {
 }
 
 export function delay(milliseconds: number) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, milliseconds)
   })
 }

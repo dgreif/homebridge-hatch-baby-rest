@@ -13,42 +13,42 @@ interface FeedbackField {
 const feedbackFields: { [key: string]: FeedbackField } = {
   54: {
     name: 'time',
-    length: 4
+    length: 4,
   },
 
   43: {
     name: 'color',
     length: 4,
-    mapper: data => {
+    mapper: (data) => {
       return {
         color: {
           r: data[0],
           g: data[1],
           b: data[2],
-          a: data[3]
-        }
+          a: data[3],
+        },
       }
-    }
+    },
   },
   50: {
     name: 'powerPreset',
     length: 1,
-    mapper: data => {
+    mapper: (data) => {
       return {
-        power: Boolean(data[0]) && !(data[0] & 0xc0)
+        power: Boolean(data[0]) && !(data[0] & 0xc0),
       }
-    }
+    },
   },
   53: {
     name: 'audio',
     length: 2,
-    mapper: data => {
+    mapper: (data) => {
       return {
         audioTrack: data[0],
-        volume: Math.round((data[1] / 255) * 100)
+        volume: Math.round((data[1] / 255) * 100),
       }
-    }
-  }
+    },
+  },
 }
 
 export interface Feedback {

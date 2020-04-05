@@ -13,14 +13,14 @@ import {
   share,
   startWith,
   take,
-  tap
+  tap,
 } from 'rxjs/operators'
 import { stripMacAddress, stripUuid } from './util'
 import {
   Color,
   formatRestCommand,
   RestCommand,
-  RestCommandValue
+  RestCommandValue,
 } from './rest-commands'
 import { Peripheral, Service } from 'noble'
 import { promisify } from 'util'
@@ -33,13 +33,13 @@ const usedPeripheralIds: string[] = []
 
 const enum ServiceUuid {
   Advertising = '02260001-5efd-47eb-9c1a-de53f7a2b232',
-  Rest = '02240001-5efd-47eb-9c1a-de53f7a2b232'
+  Rest = '02240001-5efd-47eb-9c1a-de53f7a2b232',
 }
 
 const enum CharacteristicUuid {
   Tx = '02240002-5efd-47eb-9c1a-de53f7a2b232',
   Rx = '02240003-5efd-47eb-9c1a-de53f7a2b232',
-  CurrentFeedback = '02260002-5efd-47eb-9c1a-de53f7a2b232'
+  CurrentFeedback = '02260002-5efd-47eb-9c1a-de53f7a2b232',
 }
 
 export class HatchBabyRest {
@@ -50,25 +50,25 @@ export class HatchBabyRest {
     power: false,
     volume: 0,
     color: { r: 0, g: 0, b: 0, a: 0 },
-    audioTrack: AudioTrack.None
+    audioTrack: AudioTrack.None,
   })
   onPower = this.onFeedback.pipe(
-    map(feedback => feedback.power),
+    map((feedback) => feedback.power),
     distinctUntilChanged(),
     share()
   )
   onVolume = this.onFeedback.pipe(
-    map(feedback => feedback.volume),
+    map((feedback) => feedback.volume),
     distinctUntilChanged(),
     share()
   )
   onColor = this.onFeedback.pipe(
-    map(feedback => feedback.color),
+    map((feedback) => feedback.color),
     distinctUntilChanged(colorsMatch),
     share()
   )
   onAudioTrack = this.onFeedback.pipe(
-    map(feedback => feedback.audioTrack),
+    map((feedback) => feedback.audioTrack),
     distinctUntilChanged(),
     share()
   )
@@ -81,7 +81,7 @@ export class HatchBabyRest {
     private macAddress: string,
     private logger: HAP.Log
   ) {
-    this.getDevice().then(device => {
+    this.getDevice().then((device) => {
       device.on('connect', () => {
         return this.subscribeToFeedback()
       })
@@ -103,7 +103,7 @@ export class HatchBabyRest {
     await fromEvent(noble, 'stateChange')
       .pipe(
         startWith(noble.state),
-        filter(state => state === 'poweredOn'),
+        filter((state) => state === 'poweredOn'),
         take(1)
       )
       .toPromise()
@@ -111,7 +111,7 @@ export class HatchBabyRest {
     const stripedAddress = stripMacAddress(address),
       peripheralPromise = fromEvent<Peripheral>(noble, 'discover')
         .pipe(
-          filter(peripheral => {
+          filter((peripheral) => {
             return (
               stripMacAddress(peripheral.address) === stripedAddress ||
               (peripheral.addressType === 'unknown' &&
@@ -119,7 +119,7 @@ export class HatchBabyRest {
             )
           }),
           take(1),
-          tap(peripheral => {
+          tap((peripheral) => {
             usedPeripheralIds.push(peripheral.id)
             this.logger.info(
               `Found device ${
@@ -179,7 +179,7 @@ export class HatchBabyRest {
   discoverServicesPromise?: Promise<Service[]>
   getServices() {
     if (!this.discoverServicesPromise) {
-      this.discoverServicesPromise = this.connect().then(device =>
+      this.discoverServicesPromise = this.connect().then((device) =>
         promisify(
           device.discoverAllServicesAndCharacteristics.bind(device) as any
         )()
@@ -192,7 +192,7 @@ export class HatchBabyRest {
   async getService(serviceUuid: string) {
     const services = await this.getServices(),
       targetUuid = stripUuid(serviceUuid),
-      service = services.find(s => stripUuid(s.uuid) === targetUuid)
+      service = services.find((s) => stripUuid(s.uuid) === targetUuid)
 
     if (!service) {
       this.disconnect()
@@ -208,7 +208,7 @@ export class HatchBabyRest {
     const service = await this.getService(serviceUuid),
       targetUuid = stripUuid(characteristicUuid),
       characteristic = service.characteristics.find(
-        c => stripUuid(c.uuid) === targetUuid
+        (c) => stripUuid(c.uuid) === targetUuid
       )
 
     if (!characteristic) {
@@ -284,7 +284,7 @@ export class HatchBabyRest {
       this.onFeedback.next(parseFeedbackBuffer(data))
     })
 
-    feedbackCharacteristic.subscribe(err => {
+    feedbackCharacteristic.subscribe((err) => {
       if (err) {
         this.logger.error('Failed to subscribe to feedback events', err)
       }
