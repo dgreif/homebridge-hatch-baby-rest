@@ -28,7 +28,6 @@ import { colorsMatch, Feedback, parseFeedbackBuffer } from './feedback'
 import { HAP } from './hap'
 import { AudioTrack } from './hatch-baby-types'
 
-const noble = require('@abandonware/noble')
 const usedPeripheralIds: string[] = []
 
 const enum ServiceUuid {
@@ -43,6 +42,7 @@ const enum CharacteristicUuid {
 }
 
 export class HatchBabyRest {
+  noble = require('@abandonware/noble')
   peripheralPromise = this.getPeripheralByAddress(this.macAddress)
 
   onFeedback = new BehaviorSubject<Feedback>({
@@ -100,16 +100,16 @@ export class HatchBabyRest {
   async getPeripheralByAddress(address: string) {
     this.logger.info('Waiting for bluetooth to power on')
 
-    await fromEvent(noble, 'stateChange')
+    await fromEvent(this.noble, 'stateChange')
       .pipe(
-        startWith(noble.state),
+        startWith(this.noble.state),
         filter((state) => state === 'poweredOn'),
         take(1)
       )
       .toPromise()
 
     const stripedAddress = stripMacAddress(address),
-      peripheralPromise = fromEvent<Peripheral>(noble, 'discover')
+      peripheralPromise = fromEvent<Peripheral>(this.noble, 'discover')
         .pipe(
           filter((peripheral) => {
             return (
@@ -143,7 +143,7 @@ export class HatchBabyRest {
         .toPromise()
 
     this.logger.info('Scanning for device')
-    noble.startScanning(['180a'])
+    this.noble.startScanning(['180a'])
 
     return peripheralPromise
   }
