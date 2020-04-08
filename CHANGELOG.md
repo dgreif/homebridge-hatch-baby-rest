@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.0.0...v2.0.1) (2020-04-08)
+
+
+### Bug Fixes
+
+* prevent noble from loading if not used ([71deda8](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/71deda858423185f24d04e8434811214cb16105e)), closes [#12](https://github.com/dgreif/homebridge-hatch-baby-rest/issues/12)
+
 ## [2.0.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v1.3.1...v2.0.0) (2020-04-05)
 
 
