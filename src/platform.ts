@@ -1,19 +1,28 @@
 import { ApiConfig, HatchBabyApi } from './api'
-import { HAP, hap, platformName, pluginName } from './hap'
+import { hap, platformName, pluginName } from './hap'
 import { useLogger } from './util'
 import { HatchBabyRestAccessory } from './accessories/hatch-baby-rest-plus'
+import {
+  API,
+  DynamicPlatformPlugin,
+  Logging,
+  PlatformAccessory,
+  PlatformConfig,
+} from 'homebridge'
 
 const debug = __filename.includes('release')
 
 process.env.HBR_DEBUG = debug ? 'true' : ''
 
-export class HatchBabyRestPlatform {
-  private readonly homebridgeAccessories: { [uuid: string]: HAP.Accessory } = {}
+export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
+  private readonly homebridgeAccessories: {
+    [uuid: string]: PlatformAccessory
+  } = {}
 
   constructor(
-    public log: HAP.Log,
-    public config: ApiConfig & { removeAll: boolean },
-    public api: HAP.Platform
+    public log: Logging,
+    public config: PlatformConfig & ApiConfig & { removeAll: boolean },
+    public api: API
   ) {
     useLogger({
       logInfo(message) {
@@ -40,7 +49,7 @@ export class HatchBabyRestPlatform {
     this.homebridgeAccessories = {}
   }
 
-  configureAccessory(accessory: HAP.Accessory) {
+  configureAccessory(accessory: PlatformAccessory) {
     this.log.info(
       `Configuring cached accessory ${accessory.UUID} ${accessory.displayName}`
     )
@@ -53,7 +62,7 @@ export class HatchBabyRestPlatform {
       lights = await hatchBabyApi.getRestPlusLights(),
       { api } = this,
       cachedAccessoryIds = Object.keys(this.homebridgeAccessories),
-      platformAccessories: HAP.Accessory[] = [],
+      platformAccessories: PlatformAccessory[] = [],
       activeAccessoryIds: string[] = [],
       debugPrefix = debug ? 'TEST ' : ''
 
@@ -67,13 +76,13 @@ export class HatchBabyRestPlatform {
     }
 
     lights.forEach((light) => {
-      const uuid = hap.UUIDGen.generate(debugPrefix + light.id),
+      const uuid = hap.uuid.generate(debugPrefix + light.id),
         displayName = debugPrefix + light.name,
         createHomebridgeAccessory = () => {
-          const accessory = new hap.PlatformAccessory(
+          const accessory = new api.platformAccessory(
             displayName,
             uuid,
-            hap.AccessoryCategories.LIGHTBULB
+            hap.Categories.LIGHTBULB
           )
 
           this.log.info(`Adding new Hatch Baby Rest+ - ${displayName}`)

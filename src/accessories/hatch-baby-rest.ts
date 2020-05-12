@@ -1,8 +1,15 @@
 import { HatchBabyRest } from '../hatch-baby-rest'
-import { hap, HAP } from '../hap'
+import { hap } from '../hap'
 import { skip } from 'rxjs/operators'
 import { Color } from '../rest-commands'
 import { AudioTrack } from '../hatch-baby-types'
+import {
+  CharacteristicEventTypes,
+  CharacteristicSetCallback,
+  Logging,
+  CharacteristicValue,
+  CharacteristicGetCallback,
+} from 'homebridge'
 
 export class HatchBabyRestAccessory {
   private hbr = new HatchBabyRest(
@@ -15,7 +22,7 @@ export class HatchBabyRestAccessory {
     : new hap.Service.Lightbulb(this.config.name)
 
   constructor(
-    public log: HAP.Log,
+    public log: Logging,
     public config: {
       name: string
       macAddress: string
@@ -37,32 +44,41 @@ export class HatchBabyRestAccessory {
     }
 
     powerCharacteristic
-      .on('set', async (value: boolean, callback: any) => {
-        callback()
+      .on(
+        CharacteristicEventTypes.SET,
+        async (
+          value: CharacteristicValue,
+          callback: CharacteristicSetCallback
+        ) => {
+          callback()
 
-        log.info(`Turning ${value ? 'on' : 'off'}`)
-        await this.hbr.setPower(value)
+          log.info(`Turning ${value ? 'on' : 'off'}`)
+          await this.hbr.setPower(Boolean(value))
 
-        if (!value) {
-          // no need to set other values since it's off
-          return
+          if (!value) {
+            // no need to set other values since it's off
+            return
+          }
+
+          if (volume) {
+            await this.hbr.setVolume(volume)
+          }
+
+          if (audioTrack) {
+            await this.hbr.setAudioTrack(audioTrack)
+          }
+
+          if (color) {
+            await this.hbr.setColor(color)
+          }
         }
-
-        if (volume) {
-          await this.hbr.setVolume(volume)
+      )
+      .on(
+        CharacteristicEventTypes.GET,
+        (callback: CharacteristicGetCallback) => {
+          callback(null, this.hbr.currentFeedback.power)
         }
-
-        if (audioTrack) {
-          await this.hbr.setAudioTrack(audioTrack)
-        }
-
-        if (color) {
-          await this.hbr.setColor(color)
-        }
-      })
-      .on('get', (callback: any) => {
-        callback(null, this.hbr.currentFeedback.power)
-      })
+      )
 
     this.hbr.onPower.pipe(skip(1)).subscribe((power: boolean) => {
       log.info(`Turned ${power ? 'on' : 'off'}`)

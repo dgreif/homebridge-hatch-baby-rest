@@ -1,12 +1,22 @@
 import { HatchBabyRestPlus } from '../hatch-baby-rest-plus'
-import { hap, HAP } from '../hap'
+import { hap } from '../hap'
 import { debounceTime, distinctUntilChanged, map, take } from 'rxjs/operators'
 import { combineLatest, Observable, of, Subject } from 'rxjs'
+import {
+  PlatformAccessory,
+  WithUUID,
+  Service as ServiceClass,
+  Characteristic as CharacteristicClass,
+  CharacteristicEventTypes,
+  CharacteristicGetCallback,
+  CharacteristicSetCallback,
+  CharacteristicValue,
+} from 'homebridge'
 
 export class HatchBabyRestAccessory {
   constructor(
     private light: HatchBabyRestPlus,
-    private accessory: HAP.Accessory
+    private accessory: PlatformAccessory
   ) {
     const { Service, Characteristic } = hap,
       lightService = this.getService(Service.Lightbulb),
@@ -25,23 +35,23 @@ export class HatchBabyRestAccessory {
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.On),
       light.onIsPowered,
-      on => light.setPower(on)
+      (on) => light.setPower(on)
     )
 
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.Brightness),
       light.onBrightness,
-      brightness => light.setBrightness(brightness)
+      (brightness) => light.setBrightness(brightness)
     )
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.Hue),
       light.onHue,
-      hue => onSetHue.next(hue)
+      (hue) => onSetHue.next(hue)
     )
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.Saturation),
       light.onSaturation,
-      sat => onSetSaturation.next(sat)
+      (sat) => onSetSaturation.next(sat)
     )
 
     this.registerCharacteristic(
@@ -51,7 +61,7 @@ export class HatchBabyRestAccessory {
     this.registerCharacteristic(
       batteryService.getCharacteristic(Characteristic.StatusLowBattery),
       light.onBatteryLevel.pipe(
-        map(batteryLevel => (batteryLevel < 20 ? 1 : 0))
+        map((batteryLevel) => (batteryLevel < 20 ? 1 : 0))
       )
     )
     batteryService
@@ -61,12 +71,12 @@ export class HatchBabyRestAccessory {
     this.registerCharacteristic(
       speakerService.getCharacteristic(Characteristic.Volume),
       light.onVolume,
-      volume => light.setVolume(volume)
+      (volume) => light.setVolume(volume)
     )
     this.registerCharacteristic(
       speakerService.getCharacteristic(Characteristic.Mute),
-      light.onVolume.pipe(map(volume => volume === 0)),
-      mute => {
+      light.onVolume.pipe(map((volume) => volume === 0)),
+      (mute) => {
         light.setVolume(mute ? 0 : 50)
       }
     )
@@ -83,7 +93,7 @@ export class HatchBabyRestAccessory {
 
     this.registerCharacteristic(
       accessoryInfoService.getCharacteristic(Characteristic.FirmwareRevision),
-      light.onState.pipe(map(state => state.deviceInfo.f))
+      light.onState.pipe(map((state) => state.deviceInfo.f))
     )
     this.registerCharacteristic(
       accessoryInfoService.getCharacteristic(Characteristic.Name),
@@ -91,34 +101,43 @@ export class HatchBabyRestAccessory {
     )
   }
 
-  getService(serviceType: HAP.Service) {
+  getService(serviceType: WithUUID<typeof ServiceClass>) {
     const existingService = this.accessory.getService(serviceType)
     return existingService || this.accessory.addService(serviceType)
   }
 
   registerCharacteristic(
-    characteristic: HAP.Characteristic,
+    characteristic: CharacteristicClass,
     onValue: Observable<any>,
     setValue?: (value: any) => any
   ) {
     const getValue = () => onValue.pipe(take(1)).toPromise()
 
-    characteristic.on('get', async (callback: any) => {
-      callback(null, await getValue())
-    })
+    characteristic.on(
+      CharacteristicEventTypes.GET,
+      async (callback: CharacteristicGetCallback) => {
+        callback(null, await getValue())
+      }
+    )
 
     if (setValue) {
-      characteristic.on('set', async (value: boolean, callback: any) => {
-        callback()
+      characteristic.on(
+        CharacteristicEventTypes.SET,
+        async (
+          value: CharacteristicValue,
+          callback: CharacteristicSetCallback
+        ) => {
+          callback()
 
-        const currentValue = await getValue()
-        if (value !== currentValue) {
-          setValue(value)
+          const currentValue = await getValue()
+          if (value !== currentValue) {
+            setValue(value)
+          }
         }
-      })
+      )
     }
 
-    onValue.pipe(distinctUntilChanged()).subscribe(value => {
+    onValue.pipe(distinctUntilChanged()).subscribe((value) => {
       characteristic.updateValue(value)
     })
   }

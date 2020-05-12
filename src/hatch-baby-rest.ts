@@ -25,8 +25,8 @@ import {
 import { Peripheral, Service } from 'noble'
 import { promisify } from 'util'
 import { colorsMatch, Feedback, parseFeedbackBuffer } from './feedback'
-import { HAP } from './hap'
 import { AudioTrack } from './hatch-baby-types'
+import { Logging } from 'homebridge'
 
 const usedPeripheralIds: string[] = []
 
@@ -79,7 +79,7 @@ export class HatchBabyRest {
   constructor(
     private name: string,
     private macAddress: string,
-    private logger: HAP.Log
+    private logger: Logging
   ) {
     this.getDevice().then((device) => {
       device.on('connect', () => {
