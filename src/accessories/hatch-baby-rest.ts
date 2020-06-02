@@ -8,7 +8,6 @@ import {
   CharacteristicSetCallback,
   Logging,
   CharacteristicValue,
-  CharacteristicGetCallback,
 } from 'homebridge'
 
 export class HatchBabyRestAccessory {
@@ -43,46 +42,42 @@ export class HatchBabyRestAccessory {
       throw new Error('Incomplete Hatch Baby Rest Configuration')
     }
 
-    powerCharacteristic
-      .on(
-        CharacteristicEventTypes.SET,
-        async (
-          value: CharacteristicValue,
-          callback: CharacteristicSetCallback
-        ) => {
-          callback()
+    powerCharacteristic.on(
+      CharacteristicEventTypes.SET,
+      async (
+        value: CharacteristicValue,
+        callback: CharacteristicSetCallback
+      ) => {
+        callback()
 
-          log.info(`Turning ${value ? 'on' : 'off'}`)
-          await this.hbr.setPower(Boolean(value))
+        log.info(`Turning ${value ? 'on' : 'off'}`)
+        await this.hbr.setPower(Boolean(value))
 
-          if (!value) {
-            // no need to set other values since it's off
-            return
-          }
-
-          if (volume) {
-            await this.hbr.setVolume(volume)
-          }
-
-          if (audioTrack) {
-            await this.hbr.setAudioTrack(audioTrack)
-          }
-
-          if (color) {
-            await this.hbr.setColor(color)
-          }
+        if (!value) {
+          // no need to set other values since it's off
+          return
         }
-      )
-      .on(
-        CharacteristicEventTypes.GET,
-        (callback: CharacteristicGetCallback) => {
-          callback(null, this.hbr.currentFeedback.power)
+
+        if (volume) {
+          await this.hbr.setVolume(volume)
         }
-      )
+
+        if (audioTrack) {
+          await this.hbr.setAudioTrack(audioTrack)
+        }
+
+        if (color) {
+          await this.hbr.setColor(color)
+        }
+      }
+    )
+
+    this.hbr.onPower.subscribe((power: boolean) => {
+      powerCharacteristic.updateValue(power)
+    })
 
     this.hbr.onPower.pipe(skip(1)).subscribe((power: boolean) => {
       log.info(`Turned ${power ? 'on' : 'off'}`)
-      powerCharacteristic.updateValue(power)
     })
   }
 

@@ -113,13 +113,6 @@ export class HatchBabyRestPlusAccessory {
   ) {
     const getValue = () => onValue.pipe(take(1)).toPromise()
 
-    characteristic.on(
-      CharacteristicEventTypes.GET,
-      async (callback: CharacteristicGetCallback) => {
-        callback(null, await getValue())
-      }
-    )
-
     if (setValue) {
       characteristic.on(
         CharacteristicEventTypes.SET,
