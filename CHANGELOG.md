@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.3](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.0.2...v2.0.3) (2020-06-02)
+
+
+### Bug Fixes
+
+* create new mqtt client when auth expires ([65d0f33](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/65d0f33ae62ef434daa9160451ede8b53102e226)), closes [#8](https://github.com/dgreif/homebridge-hatch-baby-rest/issues/8)
+
 ### [2.0.2](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.0.1...v2.0.2) (2020-05-12)
 
 ### [2.0.1](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.0.0...v2.0.1) (2020-04-08)
