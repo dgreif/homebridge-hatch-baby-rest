@@ -1,5 +1,4 @@
 import { AudioTrack, Color, LightState, RestPlusInfo } from './hatch-baby-types'
-import { RestClient } from './rest-client'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { BehaviorSubject } from 'rxjs'
 import { distinctUntilChanged, filter, map, take } from 'rxjs/operators'
@@ -47,6 +46,7 @@ function assignState(previousState: any, changes: any): LightState {
 
 export class HatchBabyRestPlus {
   private onCurrentState = new BehaviorSubject<LightState | null>(null)
+  private mqttClient?: AwsIotDevice
   onState = this.onCurrentState.pipe(
     filter((state): state is LightState => state !== null)
   )
@@ -95,13 +95,13 @@ export class HatchBabyRestPlus {
     return this.info.name
   }
 
-  constructor(
-    public info: RestPlusInfo,
-    private restClient: RestClient,
-    private mqttClient: AwsIotDevice
-  ) {
-    const { thingName } = info
+  constructor(public readonly info: RestPlusInfo) {}
+
+  registerMqttClient(mqttClient: AwsIotDevice) {
+    const { thingName } = this.info
     let getClientToken: string
+
+    this.mqttClient = mqttClient
 
     mqttClient.on(
       'status',
@@ -135,14 +135,6 @@ export class HatchBabyRestPlus {
       )
     })
 
-    mqttClient.on('timeout', (topic, message) => {
-      logError('AWS Iot Timeout')
-      logError(message)
-    })
-    mqttClient.on('error', (e) => {
-      logError('AWS Iot Error')
-      logError(e)
-    })
     mqttClient.on('connect', () => {
       mqttClient.register(thingName, {}, () => {
         getClientToken = mqttClient.get(thingName)!
@@ -155,6 +147,11 @@ export class HatchBabyRestPlus {
   }
 
   update(update: DeepPartial<LightState>) {
+    if (!this.mqttClient) {
+      logError(`Unable to Update ${this.name} - No MQTT Client Registered`)
+      return
+    }
+
     this.mqttClient.update(this.info.thingName, {
       state: {
         desired: update,

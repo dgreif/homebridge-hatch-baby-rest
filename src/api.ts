@@ -6,7 +6,7 @@ import {
   RestPlusInfo,
 } from './hatch-baby-types'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
-import { logError } from './util'
+import { logDebug, logError } from './util'
 import { HatchBabyRestPlus } from './hatch-baby-rest-plus'
 
 export interface ApiConfig extends EmailAuth {}
@@ -61,22 +61,57 @@ export class HatchBabyApi {
         sessionToken: credentials.SessionToken,
       })
 
-    mqttClient.on('error', (error) => {
-      logError('MQTT Error:')
-      logError(error)
-    })
-
     return mqttClient
   }
 
   async getRestPlusLights() {
-    const [lights, mqttClient] = await Promise.all([
-      this.getRestPlusLightsInfo(),
-      this.createAwsIotClient(),
-    ])
+    const lightsInfo = await this.getRestPlusLightsInfo(),
+      lights = lightsInfo.map((info) => {
+        return new HatchBabyRestPlus(info)
+      })
 
-    return lights.map((info) => {
-      return new HatchBabyRestPlus(info, this.restClient, mqttClient)
-    })
+    let bindingNewIotClient = false,
+      previousMqttClient: AwsIotDevice | null = null
+    const createNewIotClient = async () => {
+      try {
+        if (bindingNewIotClient) {
+          return
+        }
+        bindingNewIotClient = true
+
+        if (previousMqttClient) {
+          previousMqttClient.end()
+          previousMqttClient = null
+        }
+
+        logDebug('Creating new MQTT Client')
+
+        const mqttClient = await this.createAwsIotClient()
+        previousMqttClient = mqttClient
+
+        mqttClient.on('error', (error) => {
+          if (error.message.includes('(403)')) {
+            logError('MQTT Client No Longer Authorized')
+          } else {
+            logError('MQTT Error:')
+            logError(error)
+          }
+
+          createNewIotClient()
+        })
+
+        lights.forEach((light) => light.registerMqttClient(mqttClient))
+        logDebug('Created new MQTT Client')
+      } catch (e) {
+        logError('Failed to Create an MQTT Client')
+        logError(e)
+      } finally {
+        bindingNewIotClient = false
+      }
+    }
+
+    createNewIotClient().catch()
+
+    return lights
   }
 }

@@ -1,7 +1,7 @@
 import { ApiConfig, HatchBabyApi } from './api'
 import { hap, platformName, pluginName } from './hap'
 import { useLogger } from './util'
-import { HatchBabyRestAccessory } from './accessories/hatch-baby-rest-plus'
+import { HatchBabyRestPlusAccessory } from './accessories/hatch-baby-rest-plus'
 import {
   API,
   DynamicPlatformPlugin,
@@ -93,7 +93,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         homebridgeAccessory =
           this.homebridgeAccessories[uuid] || createHomebridgeAccessory()
 
-      new HatchBabyRestAccessory(light, homebridgeAccessory)
+      new HatchBabyRestPlusAccessory(light, homebridgeAccessory)
 
       this.homebridgeAccessories[uuid] = homebridgeAccessory
       activeAccessoryIds.push(uuid)

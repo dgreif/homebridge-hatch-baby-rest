@@ -13,7 +13,7 @@ import {
   CharacteristicValue,
 } from 'homebridge'
 
-export class HatchBabyRestAccessory {
+export class HatchBabyRestPlusAccessory {
   constructor(
     private light: HatchBabyRestPlus,
     private accessory: PlatformAccessory
