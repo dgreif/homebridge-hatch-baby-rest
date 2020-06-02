@@ -22,7 +22,7 @@ import {
   RestCommand,
   RestCommandValue,
 } from './rest-commands'
-import { Peripheral, Service } from 'noble'
+import { Peripheral, Service } from '@abandonware/noble'
 import { promisify } from 'util'
 import { colorsMatch, Feedback, parseFeedbackBuffer } from './feedback'
 import { AudioTrack } from './hatch-baby-types'
