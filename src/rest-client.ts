@@ -1,5 +1,4 @@
 import got, { Options as RequestOptions } from 'got'
-
 import { delay, logError } from './util'
 import { LoginResponse } from './hatch-baby-types'
 
