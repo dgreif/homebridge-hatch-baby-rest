@@ -46,7 +46,7 @@ export class HatchBabyApi {
           'content-type': 'application/x-amz-json-1.1',
           'X-Amz-Target': 'AWSCognitoIdentityService.GetCredentialsForIdentity',
         },
-        data: {
+        json: {
           IdentityId: iotResponse.identityId,
           Logins: {
             'cognito-identity.amazonaws.com': iotResponse.token,

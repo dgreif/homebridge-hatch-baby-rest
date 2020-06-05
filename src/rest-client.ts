@@ -1,23 +1,29 @@
-import axios, { AxiosRequestConfig, ResponseType } from 'axios'
+import got, { Options as RequestOptions } from 'got'
+
 import { delay, logError } from './util'
 import { LoginResponse } from './hatch-baby-types'
 
-const apiBaseUrl = 'https://data.hatchbaby.com/'
+const apiBaseUrl = 'https://data.hatchbaby.com/',
+  defaultRequestOptions: RequestOptions = {
+    http2: true,
+    responseType: 'json',
+    method: 'GET',
+  }
 
 export function apiPath(path: string) {
   return apiBaseUrl + path
 }
 
-export async function requestWithRetry<T>(
-  options: AxiosRequestConfig
-): Promise<T> {
+export async function requestWithRetry<T>(options: RequestOptions): Promise<T> {
   try {
-    const { data } = await axios(options)
-    return data as T
+    const response = (await got({ ...defaultRequestOptions, ...options })) as {
+      body: T
+    }
+    return response.body
   } catch (e) {
     if (!e.response) {
       logError(
-        `Failed to reach Hatch Baby server at ${options.url}.  Trying again in 5 seconds...`
+        `Failed to reach Hatch Baby server at ${options.url}.  ${e.message}.  Trying again in 5 seconds...`
       )
       await delay(5000)
       return requestWithRetry(options)
@@ -41,14 +47,11 @@ export class RestClient {
     try {
       const resp = await requestWithRetry<LoginResponse>({
         url: apiPath('public/v1/login'),
-        data: {
+        json: {
           email: this.authOptions.email,
           password: this.authOptions.password,
         },
         method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-        },
       })
 
       return resp
@@ -65,30 +68,24 @@ export class RestClient {
     this.loginPromise = this.logIn()
   }
 
-  async request<T = void>(options: {
-    method?: 'GET' | 'POST' | 'PUT'
-    url: string
-    data?: any
-    responseType?: ResponseType
-  }): Promise<T> {
-    const { method, url, data } = options
-
+  async request<T = void>(
+    options: RequestOptions & { url: string }
+  ): Promise<T> {
     try {
       const loginResponse = await this.loginPromise,
         headers: { [key: string]: string } = {
-          'content-type': 'application/json',
+          ...options.headers,
           'X-HatchBaby-Auth': loginResponse.token,
         },
         response = await requestWithRetry<{ payload: T }>({
-          method: method || 'GET',
-          url,
-          data,
+          ...options,
           headers,
         })
 
       return response.payload
     } catch (e) {
-      const response = e.response || {}
+      const response = e.response || {},
+        { url } = options
 
       if (response.status === 401) {
         this.refreshAuth()
