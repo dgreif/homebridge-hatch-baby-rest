@@ -1,0 +1,8 @@
+{
+  "check-leaks": true,
+  "reporter": "list",
+  "require": "ts-node/register",
+  "watch-extensions": "ts",
+  "recursive": true,
+  "exit": true
+}
