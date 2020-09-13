@@ -96,3 +96,13 @@ Example | Description
 `{ "r": 0, "g": 255, "b": 0, "a": 128 }` | green, 1/2 brightness
 `{ "r": 0, "g": 0, "b": 255, "a": 128 }` | blue, 1/2 brightness
 `{ "r": 255, "g": 0, "b": 255, "a": 128 }` | purple, 1/2 brightness
+
+### Bluetooth on Linux (Raspberry Pi)
+
+If the plugin is unable to connect to your bluetooth Rest and you are running homebridge on a Raspberry Pi
+or similar verion of linux, try running the following commands and then restarting homebridge
+
+```
+sudo apt-get install bluetooth bluez libbluetooth-dev libudev-dev
+sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)
+```
