@@ -30,11 +30,13 @@ import { Logging } from 'homebridge'
 
 const usedPeripheralIds: string[] = []
 
+// eslint-disable-next-line no-shadow
 const enum ServiceUuid {
   Advertising = '02260001-5efd-47eb-9c1a-de53f7a2b232',
   Rest = '02240001-5efd-47eb-9c1a-de53f7a2b232',
 }
 
+// eslint-disable-next-line no-shadow
 const enum CharacteristicUuid {
   Tx = '02240002-5efd-47eb-9c1a-de53f7a2b232',
   Rx = '02240003-5efd-47eb-9c1a-de53f7a2b232',

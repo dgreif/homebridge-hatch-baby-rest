@@ -74,6 +74,7 @@ export interface IotCredentialsResponse {
   IdentityId: string
 }
 
+// eslint-disable-next-line no-shadow
 export const enum AudioTrack {
   None = 0,
   Stream = 2,
