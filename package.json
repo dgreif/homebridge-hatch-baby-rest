@@ -4,8 +4,8 @@
   "description": "Homebridge plugin for Hatch Baby Rest bluetooth night light",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha test/**/*.spec.ts && eslint **/*.ts",
-    "lint": "eslint **/*.ts --fix",
+    "test": "mocha test/**/*.spec.ts && eslint '**/*.ts'",
+    "lint": "eslint '**/*.ts' --fix",
     "prettier": "prettier **/*.ts --write",
     "build": "rm -rf lib && tsc",
     "example": "ts-node ./examples/example.ts",

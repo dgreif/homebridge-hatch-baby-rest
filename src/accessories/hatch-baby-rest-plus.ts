@@ -8,7 +8,6 @@ import {
   Service as ServiceClass,
   Characteristic as CharacteristicClass,
   CharacteristicEventTypes,
-  CharacteristicGetCallback,
   CharacteristicSetCallback,
   CharacteristicValue,
 } from 'homebridge'
