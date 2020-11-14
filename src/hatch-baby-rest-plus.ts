@@ -1,8 +1,8 @@
 import { AudioTrack, Color, LightState, RestPlusInfo } from './hatch-baby-types'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
-import { BehaviorSubject } from 'rxjs'
+import { BehaviorSubject, Subject } from 'rxjs'
 import { distinctUntilChanged, filter, map, take } from 'rxjs/operators'
-import { logError } from './util'
+import { delay, logError } from './util'
 import { DeepPartial } from 'ts-essentials'
 const rgb2hsv = require('pure-color/convert/rgb2hsv'),
   hsv2rgb = require('pure-color/convert/hsv2rgb')
@@ -47,6 +47,9 @@ function assignState(previousState: any, changes: any): LightState {
 export class HatchBabyRestPlus {
   private onCurrentState = new BehaviorSubject<LightState | null>(null)
   private mqttClient?: AwsIotDevice
+  private onStatusToken = new Subject<string>()
+  private previousUpdatePromise: Promise<any> = Promise.resolve()
+
   onState = this.onCurrentState.pipe(
     filter((state): state is LightState => state !== null)
   )
@@ -111,13 +114,18 @@ export class HatchBabyRestPlus {
         clientToken,
         status: { state: { desired: LightState; reported: LightState } }
       ) => {
-        if (clientToken !== getClientToken) {
+        if (topic !== thingName) {
+          // status for a different thing
           return
         }
 
-        const { state } = status
+        this.onStatusToken.next(clientToken)
 
-        this.onCurrentState.next(assignState(state.reported, state.desired))
+        if (clientToken === getClientToken) {
+          const { state } = status
+
+          this.onCurrentState.next(assignState(state.reported, state.desired))
+        }
       }
     )
 
@@ -138,6 +146,12 @@ export class HatchBabyRestPlus {
     mqttClient.on('connect', () => {
       mqttClient.register(thingName, {}, () => {
         getClientToken = mqttClient.get(thingName)!
+        this.previousUpdatePromise = this.onStatusToken
+          .pipe(
+            filter((token) => token === getClientToken),
+            take(1)
+          )
+          .toPromise()
       })
     })
   }
@@ -147,16 +161,41 @@ export class HatchBabyRestPlus {
   }
 
   update(update: DeepPartial<LightState>) {
-    if (!this.mqttClient) {
-      logError(`Unable to Update ${this.name} - No MQTT Client Registered`)
-      return
-    }
+    this.previousUpdatePromise = this.previousUpdatePromise
+      .catch((_) => {
+        // ignore errors, they shouldn't be possible
+        void _
+      })
+      .then(() => {
+        if (!this.mqttClient) {
+          logError(`Unable to Update ${this.name} - No MQTT Client Registered`)
+          return
+        }
 
-    this.mqttClient.update(this.info.thingName, {
-      state: {
-        desired: update,
-      },
-    })
+        const updateToken = this.mqttClient.update(this.info.thingName, {
+          state: {
+            desired: update,
+          },
+        })
+
+        if (!updateToken) {
+          logError(
+            `Failed to apply update to ${
+              this.name
+            } because another update was in progress: ${JSON.stringify(update)}`
+          )
+        }
+
+        const requestComplete = this.onStatusToken
+          .pipe(
+            filter((token) => token === updateToken),
+            take(1)
+          )
+          .toPromise()
+
+        // wait a max of 30 seconds to finish request
+        return Promise.race([requestComplete, delay(30000)])
+      })
   }
 
   setVolume(percentage: number) {
