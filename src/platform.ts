@@ -1,4 +1,4 @@
-import { ApiConfig, HatchBabyApi } from './api'
+import { HatchBabyApi } from './api'
 import { hap, platformName, pluginName } from './hap'
 import { useLogger } from './util'
 import { HatchBabyRestPlusAccessory } from './accessories/hatch-baby-rest-plus'
@@ -9,6 +9,7 @@ import {
   PlatformAccessory,
   PlatformConfig,
 } from 'homebridge'
+import { HatchBabyPlatformOptions } from './hatch-baby-types'
 
 const debug = __filename.includes('release')
 
@@ -21,7 +22,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
 
   constructor(
     public log: Logging,
-    public config: PlatformConfig & ApiConfig & { removeAll: boolean },
+    public config: PlatformConfig & HatchBabyPlatformOptions,
     public api: API
   ) {
     useLogger({
@@ -66,14 +67,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
       activeAccessoryIds: string[] = [],
       debugPrefix = debug ? 'TEST ' : ''
 
-    if (this.config.removeAll) {
-      this.log.info(
-        'REMOVING ALL Hatch Baby Rest+ lights.  You can now stop your homebridge server and restart it without removeAll set.'
-      )
-      lights.length = 0
-    } else {
-      this.log.info(`Configuring ${lights.length} Hatch Baby Rest+ lights`)
-    }
+    this.log.info(`Configuring ${lights.length} Hatch Baby Rest+ lights`)
 
     lights.forEach((light) => {
       const uuid = hap.uuid.generate(debugPrefix + light.id),
@@ -93,7 +87,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         homebridgeAccessory =
           this.homebridgeAccessories[uuid] || createHomebridgeAccessory()
 
-      new HatchBabyRestPlusAccessory(light, homebridgeAccessory)
+      new HatchBabyRestPlusAccessory(light, homebridgeAccessory, this.config)
 
       this.homebridgeAccessories[uuid] = homebridgeAccessory
       activeAccessoryIds.push(uuid)

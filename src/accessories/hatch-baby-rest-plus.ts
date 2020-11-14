@@ -11,11 +11,13 @@ import {
   CharacteristicSetCallback,
   CharacteristicValue,
 } from 'homebridge'
+import { HatchBabyPlatformOptions, SpecialColor } from '../hatch-baby-types'
 
 export class HatchBabyRestPlusAccessory {
   constructor(
     private light: HatchBabyRestPlus,
-    private accessory: PlatformAccessory
+    private accessory: PlatformAccessory,
+    private options: HatchBabyPlatformOptions
   ) {
     const { Service, Characteristic } = hap,
       lightService = this.getService(Service.Lightbulb),
@@ -28,13 +30,24 @@ export class HatchBabyRestPlusAccessory {
     combineLatest([onSetHue, onSetSaturation])
       .pipe(debounceTime(100))
       .subscribe(([hue, saturation]) => {
+        if (this.options.alwaysRainbow) {
+          light.setColor(SpecialColor.Rainbow)
+          return
+        }
+
         light.setColorFromHueAndSaturation(hue, saturation)
       })
 
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.On),
       light.onIsPowered,
-      (on) => light.setPower(on)
+      (on) => {
+        light.setPower(on)
+
+        if (on && this.options.alwaysRainbow) {
+          light.setColor(SpecialColor.Rainbow)
+        }
+      }
     )
 
     this.registerCharacteristic(

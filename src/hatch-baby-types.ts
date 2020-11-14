@@ -1,3 +1,5 @@
+import { ApiConfig } from './api'
+
 export interface Baby {
   id: number
   createDate: string
@@ -95,8 +97,25 @@ export interface Color {
   g: number
   b: number
   i: number // intensity, max 65535
-  R: boolean // rainbow if true, others 0
-  W: boolean // white if true, others 0
+  R: boolean // rainbow if true, rgb 0
+  W: boolean // white if true, rgb 0
+}
+
+export const SpecialColor = {
+  Rainbow: {
+    r: 0,
+    g: 0,
+    b: 0,
+    R: true,
+    W: false,
+  },
+  White: {
+    r: 0,
+    g: 0,
+    b: 0,
+    R: false,
+    W: true,
+  },
 }
 
 interface Audio {
@@ -187,4 +206,8 @@ export interface AwsIotStatus {
   state: {
     desired?: Partial<LightState>
   }
+}
+
+export interface HatchBabyPlatformOptions extends ApiConfig {
+  alwaysRainbow?: boolean
 }
