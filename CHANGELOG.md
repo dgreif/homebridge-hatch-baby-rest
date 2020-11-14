@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.0.5...v2.1.0) (2020-11-14)
+
+
+### Features
+
+* **rest+:** `alwaysRainbow` option ([016bcac](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/016bcac7339b13762ef67f9c4113e0dec7aed8bb))
+
+
+### Bug Fixes
+
+* **rest+:** handle update requests serially ([f08f2b9](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/f08f2b9e76f73075546420cffce2b31d3c900078))
+* only allow rest+ via platform ([de0e4f1](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/de0e4f1e6adfc83a33c21dc7163bbaa560cbc7e8)), closes [#32](https://github.com/dgreif/homebridge-hatch-baby-rest/issues/32)
+* only apply state updates to target device ([7635d32](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/7635d32f662a508e97a647fcd2726b79545ba4a0)), closes [#28](https://github.com/dgreif/homebridge-hatch-baby-rest/issues/28)
+
 ### [2.0.5](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.0.4...v2.0.5) (2020-09-13)
 
 ### [2.0.4](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.0.3...v2.0.4) (2020-06-05)
