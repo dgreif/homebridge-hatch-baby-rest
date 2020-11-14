@@ -6,7 +6,7 @@ import {
   RestPlusInfo,
 } from './hatch-baby-types'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
-import { logDebug, logError } from './util'
+import { logDebug, logError, logInfo } from './util'
 import { HatchBabyRestPlus } from './hatch-baby-rest-plus'
 
 export interface ApiConfig extends EmailAuth {}
@@ -26,11 +26,17 @@ export class HatchBabyApi {
   }
 
   async getRestPlusLightsInfo() {
-    const hbrps = await this.restClient.request<RestPlusInfo[]>({
+    const lightInfos = await this.restClient.request<RestPlusInfo[]>({
       url: apiPath('service/app/restPlus/v1/fetch'),
     })
 
-    return hbrps
+    lightInfos.forEach((lightInfo) => {
+      if (lightInfo.product !== 'restPlus') {
+        logInfo('Unsupported Light Found: ' + JSON.stringify(lightInfo))
+      }
+    })
+
+    return lightInfos.filter((lightInfo) => lightInfo.product === 'restPlus')
   }
 
   async createAwsIotClient() {
