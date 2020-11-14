@@ -123,7 +123,7 @@ export class HatchBabyRestPlus {
 
     mqttClient.on('foreignStateChange', (topic, message, s) => {
       const currentState = this.onCurrentState.getValue()
-      if (!currentState) {
+      if (!currentState || topic !== thingName) {
         return
       }
 
