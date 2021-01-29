@@ -79,8 +79,8 @@ export class HatchBabyRest {
   reconnectSubscription?: Subscription
 
   constructor(
-    private name: string,
-    private macAddress: string,
+    public readonly name: string,
+    public readonly macAddress: string,
     private logger: Logging
   ) {
     this.getDevice().then((device) => {

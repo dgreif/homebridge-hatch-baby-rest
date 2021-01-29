@@ -19,6 +19,7 @@ export class HatchBabyRestAccessory {
   private service = this.config.showAsSwitch
     ? new hap.Service.Switch(this.config.name)
     : new hap.Service.Lightbulb(this.config.name)
+  private accessoryInfoService = new hap.Service.AccessoryInformation()
 
   constructor(
     public log: Logging,
@@ -31,9 +32,9 @@ export class HatchBabyRestAccessory {
       showAsSwitch?: boolean
     }
   ) {
-    const powerCharacteristic = this.service.getCharacteristic(
-        hap.Characteristic.On
-      ),
+    const { Characteristic } = hap,
+      hbr = this.hbr,
+      powerCharacteristic = this.service.getCharacteristic(Characteristic.On),
       { volume, audioTrack, color } = config,
       audioSupplied = Boolean(audioTrack && volume)
 
@@ -51,7 +52,7 @@ export class HatchBabyRestAccessory {
         callback()
 
         log.info(`Turning ${value ? 'on' : 'off'}`)
-        await this.hbr.setPower(Boolean(value))
+        await hbr.setPower(Boolean(value))
 
         if (!value) {
           // no need to set other values since it's off
@@ -59,29 +60,39 @@ export class HatchBabyRestAccessory {
         }
 
         if (volume) {
-          await this.hbr.setVolume(volume)
+          await hbr.setVolume(volume)
         }
 
         if (audioTrack) {
-          await this.hbr.setAudioTrack(audioTrack)
+          await hbr.setAudioTrack(audioTrack)
         }
 
         if (color) {
-          await this.hbr.setColor(color)
+          await hbr.setColor(color)
         }
       }
     )
 
-    this.hbr.onPower.subscribe((power: boolean) => {
+    hbr.onPower.subscribe((power: boolean) => {
       powerCharacteristic.updateValue(power)
     })
 
-    this.hbr.onPower.pipe(skip(1)).subscribe((power: boolean) => {
+    hbr.onPower.pipe(skip(1)).subscribe((power: boolean) => {
       log.info(`Turned ${power ? 'on' : 'off'}`)
     })
+
+    this.accessoryInfoService
+      .getCharacteristic(Characteristic.Manufacturer)
+      .updateValue('Hatch Baby')
+    this.accessoryInfoService
+      .getCharacteristic(Characteristic.Model)
+      .updateValue('Rest')
+    this.accessoryInfoService
+      .getCharacteristic(Characteristic.SerialNumber)
+      .updateValue(hbr.macAddress)
   }
 
   getServices() {
-    return [this.service]
+    return [this.service, this.accessoryInfoService]
   }
 }

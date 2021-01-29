@@ -101,7 +101,7 @@ export class HatchBabyRestPlusAccessory {
       .updateValue('Rest+')
     accessoryInfoService
       .getCharacteristic(Characteristic.SerialNumber)
-      .updateValue('Unknown')
+      .updateValue(light.info.macAddress)
 
     this.registerCharacteristic(
       accessoryInfoService.getCharacteristic(Characteristic.FirmwareRevision),
