@@ -43,9 +43,9 @@ export class HatchBabyApi {
     const iotResponse = await this.restClient.request<IotTokenResponse>({
         url: apiPath('service/app/restPlus/token/v1/fetch'),
       }),
-      { Credentials: credentials } = await requestWithRetry<
-        IotCredentialsResponse
-      >({
+      {
+        Credentials: credentials,
+      } = await requestWithRetry<IotCredentialsResponse>({
         url: `https://cognito-identity.${iotResponse.region}.amazonaws.com`,
         method: 'POST',
         headers: {

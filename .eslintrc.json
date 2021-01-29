@@ -5,6 +5,10 @@
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended"
   ],
+  "ignorePatterns": [
+    "lib",
+    ".homebridge"
+  ],
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module"
@@ -99,7 +103,7 @@
     "no-undef": 2,
     "no-undef-init": 2,
     "no-undefined": 0,
-    "no-unused-vars": 2,
+    "no-unused-vars": 0,
     "no-use-before-define": 2,
 
     "strict": [2, "never"],

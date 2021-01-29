@@ -11,9 +11,11 @@ import {
 } from 'homebridge'
 import { HatchBabyPlatformOptions } from './hatch-baby-types'
 
-const debug = __filename.includes('release')
+const isTestHomebridge = process.argv
+  .join(' ')
+  .includes('-P . -U ./.homebridge')
 
-process.env.HBR_DEBUG = debug ? 'true' : ''
+process.env.HBR_DEBUG = isTestHomebridge ? 'true' : ''
 
 export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
   private readonly homebridgeAccessories: {
@@ -65,7 +67,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
       cachedAccessoryIds = Object.keys(this.homebridgeAccessories),
       platformAccessories: PlatformAccessory[] = [],
       activeAccessoryIds: string[] = [],
-      debugPrefix = debug ? 'TEST ' : ''
+      debugPrefix = isTestHomebridge ? 'TEST ' : ''
 
     this.log.info(`Configuring ${lights.length} Hatch Baby Rest+ lights`)
 
