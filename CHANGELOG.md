@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.1.0...v2.2.0) (2021-01-29)
+
+
+### Features
+
+* use mac address as serial number ([a7ee3f6](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/a7ee3f601bb20e351aa12d6eafbcb64e07fbc998)), closes [#42](https://github.com/dgreif/homebridge-hatch-baby-rest/issues/42)
+
 ## [2.1.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.0.5...v2.1.0) (2020-11-14)
 
 
