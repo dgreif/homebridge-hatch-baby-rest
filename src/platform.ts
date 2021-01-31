@@ -1,7 +1,7 @@
 import { HatchBabyApi } from './api'
-import { hap, platformName, pluginName } from './hap'
+import { hap, isTestHomebridge, platformName, pluginName } from './hap'
 import { useLogger } from './util'
-import { HatchBabyRestPlusAccessory } from './accessories/hatch-baby-rest-plus'
+import { HatchBabyRestPlusAccessory } from './accessories/light-and-sound-machine'
 import {
   API,
   DynamicPlatformPlugin,
@@ -10,12 +10,6 @@ import {
   PlatformConfig,
 } from 'homebridge'
 import { HatchBabyPlatformOptions } from './hatch-baby-types'
-
-const isTestHomebridge = process.argv
-  .join(' ')
-  .includes('-P . -U ./.homebridge')
-
-process.env.HBR_DEBUG = isTestHomebridge ? 'true' : ''
 
 export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
   private readonly homebridgeAccessories: {

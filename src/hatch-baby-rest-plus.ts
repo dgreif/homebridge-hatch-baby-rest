@@ -4,6 +4,8 @@ import { BehaviorSubject, Subject } from 'rxjs'
 import { distinctUntilChanged, filter, map, take } from 'rxjs/operators'
 import { delay, logError } from './util'
 import { DeepPartial } from 'ts-essentials'
+import { LightAndSoundMachine } from './accessories/light-and-sound-machine'
+
 const rgb2hsv = require('pure-color/convert/rgb2hsv'),
   hsv2rgb = require('pure-color/convert/hsv2rgb')
 
@@ -44,7 +46,7 @@ function assignState(previousState: any, changes: any): LightState {
   return state
 }
 
-export class HatchBabyRestPlus {
+export class HatchBabyRestPlus implements LightAndSoundMachine {
   private onCurrentState = new BehaviorSubject<LightState | null>(null)
   private mqttClient?: AwsIotDevice
   private onStatusToken = new Subject<string>()
@@ -91,11 +93,18 @@ export class HatchBabyRestPlus {
     distinctUntilChanged()
   )
 
+  onFirmwareVersion = this.onState.pipe(map((state) => state.deviceInfo.f))
+
   get id() {
     return this.info.id
   }
+
   get name() {
     return this.info.name
+  }
+
+  get macAddress() {
+    return this.info.macAddress
   }
 
   constructor(public readonly info: RestPlusInfo) {}

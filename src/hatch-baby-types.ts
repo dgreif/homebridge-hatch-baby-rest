@@ -91,6 +91,20 @@ export const enum AudioTrack {
   Twinkle = 13,
   RockABye = 14,
 }
+export const audioTracks = [
+  AudioTrack.None,
+  AudioTrack.Stream,
+  AudioTrack.PinkNoise,
+  AudioTrack.Dryer,
+  AudioTrack.Ocean,
+  AudioTrack.Wind,
+  AudioTrack.Rain,
+  AudioTrack.Bird,
+  AudioTrack.Crickets,
+  AudioTrack.Brahms,
+  AudioTrack.Twinkle,
+  AudioTrack.RockABye,
+]
 
 export interface Color {
   r: number
