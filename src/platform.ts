@@ -1,6 +1,6 @@
 import { HatchBabyApi } from './api'
 import { hap, isTestHomebridge, platformName, pluginName } from './hap'
-import { useLogger } from './util'
+import { stripMacAddress, useLogger } from './util'
 import { HatchBabyRestPlusAccessory } from './accessories/light-and-sound-machine'
 import {
   API,
@@ -10,6 +10,7 @@ import {
   PlatformConfig,
 } from 'homebridge'
 import { HatchBabyPlatformOptions } from './hatch-baby-types'
+import { HatchBabyRest } from './hatch-baby-rest'
 
 export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
   private readonly homebridgeAccessories: {
@@ -55,18 +56,32 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
   }
 
   async connectToApi() {
-    const hatchBabyApi = new HatchBabyApi(this.config),
-      lights = await hatchBabyApi.getRestPlusLights(),
+    const hatchBabyApi =
+        this.config.email && this.config.password
+          ? new HatchBabyApi(this.config)
+          : undefined,
+      restLights =
+        this.config.restLights?.map(
+          (lightConfig) =>
+            new HatchBabyRest(lightConfig.name, lightConfig.macAddress)
+        ) || [],
+      restPlusLights = hatchBabyApi
+        ? await hatchBabyApi.getRestPlusLights()
+        : [],
+      lights = [...restLights, ...restPlusLights],
       { api } = this,
       cachedAccessoryIds = Object.keys(this.homebridgeAccessories),
       platformAccessories: PlatformAccessory[] = [],
       activeAccessoryIds: string[] = [],
       debugPrefix = isTestHomebridge ? 'TEST ' : ''
 
-    this.log.info(`Configuring ${lights.length} Hatch Baby Rest+ lights`)
+    this.log.info(
+      `Configuring ${restLights.length} Rest and ${restPlusLights.length} Rest+ lights`
+    )
 
     lights.forEach((light) => {
-      const uuid = hap.uuid.generate(debugPrefix + light.id),
+      const id = 'id' in light ? light.id : stripMacAddress(light.macAddress),
+        uuid = hap.uuid.generate(debugPrefix + id),
         displayName = debugPrefix + light.name,
         createHomebridgeAccessory = () => {
           const accessory = new api.platformAccessory(
@@ -83,7 +98,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         homebridgeAccessory =
           this.homebridgeAccessories[uuid] || createHomebridgeAccessory()
 
-      new HatchBabyRestPlusAccessory(light, homebridgeAccessory, this.config)
+      new HatchBabyRestPlusAccessory(light, homebridgeAccessory)
 
       this.homebridgeAccessories[uuid] = homebridgeAccessory
       activeAccessoryIds.push(uuid)

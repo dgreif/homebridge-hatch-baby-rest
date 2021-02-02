@@ -10,15 +10,14 @@ import {
   distinctUntilChanged,
   filter,
   map,
-  share,
   startWith,
   take,
   tap,
 } from 'rxjs/operators'
-import { stripMacAddress, stripUuid } from './util'
+import { logError, logInfo, stripMacAddress, stripUuid } from './util'
 import {
-  Color,
   formatRestCommand,
+  RestColorAndBrightness,
   RestCommand,
   RestCommandValue,
 } from './rest-commands'
@@ -26,7 +25,8 @@ import { Peripheral, Service } from '@abandonware/noble'
 import { promisify } from 'util'
 import { colorsMatch, Feedback, parseFeedbackBuffer } from './feedback'
 import { AudioTrack } from './hatch-baby-types'
-import { Logging } from 'homebridge'
+import { LightAndSoundMachine } from './accessories/light-and-sound-machine'
+import { rgbToHsb, convertToHexRange, hsbToRgb, HsbColor } from './colors'
 
 const usedPeripheralIds: string[] = []
 
@@ -43,7 +43,7 @@ const enum CharacteristicUuid {
   CurrentFeedback = '02260002-5efd-47eb-9c1a-de53f7a2b232',
 }
 
-export class HatchBabyRest {
+export class HatchBabyRest implements LightAndSoundMachine {
   noble = require('@abandonware/noble')
   peripheralPromise = this.getPeripheralByAddress(this.macAddress)
 
@@ -54,34 +54,37 @@ export class HatchBabyRest {
     color: { r: 0, g: 0, b: 0, a: 0 },
     audioTrack: AudioTrack.None,
   })
-  onPower = this.onFeedback.pipe(
-    map((feedback) => feedback.power),
-    distinctUntilChanged(),
-    share()
+  private fromFeedback<T>(
+    retrieveProperty: (feedback: Feedback) => T,
+    distinctCheck?: (a: any, b: any) => boolean
+  ) {
+    return this.onFeedback.pipe(
+      map(retrieveProperty),
+      distinctUntilChanged(distinctCheck)
+    )
+  }
+
+  onIsPowered = this.fromFeedback((feedback) => feedback.power)
+  onVolume = this.fromFeedback((feedback) => feedback.volume)
+  onColor = this.fromFeedback((feedback) => feedback.color, colorsMatch)
+  onBrightness = this.fromFeedback((feedback) => feedback.color.a)
+  onHsb = this.onColor.pipe(map((color) => rgbToHsb(color, 255)))
+  onHue = this.onHsb.pipe(
+    map((hsb) => hsb.h),
+    distinctUntilChanged()
   )
-  onVolume = this.onFeedback.pipe(
-    map((feedback) => feedback.volume),
-    distinctUntilChanged(),
-    share()
+  onSaturation = this.onHsb.pipe(
+    map((hsb) => hsb.s),
+    distinctUntilChanged()
   )
-  onColor = this.onFeedback.pipe(
-    map((feedback) => feedback.color),
-    distinctUntilChanged(colorsMatch),
-    share()
-  )
-  onAudioTrack = this.onFeedback.pipe(
-    map((feedback) => feedback.audioTrack),
-    distinctUntilChanged(),
-    share()
-  )
+  onAudioTrack = this.fromFeedback((feedback) => feedback.audioTrack)
   onUsingConnection = new Subject()
 
   reconnectSubscription?: Subscription
 
   constructor(
     public readonly name: string,
-    public readonly macAddress: string,
-    private logger: Logging
+    public readonly macAddress: string
   ) {
     this.getDevice().then((device) => {
       device.on('connect', () => {
@@ -100,7 +103,7 @@ export class HatchBabyRest {
   }
 
   async getPeripheralByAddress(address: string) {
-    this.logger.info('Waiting for bluetooth to power on')
+    logInfo('Waiting for bluetooth to power on')
 
     await fromEvent(this.noble, 'stateChange')
       .pipe(
@@ -123,14 +126,14 @@ export class HatchBabyRest {
           take(1),
           tap((peripheral) => {
             usedPeripheralIds.push(peripheral.id)
-            this.logger.info(
+            logInfo(
               `Found device ${
                 peripheral.advertisement.localName
               } with address ${peripheral.address || peripheral.addressType}`
             )
 
             if (peripheral.addressType === 'unknown') {
-              this.logger.info(
+              logInfo(
                 `${peripheral.advertisement.localName} has an unknown address.  This happens on OSX when you discover a device which you have never connected to.  Once connected, OSX will remember the address of this device.  If this is not the correct device, please restart homebridge and this device should be skipped over.`
               )
 
@@ -144,7 +147,7 @@ export class HatchBabyRest {
         )
         .toPromise()
 
-    this.logger.info('Scanning for device')
+    logInfo('Scanning for ' + this.name)
     this.noble.startScanning(['180a'])
 
     return peripheralPromise
@@ -157,9 +160,9 @@ export class HatchBabyRest {
       return device
     }
 
-    this.logger.info(`Connecting to ${device.advertisement.localName}...`)
+    logInfo(`Connecting to ${device.advertisement.localName}...`)
     await promisify(device.connect.bind(device) as any)()
-    this.logger.info(`Connected to ${device.advertisement.localName}`)
+    logInfo(`Connected to ${device.advertisement.localName}`)
     return device
   }
 
@@ -171,9 +174,7 @@ export class HatchBabyRest {
 
     if (this.device) {
       this.device.disconnect()
-      this.logger.info(
-        `Disconnected from ${this.device.advertisement.localName}`
-      )
+      logInfo(`Disconnected from ${this.device.advertisement.localName}`)
     }
     this.discoverServicesPromise = undefined
   }
@@ -257,8 +258,18 @@ export class HatchBabyRest {
     return this.setCommand(RestCommand.SetTrackNumber, track)
   }
 
-  setColor(color: Color) {
+  setColorAndBrightness(color: RestColorAndBrightness) {
     return this.setCommand(RestCommand.SetColor, color)
+  }
+
+  setHsb({ h, s, b }: HsbColor) {
+    // NOTE: lights assume 100% brightness in color calculations
+    const rgb = hsbToRgb({ h, s, b: 100 })
+
+    return this.setColorAndBrightness({
+      ...rgb,
+      a: convertToHexRange(b, 100),
+    })
   }
 
   setVolume(volume: number) {
@@ -268,7 +279,7 @@ export class HatchBabyRest {
 
     return this.setCommand(
       RestCommand.SetVolume,
-      Math.floor((volume / 100) * 255)
+      convertToHexRange(volume, 100)
     )
   }
 
@@ -288,7 +299,8 @@ export class HatchBabyRest {
 
     feedbackCharacteristic.subscribe((err) => {
       if (err) {
-        this.logger.error('Failed to subscribe to feedback events', err)
+        logError('Failed to subscribe to feedback events')
+        logError(err)
       }
     })
   }

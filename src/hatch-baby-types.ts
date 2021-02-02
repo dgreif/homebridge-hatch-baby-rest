@@ -106,27 +106,31 @@ export const audioTracks = [
   AudioTrack.RockABye,
 ]
 
-export interface Color {
+export interface RgbColor {
   r: number
   g: number
   b: number
+}
+
+export interface RestPlusColor extends RgbColor {
   i: number // intensity, max 65535
   R: boolean // rainbow if true, rgb 0
   W: boolean // white if true, rgb 0
 }
 
+// NOTE: rgb are used for Rest, RW used for Rest+
 export const SpecialColor = {
   Rainbow: {
-    r: 0,
-    g: 0,
-    b: 0,
+    r: 254,
+    g: 254,
+    b: 254,
     R: true,
     W: false,
   },
   White: {
-    r: 0,
-    g: 0,
-    b: 0,
+    r: 255,
+    g: 255,
+    b: 255,
     R: false,
     W: true,
   },
@@ -141,7 +145,7 @@ export interface LightState {
   owned: boolean
   a: Audio
   activePresetIndex: number
-  c: Color
+  c: RestPlusColor
   clock: { b: number; f: number }
   isFactory: boolean
   isPowered: boolean
@@ -192,7 +196,7 @@ export interface LightState {
   presets: {
     [id: number]: {
       a: Audio
-      c: Color
+      c: RestPlusColor
       f: number
     }
   }
@@ -200,7 +204,7 @@ export interface LightState {
     [id: number]: {
       a: Audio
       bm: { b: number; d: number }
-      c: Color
+      c: RestPlusColor
       d: string
       D: number
       U: number
@@ -222,6 +226,11 @@ export interface AwsIotStatus {
   }
 }
 
+interface RestLightConfig {
+  name: string
+  macAddress: string
+}
+
 export interface HatchBabyPlatformOptions extends ApiConfig {
-  alwaysRainbow?: boolean
+  restLights?: RestLightConfig[]
 }
