@@ -1,13 +1,16 @@
-import { AudioTrack, Color, LightState, RestPlusInfo } from './hatch-baby-types'
+import {
+  AudioTrack,
+  RestPlusColor,
+  LightState,
+  RestPlusInfo,
+} from './hatch-baby-types'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { BehaviorSubject, Subject } from 'rxjs'
 import { distinctUntilChanged, filter, map, take } from 'rxjs/operators'
 import { delay, logError } from './util'
 import { DeepPartial } from 'ts-essentials'
 import { LightAndSoundMachine } from './accessories/light-and-sound-machine'
-
-const rgb2hsv = require('pure-color/convert/rgb2hsv'),
-  hsv2rgb = require('pure-color/convert/hsv2rgb')
+import { rgbToHsb, hsbToRgb, HsbColor } from './colors'
 
 const MAX_VALUE = 65535
 
@@ -17,19 +20,6 @@ function convertFromPercentage(percentage: number) {
 
 function convertToPercentage(value: number) {
   return Math.floor((value * 100) / MAX_VALUE)
-}
-
-function convertToHexRange(value: number) {
-  return Math.floor((value / MAX_VALUE) * 255)
-}
-
-function convertFromHexRange(value: number) {
-  return Math.floor((value * MAX_VALUE) / 255)
-}
-
-function colorToHsb({ r, g, b }: Color) {
-  const [h, s, v] = rgb2hsv([r, g, b].map(convertToHexRange))
-  return { h, s, b: v } as { h: number; s: number; b: number }
 }
 
 function assignState(previousState: any, changes: any): LightState {
@@ -76,7 +66,7 @@ export class HatchBabyRestPlus implements LightAndSoundMachine {
     distinctUntilChanged()
   )
 
-  onHsb = this.onState.pipe(map((state) => colorToHsb(state.c)))
+  onHsb = this.onState.pipe(map((state) => rgbToHsb(state.c, MAX_VALUE)))
 
   onHue = this.onHsb.pipe(
     map(({ h }) => h),
@@ -223,22 +213,21 @@ export class HatchBabyRestPlus implements LightAndSoundMachine {
     })
   }
 
-  setColor(color: Partial<Color>) {
+  setColor(color: Partial<RestPlusColor>) {
     this.update({
       c: color,
     })
   }
 
-  setColorFromHueAndSaturation(hue: number, saturation: number) {
-    const [r, g, b] = hsv2rgb([hue, saturation, 100]).map(convertFromHexRange)
-    this.setColor({ r, g, b, R: false, W: false })
-  }
+  setHsb({ h, s, b }: HsbColor) {
+    // NOTE: lights assume 100% brightness in color calculations
+    const rgb = hsbToRgb({ h, s, b: 100 }, MAX_VALUE)
 
-  setBrightness(percentage: number) {
-    this.update({
-      c: {
-        i: convertFromPercentage(percentage),
-      },
+    this.setColor({
+      ...rgb,
+      R: false,
+      W: false,
+      i: convertFromPercentage(b),
     })
   }
 

@@ -1,16 +1,16 @@
 import 'dotenv/config'
 import { HatchBabyRest } from '../src/hatch-baby-rest'
 import { delay } from '../src/util'
-import { Color } from '../src/rest-commands'
+import { RestColorAndBrightness } from '../src/rest-commands'
 import { filter, take } from 'rxjs/operators'
 import { colorsMatch } from '../src/feedback'
 import { AudioTrack } from '../src/hatch-baby-types'
 
 async function example() {
   const macAddress = process.env.HBR_MAC_ADDRESS!,
-    hbr = new HatchBabyRest('Test Night Light', macAddress, console),
+    hbr = new HatchBabyRest('Test Night Light', macAddress),
     waitForPower = (power: boolean) =>
-      hbr.onPower
+      hbr.onIsPowered
         .pipe(
           filter((x) => x === power),
           take(1)
@@ -30,7 +30,7 @@ async function example() {
           take(1)
         )
         .toPromise(),
-    waitForColor = (color: Color) =>
+    waitForColor = (color: RestColorAndBrightness) =>
       hbr.onColor
         .pipe(
           filter((x) => colorsMatch(x, color)),
@@ -43,7 +43,7 @@ async function example() {
   await hbr.setPower(true)
   await hbr.setAudioTrack(AudioTrack.Crickets)
   await hbr.setVolume(50)
-  await hbr.setColor({ r: 0, g: 255, b: 0, a: 200 })
+  await hbr.setColorAndBrightness({ r: 0, g: 255, b: 0, a: 200 })
 
   await waitForPower(true)
   await waitForAudioTrack(AudioTrack.Crickets)
@@ -53,7 +53,7 @@ async function example() {
 
   await hbr.setAudioTrack(AudioTrack.Rain)
   await hbr.setVolume(80)
-  await hbr.setColor({ r: 0, g: 0, b: 255, a: 200 })
+  await hbr.setColorAndBrightness({ r: 0, g: 0, b: 255, a: 200 })
 
   await waitForAudioTrack(AudioTrack.Rain)
   await waitForVolume(80)
@@ -62,7 +62,7 @@ async function example() {
 
   await hbr.setAudioTrack(AudioTrack.PinkNoise)
   await hbr.setVolume(30)
-  await hbr.setColor({ r: 255, g: 0, b: 0, a: 50 })
+  await hbr.setColorAndBrightness({ r: 255, g: 0, b: 0, a: 50 })
 
   await waitForAudioTrack(AudioTrack.PinkNoise)
   await waitForVolume(30)
@@ -71,7 +71,7 @@ async function example() {
 
   await hbr.setAudioTrack(AudioTrack.RockABye)
   await hbr.setVolume(40)
-  await hbr.setColor({ r: 254, g: 254, b: 254, a: 150 })
+  await hbr.setColorAndBrightness({ r: 254, g: 254, b: 254, a: 150 })
 
   await waitForAudioTrack(AudioTrack.RockABye)
   await waitForVolume(40)

@@ -1,6 +1,11 @@
 import { hap, isTestHomebridge } from '../hap'
-import { debounceTime, distinctUntilChanged, map, take } from 'rxjs/operators'
-import { combineLatest, Observable, of, Subject } from 'rxjs'
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  startWith,
+} from 'rxjs/operators'
+import { Observable, of, Subject } from 'rxjs'
 import {
   Characteristic as CharacteristicClass,
   CharacteristicEventTypes,
@@ -10,13 +15,9 @@ import {
   Service as ServiceClass,
   WithUUID,
 } from 'homebridge'
-import {
-  AudioTrack,
-  audioTracks,
-  Color,
-  HatchBabyPlatformOptions,
-  SpecialColor,
-} from '../hatch-baby-types'
+import { AudioTrack, audioTracks } from '../hatch-baby-types'
+import { HsbColor } from '../colors'
+import { logInfo } from '../util'
 
 export interface LightAndSoundMachine {
   name: string
@@ -29,11 +30,9 @@ export interface LightAndSoundMachine {
   onBatteryLevel?: Observable<number>
   onVolume: Observable<number>
   onAudioTrack: Observable<AudioTrack>
-  onFirmwareVersion: Observable<string>
+  onFirmwareVersion?: Observable<string>
 
-  setColor: (color: Partial<Color>) => any
-  setColorFromHueAndSaturation: (hue: number, saturation: number) => any
-  setBrightness: (percentage: number) => any
+  setHsb: (hsb: HsbColor) => any
   setPower: (on: boolean) => any
   setVolume: (volume: number) => any
   setAudioTrack: (track: AudioTrack) => any
@@ -42,8 +41,7 @@ export interface LightAndSoundMachine {
 export class HatchBabyRestPlusAccessory {
   constructor(
     private light: LightAndSoundMachine,
-    private accessory: PlatformAccessory,
-    private options: HatchBabyPlatformOptions
+    private accessory: PlatformAccessory
   ) {
     const { Service, Characteristic } = hap,
       { name } = light,
@@ -52,50 +50,57 @@ export class HatchBabyRestPlusAccessory {
       accessoryInfoService = this.getService(Service.AccessoryInformation),
       audioService = this.getService(Service.Fan, 'Audio Track'),
       onOffService = this.getService(Service.Switch),
-      onSetHue = new Subject<number>(),
-      onSetSaturation = new Subject<number>()
+      onHsbSet = new Subject(),
+      context = accessory.context as HsbColor,
+      onBrightness = light.onBrightness.pipe(startWith(context.b || 0))
 
-    combineLatest([onSetHue, onSetSaturation])
-      .pipe(debounceTime(100))
-      .subscribe(([hue, saturation]) => {
-        if (this.options.alwaysRainbow) {
-          light.setColor(SpecialColor.Rainbow)
-          return
-        }
+    context.h = context.h || 0
+    context.s = context.s || 0
+    context.b = context.b || 0
 
-        light.setColorFromHueAndSaturation(hue, saturation)
-      })
+    light.onHue.subscribe((h) => (context.h = h))
+    light.onSaturation.subscribe((s) => (context.s = s))
+    onBrightness.subscribe((b) => (context.b = b))
+    onHsbSet.pipe(debounceTime(100)).subscribe(() => {
+      light.setHsb(context)
+    })
 
     this.registerCharacteristic(
       onOffService.getCharacteristic(Characteristic.On),
       light.onIsPowered,
       (on) => {
+        logInfo(`Turning ${on ? 'on' : 'off'} ${name}`)
         light.setPower(on)
-
-        if (on && this.options.alwaysRainbow) {
-          light.setColor(SpecialColor.Rainbow)
-        }
       }
     )
 
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.On),
-      light.onBrightness.pipe(map((brightness) => Boolean(brightness)))
-    )
-    this.registerCharacteristic(
-      lightService.getCharacteristic(Characteristic.Brightness),
-      light.onBrightness,
-      (brightness) => light.setBrightness(brightness)
+      onBrightness.pipe(map((brightness) => Boolean(brightness)))
     )
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.Hue),
       light.onHue,
-      (hue) => onSetHue.next(hue)
+      (hue) => {
+        context.h = hue
+        onHsbSet.next()
+      }
     )
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.Saturation),
       light.onSaturation,
-      (sat) => onSetSaturation.next(sat)
+      (saturation) => {
+        context.s = saturation
+        onHsbSet.next()
+      }
+    )
+    this.registerCharacteristic(
+      lightService.getCharacteristic(Characteristic.Brightness),
+      onBrightness,
+      (brightness) => {
+        context.b = brightness
+        onHsbSet.next()
+      }
     )
 
     if (light.onBatteryLevel) {
@@ -171,7 +176,7 @@ export class HatchBabyRestPlusAccessory {
 
     this.registerCharacteristic(
       accessoryInfoService.getCharacteristic(Characteristic.FirmwareRevision),
-      light.onFirmwareVersion
+      light.onFirmwareVersion || of('')
     )
     this.registerCharacteristic(
       accessoryInfoService.getCharacteristic(Characteristic.Name),
@@ -196,21 +201,12 @@ export class HatchBabyRestPlusAccessory {
     onValue: Observable<any>,
     setValue?: (value: any) => any
   ) {
-    const getValue = () => onValue.pipe(take(1)).toPromise()
-
     if (setValue) {
       characteristic.on(
         CharacteristicEventTypes.SET,
-        async (
-          value: CharacteristicValue,
-          callback: CharacteristicSetCallback
-        ) => {
+        (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
           callback()
-
-          const currentValue = await getValue()
-          if (value !== currentValue) {
-            setValue(value)
-          }
+          setValue(value)
         }
       )
     }

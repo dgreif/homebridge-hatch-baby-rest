@@ -1,4 +1,4 @@
-import { Color } from './rest-commands'
+import { RestColorAndBrightness } from './rest-commands'
 
 interface FeedbackField {
   name: string
@@ -55,7 +55,7 @@ export interface Feedback {
   time: number
   power: boolean
   volume: number
-  color: Color
+  color: RestColorAndBrightness
   audioTrack: number
 }
 
@@ -84,6 +84,9 @@ export function parseFeedbackBuffer(feedbackBuffer: Buffer) {
   return feedback
 }
 
-export function colorsMatch(a: Color, b: Color) {
+export function colorsMatch(
+  a: RestColorAndBrightness,
+  b: RestColorAndBrightness
+) {
   return a.a === b.a && a.r === b.r && a.g === b.g && a.b === b.b
 }

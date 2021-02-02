@@ -1,7 +1,7 @@
 import { HatchBabyRest } from '../hatch-baby-rest'
 import { hap } from '../hap'
 import { skip } from 'rxjs/operators'
-import { Color } from '../rest-commands'
+import { RestColorAndBrightness } from '../rest-commands'
 import { AudioTrack } from '../hatch-baby-types'
 import {
   CharacteristicEventTypes,
@@ -11,11 +11,7 @@ import {
 } from 'homebridge'
 
 export class HatchBabyRestAccessory {
-  private hbr = new HatchBabyRest(
-    this.config.name,
-    this.config.macAddress,
-    this.log
-  )
+  private hbr = new HatchBabyRest(this.config.name, this.config.macAddress)
   private service = this.config.showAsSwitch
     ? new hap.Service.Switch(this.config.name)
     : new hap.Service.Lightbulb(this.config.name)
@@ -28,7 +24,7 @@ export class HatchBabyRestAccessory {
       macAddress: string
       volume?: number
       audioTrack?: AudioTrack
-      color?: Color
+      color?: RestColorAndBrightness
       showAsSwitch?: boolean
     }
   ) {
@@ -68,16 +64,16 @@ export class HatchBabyRestAccessory {
         }
 
         if (color) {
-          await hbr.setColor(color)
+          await hbr.setColorAndBrightness(color)
         }
       }
     )
 
-    hbr.onPower.subscribe((power: boolean) => {
+    hbr.onIsPowered.subscribe((power: boolean) => {
       powerCharacteristic.updateValue(power)
     })
 
-    hbr.onPower.pipe(skip(1)).subscribe((power: boolean) => {
+    hbr.onIsPowered.pipe(skip(1)).subscribe((power: boolean) => {
       log.info(`Turned ${power ? 'on' : 'off'}`)
     })
 

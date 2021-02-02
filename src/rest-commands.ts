@@ -1,4 +1,6 @@
 // eslint-disable-next-line no-shadow
+import { RgbColor } from './hatch-baby-types'
+
 export const enum RestCommand {
   SetPower = 'SI',
   SetColor = 'SC',
@@ -6,14 +8,11 @@ export const enum RestCommand {
   SetVolume = 'SV',
 }
 
-export interface Color {
-  r: number
-  g: number
-  b: number
+export interface RestColorAndBrightness extends RgbColor {
   a: number
 }
 
-export type RestCommandValue = number | Color
+export type RestCommandValue = number | RestColorAndBrightness
 
 function zeroPaddedHex(value: number) {
   let hex = value.toString(16)
@@ -34,8 +33,10 @@ export function formatRestCommand(
   }
 
   return Buffer.from(
-    `${command}${zeroPaddedHex(value.r)}${zeroPaddedHex(
-      value.g
-    )}${zeroPaddedHex(value.b)}${zeroPaddedHex(value.a)}`
+    command +
+      zeroPaddedHex(value.r) +
+      zeroPaddedHex(value.g) +
+      zeroPaddedHex(value.b) +
+      zeroPaddedHex(value.a)
   )
 }
