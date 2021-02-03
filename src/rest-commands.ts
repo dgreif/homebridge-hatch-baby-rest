@@ -1,6 +1,6 @@
-// eslint-disable-next-line no-shadow
 import { RgbColor } from './hatch-baby-types'
 
+// eslint-disable-next-line no-shadow
 export const enum RestCommand {
   SetPower = 'SI',
   SetColor = 'SC',
