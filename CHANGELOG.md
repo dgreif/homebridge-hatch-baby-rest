@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0-beta.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.2.1...v3.0.0-beta.0) (2021-02-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* v3 includes a number of breaking changes.  Please see https://github.com/dgreif/homebridge-hatch-baby-rest/wiki/Upgrading-from-v2-to-v3 for details
+
+### Features
+
+* unified platform config for rest and rest+ ([aaa10d6](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/aaa10d6d4b4f013187415fe91bf97aad455e1125))
+* **rest:** separate power, light and sound accessories ([c44296f](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/c44296f136b6242259a06005d923736f18ee6a22))
+* **rest+:** separate power, light and sound accessories ([55617e5](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/55617e5c78565c6068143fdb7b34401c42dceb70))
+
 ### [2.2.1](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.2.0...v2.2.1) (2021-01-29)
 
 ## [2.2.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.1.0...v2.2.0) (2021-01-29)
