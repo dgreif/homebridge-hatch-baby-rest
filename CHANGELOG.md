@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0-beta.1](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v3.0.0-beta.0...v3.0.0-beta.1) (2021-02-03)
+
+
+### Bug Fixes
+
+* automatically migrate rest accessories to platform ([752fde8](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/752fde8d971675079e24e09c0268ba43ed6c504b))
+
 ## [3.0.0-beta.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.2.1...v3.0.0-beta.0) (2021-02-03)
 
 
