@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v3.0.0...v3.1.0) (2021-03-06)
+
+
+### Features
+
+* rest mini support ([705da04](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/705da043dd5fb3def2ef24559535b963783e306a))
+
+
+### Bug Fixes
+
+* **rest+:** handle "no color" selection from hatch app ([b1a8014](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/b1a801464419c47ee2608633c9209ea80902a879)), closes [#45](https://github.com/dgreif/homebridge-hatch-baby-rest/issues/45)
+* update dependencies ([9106508](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/9106508a4cd5426208fdf8d4af15b5e947df62cb))
+
 ## [3.0.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v2.2.1...v3.0.0) (2021-02-06)
 
 
