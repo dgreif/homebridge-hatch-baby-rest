@@ -3,13 +3,15 @@
 [![Actions Status](https://github.com/dgreif/homebridge-hatch-baby-rest/workflows/Node%20CI/badge.svg)](https://github.com/dgreif/homebridge-hatch-baby-rest/actions)
 [![Donate](https://badgen.net/badge/Donate/PayPal/91BE09)](https://www.paypal.me/dustingreif)
 
-This homebridge plugin allows you to add the Hatch Baby Rest and the Hatch Baby Rest+ night lights to HomeKit.  For both types of lights, you are able to control the following:
+This homebridge plugin allows you to add the Hatch Rest, Rest+ and Rest Mini to HomeKit.  For each device, you are able to control the following:
 
-  * On / Off - Master switch for both light and sound
-  * Brightness and Color
+  * On / Off - Master switch for both light and sound **
+  * Brightness and Color **
   * Audio Track - represented as a Fan, with different speed levels mapping to different audio tracks.  For example, 0% is the "None" track, and 100% is the "Rock-a-Bye" track
   * Volume - not available in the Home app, but in some 3rd party HomeKit apps
   * Battery level and firmware version (Rest+ only)
+
+** Rest Mini does not have a light, so only audio controls are available
 
 ## Easy Setup
 
@@ -22,9 +24,9 @@ This provides a user interface in which you can enter your account and light inf
 npm i -g homebridge-hatch-baby-rest
 ```
 
-### Configuration For Hatch Baby Rest+ (WiFi night light)
+### Configuration For Hatch Baby Rest+ (WiFi night light) And Rest Mini
 
-The Rest+ night light uses WiFi to directly interact with Hatch Baby's api.  This allows you to access all of your Rest+ lights by simply providing your Hatch Baby email/password.
+The Rest+ night light and Rest Mini use WiFi to directly interact with Hatch Baby's api.  This allows you to access all of your Rest+/Rest Minis by simply providing your Hatch Baby email/password.
 
  ```json
 {
