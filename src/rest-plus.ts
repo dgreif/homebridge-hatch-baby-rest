@@ -46,7 +46,13 @@ export class RestPlus
   )
 
   onBrightness = this.onState.pipe(
-    map((state) => convertToPercentage(state.c.i)),
+    map(({ c }) => {
+      if (c.r === 0 && c.g === 0 && c.b === 0 && !c.R && !c.W) {
+        // when "no" color is selected in Rest app, i (intensity) doesn't get set to 0, but everything else does
+        return 0
+      }
+      return convertToPercentage(c.i)
+    }),
     distinctUntilChanged()
   )
 
