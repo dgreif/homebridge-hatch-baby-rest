@@ -1,28 +1,11 @@
-import {
-  AudioTrack,
-  RestPlusColor,
-  LightState,
-  RestPlusInfo,
-} from './hatch-baby-types'
+import { RestPlusState, IotDeviceInfo } from './hatch-sleep-types'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { BehaviorSubject, Subject } from 'rxjs'
-import { distinctUntilChanged, filter, map, take } from 'rxjs/operators'
+import { filter, take } from 'rxjs/operators'
 import { delay, logError } from './util'
 import { DeepPartial } from 'ts-essentials'
-import { LightAndSoundMachine } from './accessories/light-and-sound-machine'
-import { rgbToHsb, hsbToRgb, HsbColor } from './colors'
 
-const MAX_VALUE = 65535
-
-function convertFromPercentage(percentage: number) {
-  return Math.floor((percentage / 100) * MAX_VALUE)
-}
-
-function convertToPercentage(value: number) {
-  return Math.floor((value * 100) / MAX_VALUE)
-}
-
-function assignState(previousState: any, changes: any): LightState {
+function assignState<T = RestPlusState>(previousState: any, changes: any): T {
   const state = Object.assign({}, previousState)
 
   for (const key in changes) {
@@ -36,54 +19,25 @@ function assignState(previousState: any, changes: any): LightState {
   return state
 }
 
-export class HatchBabyRestPlus implements LightAndSoundMachine {
-  private onCurrentState = new BehaviorSubject<LightState | null>(null)
+export const MAX_IOT_VALUE = 65535
+
+export function convertFromPercentage(percentage: number) {
+  return Math.floor((percentage / 100) * MAX_IOT_VALUE)
+}
+
+export function convertToPercentage(value: number) {
+  return Math.floor((value * 100) / MAX_IOT_VALUE)
+}
+
+export class IotDevice<T> {
+  private onCurrentState = new BehaviorSubject<T | null>(null)
   private mqttClient?: AwsIotDevice
   private onStatusToken = new Subject<string>()
   private previousUpdatePromise: Promise<any> = Promise.resolve()
 
   onState = this.onCurrentState.pipe(
-    filter((state): state is LightState => state !== null)
+    filter((state): state is T => state !== null)
   )
-
-  onVolume = this.onState.pipe(
-    map((state) => convertToPercentage(state.a.v)),
-    distinctUntilChanged()
-  )
-
-  onAudioTrack = this.onState.pipe(
-    map((state) => state.a.t),
-    distinctUntilChanged()
-  )
-
-  onIsPowered = this.onState.pipe(
-    map((state) => state.isPowered),
-    distinctUntilChanged()
-  )
-
-  onBrightness = this.onState.pipe(
-    map((state) => convertToPercentage(state.c.i)),
-    distinctUntilChanged()
-  )
-
-  onHsb = this.onState.pipe(map((state) => rgbToHsb(state.c, MAX_VALUE)))
-
-  onHue = this.onHsb.pipe(
-    map(({ h }) => h),
-    distinctUntilChanged()
-  )
-
-  onSaturation = this.onHsb.pipe(
-    map(({ s }) => s),
-    distinctUntilChanged()
-  )
-
-  onBatteryLevel = this.onState.pipe(
-    map((state) => state.deviceInfo.b),
-    distinctUntilChanged()
-  )
-
-  onFirmwareVersion = this.onState.pipe(map((state) => state.deviceInfo.f))
 
   get id() {
     return this.info.id
@@ -97,7 +51,7 @@ export class HatchBabyRestPlus implements LightAndSoundMachine {
     return this.info.macAddress
   }
 
-  constructor(public readonly info: RestPlusInfo) {}
+  constructor(public readonly info: IotDeviceInfo) {}
 
   registerMqttClient(mqttClient: AwsIotDevice) {
     const { thingName } = this.info
@@ -111,7 +65,7 @@ export class HatchBabyRestPlus implements LightAndSoundMachine {
         topic,
         message,
         clientToken,
-        status: { state: { desired: LightState; reported: LightState } }
+        status: { state: { desired: T; reported: T } }
       ) => {
         if (topic !== thingName) {
           // status for a different thing
@@ -130,6 +84,7 @@ export class HatchBabyRestPlus implements LightAndSoundMachine {
 
     mqttClient.on('foreignStateChange', (topic, message, s) => {
       const currentState = this.onCurrentState.getValue()
+
       if (!currentState || topic !== thingName) {
         return
       }
@@ -159,7 +114,7 @@ export class HatchBabyRestPlus implements LightAndSoundMachine {
     return this.onState.pipe(take(1)).toPromise()
   }
 
-  update(update: DeepPartial<LightState>) {
+  update(update: DeepPartial<T>) {
     this.previousUpdatePromise = this.previousUpdatePromise
       .catch((_) => {
         // ignore errors, they shouldn't be possible
@@ -195,45 +150,5 @@ export class HatchBabyRestPlus implements LightAndSoundMachine {
         // wait a max of 30 seconds to finish request
         return Promise.race([requestComplete, delay(30000)])
       })
-  }
-
-  setVolume(percentage: number) {
-    this.update({
-      a: {
-        v: convertFromPercentage(percentage),
-      },
-    })
-  }
-
-  setAudioTrack(audioTrack: AudioTrack) {
-    this.update({
-      a: {
-        t: audioTrack,
-      },
-    })
-  }
-
-  setColor(color: Partial<RestPlusColor>) {
-    this.update({
-      c: color,
-    })
-  }
-
-  setHsb({ h, s, b }: HsbColor) {
-    // NOTE: lights assume 100% brightness in color calculations
-    const rgb = hsbToRgb({ h, s, b: 100 }, MAX_VALUE)
-
-    this.setColor({
-      ...rgb,
-      R: false,
-      W: false,
-      i: convertFromPercentage(b),
-    })
-  }
-
-  setPower(on: boolean) {
-    this.update({
-      isPowered: on,
-    })
   }
 }

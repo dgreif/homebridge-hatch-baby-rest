@@ -3,11 +3,12 @@ import {
   IotCredentialsResponse,
   IotTokenResponse,
   MemberResponse,
-  RestPlusInfo,
-} from './hatch-baby-types'
+  IotDeviceInfo,
+} from './hatch-sleep-types'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { logDebug, logError, logInfo } from './util'
-import { HatchBabyRestPlus } from './hatch-baby-rest-plus'
+import { RestPlus } from './rest-plus'
+import { RestMini } from './rest-mini'
 
 export interface ApiConfig extends EmailAuth {}
 
@@ -25,18 +26,21 @@ export class HatchBabyApi {
     })
   }
 
-  async getRestPlusLightsInfo() {
-    const lightInfos = await this.restClient.request<RestPlusInfo[]>({
-      url: apiPath('service/app/restPlus/v1/fetch'),
-    })
+  async getIotDevices() {
+    const devices =
+      (await this.restClient.request<IotDeviceInfo[] | null>({
+        url: apiPath(
+          'service/app/iotDevice/v2/fetch?iotProducts=restPlus&iotProducts=restMini'
+        ),
+      })) || []
 
-    lightInfos.forEach((lightInfo) => {
-      if (lightInfo.product !== 'restPlus') {
-        logInfo('Unsupported Light Found: ' + JSON.stringify(lightInfo))
+    devices.forEach((device) => {
+      if (device.product !== 'restPlus' && device.product !== 'restMini') {
+        logInfo('Unsupported Light Found: ' + JSON.stringify(device))
       }
     })
 
-    return lightInfos.filter((lightInfo) => lightInfo.product === 'restPlus')
+    return devices
   }
 
   async createAwsIotClient() {
@@ -70,11 +74,18 @@ export class HatchBabyApi {
     return mqttClient
   }
 
-  async getRestPlusLights() {
-    const lightsInfo = await this.getRestPlusLightsInfo(),
-      lights = lightsInfo.map((info) => {
-        return new HatchBabyRestPlus(info)
-      })
+  async getDevices() {
+    const devices = await this.getIotDevices(),
+      restPluses = devices
+        .filter((device) => device.product === 'restPlus')
+        .map((info) => {
+          return new RestPlus(info)
+        }),
+      restMinis = devices
+        .filter((device) => device.product === 'restMini')
+        .map((info) => {
+          return new RestMini(info)
+        })
 
     let bindingNewIotClient = false,
       previousMqttClient: AwsIotDevice | null = null
@@ -106,7 +117,11 @@ export class HatchBabyApi {
           createNewIotClient()
         })
 
-        lights.forEach((light) => light.registerMqttClient(mqttClient))
+        restPluses.forEach((restPlus) =>
+          restPlus.registerMqttClient(mqttClient)
+        )
+        restMinis.forEach((restMini) => restMini.registerMqttClient(mqttClient))
+
         logDebug('Created new MQTT Client')
       } catch (e) {
         logError('Failed to Create an MQTT Client')
@@ -118,6 +133,9 @@ export class HatchBabyApi {
 
     createNewIotClient().catch()
 
-    return lights
+    return {
+      restPluses,
+      restMinis,
+    }
   }
 }

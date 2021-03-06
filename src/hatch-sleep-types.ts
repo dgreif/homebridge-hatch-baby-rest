@@ -44,7 +44,7 @@ export interface MemberResponse {
   member: Member
 }
 
-export interface RestPlusInfo {
+export interface IotDeviceInfo {
   id: number
   createDate: string
   updateDate: string
@@ -141,7 +141,7 @@ interface Audio {
   v: number // volume, max 65535
 }
 
-export interface LightState {
+export interface RestPlusState {
   owned: boolean
   a: Audio
   activePresetIndex: number
@@ -220,10 +220,71 @@ export interface LightState {
   debug: 0
 }
 
-export interface AwsIotStatus {
-  state: {
-    desired?: Partial<LightState>
+// eslint-disable-next-line no-shadow
+export const enum RestMiniAudioTrack {
+  None = 0,
+  Heartbeat = 10124,
+  Water = 10125,
+  WhiteNoise = 10126,
+  Dryer = 10127,
+  Ocean = 10128,
+  Wind = 10129,
+  Rain = 10130,
+  Birds = 10131,
+}
+export const restMiniAudioTracks = [
+  RestMiniAudioTrack.None,
+  RestMiniAudioTrack.WhiteNoise,
+  RestMiniAudioTrack.Ocean,
+  RestMiniAudioTrack.Rain,
+  RestMiniAudioTrack.Water,
+  RestMiniAudioTrack.Wind,
+  RestMiniAudioTrack.Birds,
+  RestMiniAudioTrack.Dryer,
+  RestMiniAudioTrack.Heartbeat,
+]
+
+export interface RestMiniSound {
+  id: number
+  mute: boolean
+  url: string
+  until: 'indefinite' | 'duration' | string
+  duration: number
+  v: number
+}
+
+export interface RestMiniState {
+  env: 'prod' | string
+  current: {
+    playing: 'none' | 'remote' | string
+    step: number
+    sound: RestMiniSound
   }
+  playNext: {
+    enabled: false
+    sound: RestMiniSound & {
+      ignoreVolume: false
+    }
+  }
+  timer: { s: string; d: number }
+  streaming: { status: 'none' | string }
+  timezone: string
+  rF: {
+    v: string
+    i: boolean
+    u: string
+  }
+  deviceInfo: { f: string; fR: number; hwVersion: string }
+  lucky: number
+  LDR: 'OK' | string
+  LWTP: boolean
+  debug: number
+  logging: number
+  owned: boolean
+  lastReset: 'PowerOn' | string
+  REX: { lock: number; key: number; command: 'none' | string }
+  connected: boolean
+  rssi: number
 }
 
 interface RestLightConfig {

@@ -1,6 +1,6 @@
 import { formatRestCommand, RestCommand } from '../src/rest-commands'
 import { expect } from 'chai'
-import { AudioTrack } from '../src/hatch-baby-types'
+import { AudioTrack } from '../src/hatch-sleep-types'
 
 describe('Feedback Parsing', () => {
   it('should format a number command into a buffer', () => {

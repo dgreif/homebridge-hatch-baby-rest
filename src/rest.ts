@@ -24,7 +24,7 @@ import {
 import { Peripheral, Service } from '@abandonware/noble'
 import { promisify } from 'util'
 import { colorsMatch, Feedback, parseFeedbackBuffer } from './feedback'
-import { AudioTrack } from './hatch-baby-types'
+import { AudioTrack, audioTracks } from './hatch-sleep-types'
 import { LightAndSoundMachine } from './accessories/light-and-sound-machine'
 import {
   rgbToHsb,
@@ -49,7 +49,9 @@ const enum CharacteristicUuid {
   CurrentFeedback = '02260002-5efd-47eb-9c1a-de53f7a2b232',
 }
 
-export class HatchBabyRest implements LightAndSoundMachine {
+export class Rest implements LightAndSoundMachine {
+  readonly model = 'Rest'
+  audioTracks = audioTracks
   noble = require('@abandonware/noble')
   peripheralPromise = this.getPeripheralByAddress(this.macAddress)
 
@@ -60,6 +62,7 @@ export class HatchBabyRest implements LightAndSoundMachine {
     color: { r: 0, g: 0, b: 0, a: 0 },
     audioTrack: AudioTrack.None,
   })
+
   private fromFeedback<T>(
     retrieveProperty: (feedback: Feedback) => T,
     distinctCheck?: (a: any, b: any) => boolean
@@ -86,6 +89,10 @@ export class HatchBabyRest implements LightAndSoundMachine {
     distinctUntilChanged()
   )
   onAudioTrack = this.fromFeedback((feedback) => feedback.audioTrack)
+  onAudioPlaying = this.onAudioTrack.pipe(
+    map((track) => track !== AudioTrack.None),
+    distinctUntilChanged()
+  )
   onUsingConnection = new Subject()
 
   reconnectSubscription?: Subscription
@@ -264,6 +271,14 @@ export class HatchBabyRest implements LightAndSoundMachine {
 
   setAudioTrack(track: AudioTrack) {
     return this.setCommand(RestCommand.SetTrackNumber, track)
+  }
+
+  setAudioPlaying(playing: boolean) {
+    if (!playing) {
+      return this.setAudioTrack(AudioTrack.None)
+    }
+
+    // do nothing for other audio tracks.  They will be handed to `setAudioTrack` directly
   }
 
   setColorAndBrightness(color: RestColorAndBrightness) {

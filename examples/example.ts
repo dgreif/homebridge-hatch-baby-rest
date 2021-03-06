@@ -1,14 +1,14 @@
 import 'dotenv/config'
-import { HatchBabyRest } from '../src/hatch-baby-rest'
+import { Rest } from '../src/rest'
 import { delay } from '../src/util'
 import { RestColorAndBrightness } from '../src/rest-commands'
 import { filter, take } from 'rxjs/operators'
 import { colorsMatch } from '../src/feedback'
-import { AudioTrack } from '../src/hatch-baby-types'
+import { AudioTrack } from '../src/hatch-sleep-types'
 
 async function example() {
   const macAddress = process.env.HBR_MAC_ADDRESS!,
-    hbr = new HatchBabyRest('Test Night Light', macAddress),
+    hbr = new Rest('Test Night Light', macAddress),
     waitForPower = (power: boolean) =>
       hbr.onIsPowered
         .pipe(

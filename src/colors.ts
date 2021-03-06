@@ -1,4 +1,4 @@
-import { RgbColor } from './hatch-baby-types'
+import { RgbColor } from './hatch-sleep-types'
 
 const rgb2hsv = require('pure-color/convert/rgb2hsv'),
   hsv2rgb = require('pure-color/convert/hsv2rgb')

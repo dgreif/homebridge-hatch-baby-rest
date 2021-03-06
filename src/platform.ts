@@ -1,7 +1,8 @@
 import { HatchBabyApi } from './api'
 import { hap, isTestHomebridge, platformName, pluginName } from './hap'
 import { stripMacAddress, useLogger } from './util'
-import { HatchBabyRestPlusAccessory } from './accessories/light-and-sound-machine'
+import { LightAndSoundMachineAccessory } from './accessories/light-and-sound-machine'
+import { SoundMachineAccessory } from './accessories/sound-machine'
 import {
   API,
   DynamicPlatformPlugin,
@@ -9,8 +10,8 @@ import {
   PlatformAccessory,
   PlatformConfig,
 } from 'homebridge'
-import { HatchBabyPlatformOptions } from './hatch-baby-types'
-import { HatchBabyRest } from './hatch-baby-rest'
+import { HatchBabyPlatformOptions } from './hatch-sleep-types'
+import { Rest } from './rest'
 
 export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
   private readonly homebridgeAccessories: {
@@ -62,27 +63,28 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
           : undefined,
       restLights =
         this.config.restLights?.map(
-          (lightConfig) =>
-            new HatchBabyRest(lightConfig.name, lightConfig.macAddress)
+          (lightConfig) => new Rest(lightConfig.name, lightConfig.macAddress)
         ) || [],
-      restPlusLights = hatchBabyApi
-        ? await hatchBabyApi.getRestPlusLights()
-        : [],
-      lights = [...restLights, ...restPlusLights],
+      { restPluses, restMinis } = hatchBabyApi
+        ? await hatchBabyApi.getDevices()
+        : { restPluses: [], restMinis: [] },
+      lights = [...restLights, ...restPluses],
       { api } = this,
       cachedAccessoryIds = Object.keys(this.homebridgeAccessories),
       platformAccessories: PlatformAccessory[] = [],
       activeAccessoryIds: string[] = [],
-      debugPrefix = isTestHomebridge ? 'TEST ' : ''
+      debugPrefix = isTestHomebridge ? 'TEST ' : '',
+      devices = [...lights, ...restMinis]
 
     this.log.info(
-      `Configuring ${restLights.length} Rest and ${restPlusLights.length} Rest+ lights`
+      `Configuring ${restLights.length} Rest, ${restPluses.length} Rest+, and ${restMinis.length} Rest Mini`
     )
 
-    lights.forEach((light) => {
-      const id = 'id' in light ? light.id : stripMacAddress(light.macAddress),
+    devices.forEach((device) => {
+      const id =
+          'id' in device ? device.id : stripMacAddress(device.macAddress),
         uuid = hap.uuid.generate(debugPrefix + id),
-        displayName = debugPrefix + light.name,
+        displayName = debugPrefix + device.name,
         createHomebridgeAccessory = () => {
           const accessory = new api.platformAccessory(
             displayName,
@@ -90,7 +92,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
             hap.Categories.LIGHTBULB
           )
 
-          this.log.info(`Adding new Hatch Baby Rest+ - ${displayName}`)
+          this.log.info(`Adding new Hatch ${device.model} - ${displayName}`)
           platformAccessories.push(accessory)
 
           return accessory
@@ -98,7 +100,11 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         homebridgeAccessory =
           this.homebridgeAccessories[uuid] || createHomebridgeAccessory()
 
-      new HatchBabyRestPlusAccessory(light, homebridgeAccessory)
+      if ('onBrightness' in device) {
+        new LightAndSoundMachineAccessory(device, homebridgeAccessory)
+      } else {
+        new SoundMachineAccessory(device, homebridgeAccessory)
+      }
 
       this.homebridgeAccessories[uuid] = homebridgeAccessory
       activeAccessoryIds.push(uuid)

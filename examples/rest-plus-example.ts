@@ -8,8 +8,8 @@ async function example() {
       email: env.HBR_EMAIL!,
       password: env.HBR_PASSWORD!,
     }),
-    restPlusLights = await api.getRestPlusLights(),
-    light = restPlusLights[0]
+    restPlusLights = await api.getDevices(),
+    light = restPlusLights.restPluses[0]
 
   light.onBrightness.subscribe((i) => console.log('Brightness', i))
   light.onVolume.subscribe((i) => console.log('Volume', i))
