@@ -3,7 +3,7 @@
 [![Actions Status](https://github.com/dgreif/homebridge-hatch-baby-rest/workflows/Node%20CI/badge.svg)](https://github.com/dgreif/homebridge-hatch-baby-rest/actions)
 [![Donate](https://badgen.net/badge/Donate/PayPal/91BE09)](https://www.paypal.me/dustingreif)
 
-This homebridge plugin allows you to add the Hatch Rest, Rest+ and Rest Mini to HomeKit.  For each device, you are able to control the following:
+This homebridge plugin allows you to add the Hatch Rest, Rest+ and Rest Mini, and Restore to HomeKit.  For each device, you are able to control the following:
 
   * On / Off - Master switch for both light and sound **
   * Brightness and Color **
@@ -12,6 +12,8 @@ This homebridge plugin allows you to add the Hatch Rest, Rest+ and Rest Mini to 
   * Battery level and firmware version (Rest+ only)
 
 ** Rest Mini does not have a light, so only audio controls are available
+
+The Hatch Restore supports much more complicated routines that do not map well to HomeKit controls.  Because of this complexity, the Restore is exposed as a simple switch.  Turning the switch on will initiate the first step in your Bedtime routine.  Turning the switch off will turn the device off no matter which routine/step you are in.
 
 ## Easy Setup
 

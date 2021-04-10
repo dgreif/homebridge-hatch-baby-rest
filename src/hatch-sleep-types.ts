@@ -192,7 +192,7 @@ export interface RestPlusState {
     fR: number
   }
   name: string
-  isPaused: false
+  isPaused: boolean
   presets: {
     [id: number]: {
       a: Audio
@@ -215,9 +215,128 @@ export interface RestPlusState {
     }
   }
   connected: true
-  rssi: -42
-  LWTP: false
-  debug: 0
+  rssi: number
+  LWTP: boolean
+  debug: number
+}
+
+export interface RestoreState {
+  alarmsDisabled: boolean
+  snoozeDuration: number
+  env: 'prod' | string
+  color: {
+    id: number
+    i: number
+    enabled: boolean
+  }
+  sound: {
+    id: number
+    v: number
+    enabled: boolean
+  }
+  deviceDefaults: {
+    colorId: number
+    i: number
+    soundId: number
+    v: number
+  }
+  restoreClock: {
+    i: number
+    turnOffAt: string
+    turnOnAt: string
+    flags: number
+    turnOffMode: 'never' | string
+  }
+  content: {
+    playing: 'none' | 'routine' | 'remote'
+    startTime: number
+    paused: boolean
+    pausedAt: number
+    offset: number
+    step: number
+    routineId: number
+    adhocId: number
+    alarmId: number
+    alarmIds: number[]
+    requested: {
+      routine: {
+        id: number
+        status: 'success' | string
+        reason: 'ok' | string
+      }
+      adhoc: {
+        id: number
+        status: 'unknown' | string
+        reason: 'none' | string
+      }
+      alarms: {
+        ids: number[]
+        status: 'success' | string
+        reason: 'ok' | string
+      }
+    }
+  }
+  LWTP: boolean
+  timezone: string
+  rF: {
+    v: string
+    i: true
+    u: string
+  }
+  deviceInfo: {
+    f: string
+    fR: number
+    hwVersion: string
+  }
+  LDR: 'OK' | string
+  lucky: number
+  SDIO: string
+  PSRAM: {
+    ID: string
+    HI: string
+    EID: string
+    week: string
+  }
+  FLASH: {
+    ID: string
+  }
+  memTest: {
+    testsPass: number
+    testsFail: number
+    wordsChecked: number
+    wordsFail: number
+    failAddr: string
+  }
+  debug: number
+  logging: number
+  owned: boolean
+  connected: boolean
+  rssi: -44
+  alarmDuration: 3600
+  alarmRampDuration: 0
+  tapDwell: 0.5
+  headphones: {
+    autoConnect: boolean
+    stateRequest: 'unknown' | string
+    requestedMacAddress: string
+    requestedHPName: string
+    requestedPin: string
+    stateResult: 'unknown' | string
+    connectedMacAddress: string
+    connectedHPName: string
+  }
+  SDContent: {
+    releaseDate: string
+    hashType: string
+    hashCode: string
+  }
+  REX: {
+    lock: number
+    key: number
+    command: 'none' | string
+  }
+  lastReset: string
+  encryption: number
 }
 
 // eslint-disable-next-line no-shadow
@@ -261,9 +380,9 @@ export interface RestMiniState {
     sound: RestMiniSound
   }
   playNext: {
-    enabled: false
+    enabled: boolean
     sound: RestMiniSound & {
-      ignoreVolume: false
+      ignoreVolume: boolean
     }
   }
   timer: { s: string; d: number }

@@ -9,8 +9,19 @@ import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { logDebug, logError, logInfo } from './util'
 import { RestPlus } from './rest-plus'
 import { RestMini } from './rest-mini'
+import { Restore } from './restore'
 
 export interface ApiConfig extends EmailAuth {}
+
+const productMap = {
+    restPlus: RestPlus,
+    restMini: RestMini,
+    restore: Restore,
+  },
+  knownProducts = Object.keys(productMap),
+  productFetchQueryString = knownProducts
+    .map((product) => 'iotProducts=' + product)
+    .join('&')
 
 export class HatchBabyApi {
   restClient = new RestClient(this.config)
@@ -30,12 +41,12 @@ export class HatchBabyApi {
     const devices =
       (await this.restClient.request<IotDeviceInfo[] | null>({
         url: apiPath(
-          'service/app/iotDevice/v2/fetch?iotProducts=restPlus&iotProducts=restMini'
+          'service/app/iotDevice/v2/fetch?' + productFetchQueryString
         ),
       })) || []
 
     devices.forEach((device) => {
-      if (device.product !== 'restPlus' && device.product !== 'restMini') {
+      if (!knownProducts.includes(device.product)) {
         logInfo('Unsupported Light Found: ' + JSON.stringify(device))
       }
     })
@@ -78,14 +89,13 @@ export class HatchBabyApi {
     const devices = await this.getIotDevices(),
       restPluses = devices
         .filter((device) => device.product === 'restPlus')
-        .map((info) => {
-          return new RestPlus(info)
-        }),
+        .map((info) => new RestPlus(info)),
       restMinis = devices
         .filter((device) => device.product === 'restMini')
-        .map((info) => {
-          return new RestMini(info)
-        })
+        .map((info) => new RestMini(info)),
+      restores = devices
+        .filter((device) => device.product === 'restore')
+        .map((info) => new Restore(info))
 
     let bindingNewIotClient = false,
       previousMqttClient: AwsIotDevice | null = null
@@ -121,6 +131,7 @@ export class HatchBabyApi {
           restPlus.registerMqttClient(mqttClient)
         )
         restMinis.forEach((restMini) => restMini.registerMqttClient(mqttClient))
+        restores.forEach((restore) => restore.registerMqttClient(mqttClient))
 
         logDebug('Created new MQTT Client')
       } catch (e) {
@@ -136,6 +147,7 @@ export class HatchBabyApi {
     return {
       restPluses,
       restMinis,
+      restores,
     }
   }
 }

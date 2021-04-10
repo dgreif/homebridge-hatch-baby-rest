@@ -18,10 +18,7 @@ export interface LightAndSoundMachine extends SoundMachine {
 }
 
 export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
-  constructor(
-    private light: LightAndSoundMachine,
-    protected accessory: PlatformAccessory
-  ) {
+  constructor(light: LightAndSoundMachine, accessory: PlatformAccessory) {
     super(light, accessory)
 
     const { Service, Characteristic } = hap,

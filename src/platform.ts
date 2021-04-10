@@ -12,6 +12,8 @@ import {
 } from 'homebridge'
 import { HatchBabyPlatformOptions } from './hatch-sleep-types'
 import { Rest } from './rest'
+import { RestoreAccessory } from './accessories/restore-accessory'
+import { Restore } from './restore'
 
 export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
   private readonly homebridgeAccessories: {
@@ -65,19 +67,19 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         this.config.restLights?.map(
           (lightConfig) => new Rest(lightConfig.name, lightConfig.macAddress)
         ) || [],
-      { restPluses, restMinis } = hatchBabyApi
+      { restPluses, restMinis, restores } = hatchBabyApi
         ? await hatchBabyApi.getDevices()
-        : { restPluses: [], restMinis: [] },
+        : { restPluses: [], restMinis: [], restores: [] },
       lights = [...restLights, ...restPluses],
       { api } = this,
       cachedAccessoryIds = Object.keys(this.homebridgeAccessories),
       platformAccessories: PlatformAccessory[] = [],
       activeAccessoryIds: string[] = [],
       debugPrefix = isTestHomebridge ? 'TEST ' : '',
-      devices = [...lights, ...restMinis]
+      devices = [...lights, ...restMinis, ...restores]
 
     this.log.info(
-      `Configuring ${restLights.length} Rest, ${restPluses.length} Rest+, and ${restMinis.length} Rest Mini`
+      `Configuring ${restLights.length} Rest, ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, and ${restores.length} Restore Devices`
     )
 
     devices.forEach((device) => {
@@ -100,7 +102,9 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         homebridgeAccessory =
           this.homebridgeAccessories[uuid] || createHomebridgeAccessory()
 
-      if ('onBrightness' in device) {
+      if (device instanceof Restore) {
+        new RestoreAccessory(device, homebridgeAccessory)
+      } else if ('onBrightness' in device) {
         new LightAndSoundMachineAccessory(device, homebridgeAccessory)
       } else {
         new SoundMachineAccessory(device, homebridgeAccessory)
