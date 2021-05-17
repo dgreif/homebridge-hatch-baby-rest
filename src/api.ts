@@ -58,22 +58,22 @@ export class HatchBabyApi {
     const iotResponse = await this.restClient.request<IotTokenResponse>({
         url: apiPath('service/app/restPlus/token/v1/fetch'),
       }),
-      {
-        Credentials: credentials,
-      } = await requestWithRetry<IotCredentialsResponse>({
-        url: `https://cognito-identity.${iotResponse.region}.amazonaws.com`,
-        method: 'POST',
-        headers: {
-          'content-type': 'application/x-amz-json-1.1',
-          'X-Amz-Target': 'AWSCognitoIdentityService.GetCredentialsForIdentity',
-        },
-        json: {
-          IdentityId: iotResponse.identityId,
-          Logins: {
-            'cognito-identity.amazonaws.com': iotResponse.token,
+      { Credentials: credentials } =
+        await requestWithRetry<IotCredentialsResponse>({
+          url: `https://cognito-identity.${iotResponse.region}.amazonaws.com`,
+          method: 'POST',
+          headers: {
+            'content-type': 'application/x-amz-json-1.1',
+            'X-Amz-Target':
+              'AWSCognitoIdentityService.GetCredentialsForIdentity',
           },
-        },
-      }),
+          json: {
+            IdentityId: iotResponse.identityId,
+            Logins: {
+              'cognito-identity.amazonaws.com': iotResponse.token,
+            },
+          },
+        }),
       mqttClient = new AwsIotDevice({
         protocol: 'wss',
         host: iotResponse.endpoint.replace('https://', ''),

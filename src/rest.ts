@@ -4,7 +4,13 @@
  * can be used by other projects, but didn't want to go to the work until there was a need.
  */
 
-import { BehaviorSubject, fromEvent, Subject, Subscription } from 'rxjs'
+import {
+  BehaviorSubject,
+  firstValueFrom,
+  fromEvent,
+  Subject,
+  Subscription,
+} from 'rxjs'
 import {
   debounceTime,
   distinctUntilChanged,
@@ -120,17 +126,16 @@ export class Rest implements LightAndSoundMachine {
   async getPeripheralByAddress(address: string) {
     logInfo('Waiting for bluetooth to power on')
 
-    await fromEvent(this.noble, 'stateChange')
-      .pipe(
+    await firstValueFrom(
+      fromEvent(this.noble, 'stateChange').pipe(
         startWith(this.noble.state),
-        filter((state) => state === 'poweredOn'),
-        take(1)
+        filter((state) => state === 'poweredOn')
       )
-      .toPromise()
+    )
 
     const stripedAddress = stripMacAddress(address),
-      peripheralPromise = fromEvent<Peripheral>(this.noble, 'discover')
-        .pipe(
+      peripheralPromise = firstValueFrom(
+        fromEvent<Peripheral>(this.noble, 'discover').pipe(
           filter((peripheral) => {
             return (
               stripMacAddress(peripheral.address) === stripedAddress ||
@@ -160,7 +165,7 @@ export class Rest implements LightAndSoundMachine {
             }
           })
         )
-        .toPromise()
+      )
 
     logInfo('Scanning for ' + this.name)
     this.noble.startScanning(['180a'])
@@ -221,7 +226,7 @@ export class Rest implements LightAndSoundMachine {
   }
 
   async getCharacteristic(characteristicUuid: string, serviceUuid: string) {
-    this.onUsingConnection.next()
+    this.onUsingConnection.next(null)
 
     const service = await this.getService(serviceUuid),
       targetUuid = stripUuid(characteristicUuid),
@@ -234,7 +239,7 @@ export class Rest implements LightAndSoundMachine {
       throw new Error(`Characteristic ${characteristicUuid} not found!`)
     }
 
-    this.onUsingConnection.next()
+    this.onUsingConnection.next(null)
     return characteristic
   }
 
@@ -266,7 +271,7 @@ export class Rest implements LightAndSoundMachine {
       false
     )
 
-    this.onUsingConnection.next()
+    this.onUsingConnection.next(null)
   }
 
   setAudioTrack(track: AudioTrack) {

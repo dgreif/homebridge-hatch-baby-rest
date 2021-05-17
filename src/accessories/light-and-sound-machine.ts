@@ -58,7 +58,7 @@ export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
       light.onHue,
       (hue) => {
         context.h = hue
-        onHsbSet.next()
+        onHsbSet.next(null)
       }
     )
     this.registerCharacteristic(
@@ -66,7 +66,7 @@ export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
       light.onSaturation,
       (saturation) => {
         context.s = saturation
-        onHsbSet.next()
+        onHsbSet.next(null)
       }
     )
     this.registerCharacteristic(
@@ -74,7 +74,7 @@ export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
       onBrightness,
       (brightness) => {
         context.b = brightness
-        onHsbSet.next()
+        onHsbSet.next(null)
       }
     )
 

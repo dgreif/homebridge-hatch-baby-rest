@@ -17,7 +17,8 @@ import {
 
 export class RestPlus
   extends IotDevice<RestPlusState>
-  implements LightAndSoundMachine {
+  implements LightAndSoundMachine
+{
   readonly model = 'Rest+'
   audioTracks = audioTracks
 

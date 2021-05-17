@@ -3,9 +3,7 @@ import { RestColorAndBrightness } from './rest-commands'
 interface FeedbackField {
   name: string
   length: number
-  mapper?: (
-    data: Buffer
-  ) => {
+  mapper?: (data: Buffer) => {
     [key: string]: any
   }
 }

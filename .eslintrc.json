@@ -115,7 +115,6 @@
     "no-restricted-modules": 0,
     "no-sync": 0,
 
-    "brace-style": [2,"1tbs"],
     "camelcase": 0,
     "comma-spacing": [2, { "before": false, "after": true }],
     "comma-style": 2,
