@@ -2,6 +2,7 @@
 
 [![Actions Status](https://github.com/dgreif/homebridge-hatch-baby-rest/workflows/Node%20CI/badge.svg)](https://github.com/dgreif/homebridge-hatch-baby-rest/actions)
 [![Donate](https://badgen.net/badge/Donate/PayPal/91BE09)](https://www.paypal.me/dustingreif)
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
 This homebridge plugin allows you to add the Hatch Rest, Rest+ and Rest Mini, and Restore to HomeKit.  For each device, you are able to control the following:
 
