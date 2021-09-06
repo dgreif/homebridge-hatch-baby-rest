@@ -16,7 +16,7 @@ export class RestoreAccessory extends BaseAccessory {
       restore.onSomeContentPlaying,
       (on) => {
         logInfo(
-          `Turning ${on ? 'on first betime step for' : 'off'} ${restore.name}`
+          `Turning ${on ? 'on first bedtime step for' : 'off'} ${restore.name}`
         )
         if (on) {
           restore.turnOnRoutine()
