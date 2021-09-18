@@ -19,7 +19,7 @@ export async function requestWithRetry<T>(options: RequestOptions): Promise<T> {
       body: T
     }
     return response.body
-  } catch (e) {
+  } catch (e: any) {
     if (!e.response) {
       logError(
         `Failed to reach Hatch Baby server at ${options.url}.  ${e.message}.  Trying again in 5 seconds...`
@@ -54,7 +54,7 @@ export class RestClient {
       })
 
       return resp
-    } catch (requestError) {
+    } catch (requestError: any) {
       const errorMessage =
         'Failed to fetch oauth token from Hatch Baby. Verify that your email and password are correct.'
       logError(requestError.response || requestError)
@@ -82,7 +82,7 @@ export class RestClient {
         })
 
       return response.payload
-    } catch (e) {
+    } catch (e: any) {
       const response = e.response || {},
         { url } = options
 
