@@ -11,6 +11,7 @@ import { RestPlus } from './rest-plus'
 import { RestMini } from './rest-mini'
 import { Restore } from './restore'
 import { BehaviorSubject } from 'rxjs'
+import { IotDevice } from './iot-device'
 
 export interface ApiConfig extends EmailAuth {}
 
@@ -141,20 +142,19 @@ export class HatchBabyApi {
         this.getIotDevices(),
         this.getOnIotClient(),
       ]),
-      restPluses = devices
-        .filter((device) => device.product === 'restPlus')
-        .map((info) => new RestPlus(info, onIotClient)),
-      restMinis = devices
-        .filter((device) => device.product === 'restMini')
-        .map((info) => new RestMini(info, onIotClient)),
-      restores = devices
-        .filter((device) => device.product === 'restore')
-        .map((info) => new Restore(info, onIotClient))
+      createDevice = <T extends IotDevice<any>>(
+        product: string,
+        Device: new (info: IotDeviceInfo, onClient: typeof onIotClient) => T
+      ): T[] => {
+        return devices
+          .filter((device) => device.product === product)
+          .map((info) => new Device(info, onIotClient))
+      }
 
     return {
-      restPluses,
-      restMinis,
-      restores,
+      restPluses: createDevice('restPlus', RestPlus),
+      restMinis: createDevice('restMini', RestMini),
+      restores: createDevice('restore', Restore),
     }
   }
 }
