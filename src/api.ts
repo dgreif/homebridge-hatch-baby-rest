@@ -10,6 +10,7 @@ import { logDebug, logError, logInfo } from './util'
 import { RestPlus } from './rest-plus'
 import { RestMini } from './rest-mini'
 import { Restore } from './restore'
+import { BehaviorSubject } from 'rxjs'
 
 export interface ApiConfig extends EmailAuth {}
 
@@ -85,38 +86,28 @@ export class HatchBabyApi {
     return mqttClient
   }
 
-  async getDevices() {
-    const devices = await this.getIotDevices(),
-      restPluses = devices
-        .filter((device) => device.product === 'restPlus')
-        .map((info) => new RestPlus(info)),
-      restMinis = devices
-        .filter((device) => device.product === 'restMini')
-        .map((info) => new RestMini(info)),
-      restores = devices
-        .filter((device) => device.product === 'restore')
-        .map((info) => new Restore(info))
+  async getOnIotClient() {
+    // eslint-disable-next-line prefer-const
+    let onIotClient: BehaviorSubject<AwsIotDevice> | undefined
 
-    let bindingNewIotClient = false,
-      previousMqttClient: AwsIotDevice | null = null
-    const createNewIotClient = async () => {
+    const createNewIotClient = async (): Promise<AwsIotDevice> => {
       try {
-        if (bindingNewIotClient) {
-          return
-        }
-        bindingNewIotClient = true
-
+        // eslint-disable-next-line no-use-before-define
+        const previousMqttClient = onIotClient?.getValue()
         if (previousMqttClient) {
-          previousMqttClient.end()
-          previousMqttClient = null
+          try {
+            previousMqttClient.end()
+          } catch (e: unknown) {
+            logError('Failed to end previous MQTT Client')
+            logError(e)
+          }
         }
 
         logDebug('Creating new MQTT Client')
 
         const mqttClient = await this.createAwsIotClient()
-        previousMqttClient = mqttClient
 
-        mqttClient.on('error', (error) => {
+        mqttClient.on('error', async (error) => {
           if (error.message.includes('(403)')) {
             logError('MQTT Client No Longer Authorized')
           } else {
@@ -124,25 +115,41 @@ export class HatchBabyApi {
             logError(error)
           }
 
-          createNewIotClient()
+          try {
+            // eslint-disable-next-line no-use-before-define
+            onIotClient?.next(await createNewIotClient())
+          } catch (_) {
+            // ignore, already logged
+          }
         })
 
-        restPluses.forEach((restPlus) =>
-          restPlus.registerMqttClient(mqttClient)
-        )
-        restMinis.forEach((restMini) => restMini.registerMqttClient(mqttClient))
-        restores.forEach((restore) => restore.registerMqttClient(mqttClient))
-
         logDebug('Created new MQTT Client')
+        return mqttClient
       } catch (e) {
         logError('Failed to Create an MQTT Client')
         logError(e)
-      } finally {
-        bindingNewIotClient = false
+        throw e
       }
     }
 
-    createNewIotClient().catch()
+    onIotClient = new BehaviorSubject<AwsIotDevice>(await createNewIotClient())
+    return onIotClient
+  }
+
+  async getDevices() {
+    const [devices, onIotClient] = await Promise.all([
+        this.getIotDevices(),
+        this.getOnIotClient(),
+      ]),
+      restPluses = devices
+        .filter((device) => device.product === 'restPlus')
+        .map((info) => new RestPlus(info, onIotClient)),
+      restMinis = devices
+        .filter((device) => device.product === 'restMini')
+        .map((info) => new RestMini(info, onIotClient)),
+      restores = devices
+        .filter((device) => device.product === 'restore')
+        .map((info) => new Restore(info, onIotClient))
 
     return {
       restPluses,

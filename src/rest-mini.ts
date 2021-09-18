@@ -1,5 +1,4 @@
 import {
-  IotDeviceInfo,
   RestMiniAudioTrack,
   restMiniAudioTracks,
   RestMiniState,
@@ -15,10 +14,6 @@ import { SoundMachine } from './accessories/sound-machine'
 export class RestMini extends IotDevice<RestMiniState> implements SoundMachine {
   readonly model = 'Rest Mini'
   audioTracks = restMiniAudioTracks
-
-  constructor(public readonly info: IotDeviceInfo) {
-    super(info)
-  }
 
   onVolume = this.onState.pipe(
     map((state) => convertToPercentage(state.current.sound.v)),

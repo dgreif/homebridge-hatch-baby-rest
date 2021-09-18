@@ -1,7 +1,6 @@
 import {
   AudioTrack,
   audioTracks,
-  IotDeviceInfo,
   RestPlusColor,
   RestPlusState,
 } from './hatch-sleep-types'
@@ -21,10 +20,6 @@ export class RestPlus
 {
   readonly model = 'Rest+'
   audioTracks = audioTracks
-
-  constructor(public readonly info: IotDeviceInfo) {
-    super(info)
-  }
 
   onVolume = this.onState.pipe(
     map((state) => convertToPercentage(state.a.v)),

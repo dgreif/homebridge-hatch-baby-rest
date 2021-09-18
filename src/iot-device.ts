@@ -1,6 +1,6 @@
 import { RestPlusState, IotDeviceInfo } from './hatch-sleep-types'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
-import { BehaviorSubject, Subject } from 'rxjs'
+import { BehaviorSubject, skip, Subject } from 'rxjs'
 import { filter, take } from 'rxjs/operators'
 import { delay, logError } from './util'
 import { DeepPartial } from 'ts-essentials'
@@ -31,7 +31,9 @@ export function convertToPercentage(value: number) {
 
 export class IotDevice<T> {
   private onCurrentState = new BehaviorSubject<T | null>(null)
-  private mqttClient?: AwsIotDevice
+  private get mqttClient() {
+    return this.onIotClient.getValue()
+  }
   private onStatusToken = new Subject<string>()
   private previousUpdatePromise: Promise<any> = Promise.resolve()
 
@@ -51,13 +53,20 @@ export class IotDevice<T> {
     return this.info.macAddress
   }
 
-  constructor(public readonly info: IotDeviceInfo) {}
+  constructor(
+    public readonly info: IotDeviceInfo,
+    public readonly onIotClient: BehaviorSubject<AwsIotDevice>
+  ) {
+    onIotClient
+      .pipe(skip(1))
+      .subscribe((client) => this.registerMqttClient(client))
 
-  registerMqttClient(mqttClient: AwsIotDevice) {
+    this.registerMqttClient(onIotClient.getValue())
+  }
+
+  private registerMqttClient(mqttClient: AwsIotDevice) {
     const { thingName } = this.info
     let getClientToken: string
-
-    this.mqttClient = mqttClient
 
     mqttClient.on(
       'status',
@@ -97,17 +106,29 @@ export class IotDevice<T> {
       )
     })
 
-    mqttClient.on('connect', () => {
-      mqttClient.register(thingName, {}, () => {
-        getClientToken = mqttClient.get(thingName)!
-        this.previousUpdatePromise = this.onStatusToken
-          .pipe(
-            filter((token) => token === getClientToken),
-            take(1)
-          )
-          .toPromise()
+    this.previousUpdatePromise = this.previousUpdatePromise
+      .catch((_) => {
+        // ignore errors, they shouldn't be possible
+        void _
       })
-    })
+      .then(
+        () =>
+          new Promise((resolve) => {
+            mqttClient.on('connect', () => {
+              mqttClient.register(thingName, {}, () => {
+                getClientToken = mqttClient.get(thingName)!
+                resolve(
+                  this.onStatusToken
+                    .pipe(
+                      filter((token) => token === getClientToken),
+                      take(1)
+                    )
+                    .toPromise()
+                )
+              })
+            })
+          })
+      )
   }
 
   getCurrentState() {

@@ -1,14 +1,10 @@
-import { IotDeviceInfo, RestoreState } from './hatch-sleep-types'
+import { RestoreState } from './hatch-sleep-types'
 import { distinctUntilChanged, map } from 'rxjs/operators'
 import { BaseDevice } from './accessories/base-accessory'
 import { IotDevice } from './iot-device'
 
 export class Restore extends IotDevice<RestoreState> implements BaseDevice {
   readonly model = 'Restore'
-
-  constructor(public readonly info: IotDeviceInfo) {
-    super(info)
-  }
 
   onSomeContentPlaying = this.onState.pipe(
     map((state) => state.content.playing !== 'none'),
