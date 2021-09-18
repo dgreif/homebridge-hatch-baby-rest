@@ -1,7 +1,7 @@
 import { RestPlusState, IotDeviceInfo } from './hatch-sleep-types'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
-import { BehaviorSubject, skip, Subject } from 'rxjs'
-import { filter, take } from 'rxjs/operators'
+import { BehaviorSubject, firstValueFrom, skip, Subject } from 'rxjs'
+import { filter } from 'rxjs/operators'
 import { delay, logError } from './util'
 import { DeepPartial } from 'ts-essentials'
 
@@ -118,12 +118,11 @@ export class IotDevice<T> {
               mqttClient.register(thingName, {}, () => {
                 getClientToken = mqttClient.get(thingName)!
                 resolve(
-                  this.onStatusToken
-                    .pipe(
-                      filter((token) => token === getClientToken),
-                      take(1)
+                  firstValueFrom(
+                    this.onStatusToken.pipe(
+                      filter((token) => token === getClientToken)
                     )
-                    .toPromise()
+                  )
                 )
               })
             })
@@ -132,7 +131,7 @@ export class IotDevice<T> {
   }
 
   getCurrentState() {
-    return this.onState.pipe(take(1)).toPromise()
+    return firstValueFrom(this.onState)
   }
 
   update(update: DeepPartial<T>) {
@@ -161,12 +160,9 @@ export class IotDevice<T> {
           )
         }
 
-        const requestComplete = this.onStatusToken
-          .pipe(
-            filter((token) => token === updateToken),
-            take(1)
-          )
-          .toPromise()
+        const requestComplete = firstValueFrom(
+          this.onStatusToken.pipe(filter((token) => token === updateToken))
+        )
 
         // wait a max of 30 seconds to finish request
         return Promise.race([requestComplete, delay(30000)])

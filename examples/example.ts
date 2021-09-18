@@ -2,41 +2,22 @@ import 'dotenv/config'
 import { Rest } from '../src/rest'
 import { delay } from '../src/util'
 import { RestColorAndBrightness } from '../src/rest-commands'
-import { filter, take } from 'rxjs/operators'
+import { filter } from 'rxjs/operators'
 import { colorsMatch } from '../src/feedback'
 import { AudioTrack } from '../src/hatch-sleep-types'
+import { firstValueFrom } from 'rxjs'
 
 async function example() {
   const macAddress = process.env.HBR_MAC_ADDRESS!,
     hbr = new Rest('Test Night Light', macAddress),
     waitForPower = (power: boolean) =>
-      hbr.onIsPowered
-        .pipe(
-          filter((x) => x === power),
-          take(1)
-        )
-        .toPromise(),
+      firstValueFrom(hbr.onIsPowered.pipe(filter((x) => x === power))),
     waitForVolume = (volume: number) =>
-      hbr.onVolume
-        .pipe(
-          filter((x) => x === volume),
-          take(1)
-        )
-        .toPromise(),
+      firstValueFrom(hbr.onVolume.pipe(filter((x) => x === volume))),
     waitForAudioTrack = (audioTrack: number) =>
-      hbr.onAudioTrack
-        .pipe(
-          filter((x) => x === audioTrack),
-          take(1)
-        )
-        .toPromise(),
+      firstValueFrom(hbr.onAudioTrack.pipe(filter((x) => x === audioTrack))),
     waitForColor = (color: RestColorAndBrightness) =>
-      hbr.onColor
-        .pipe(
-          filter((x) => colorsMatch(x, color)),
-          take(1)
-        )
-        .toPromise()
+      firstValueFrom(hbr.onColor.pipe(filter((x) => colorsMatch(x, color))))
 
   console.log('Connecting to Hatch Baby Rest with mac address', macAddress)
 
