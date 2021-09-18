@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.2.4](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v3.2.3...v3.2.4) (2021-09-18)
+
+
+### Bug Fixes
+
+* connect with aws iot before returning devices ([2370896](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/237089636a1988284b10caf24b6cf5625f0efeb3)), closes [#61](https://github.com/dgreif/homebridge-hatch-baby-rest/issues/61)
+* correct rounding for percentage conversion ([85f8013](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/85f801334e69d961cd34033c0bd74b2a5b0d9059))
+* refresh iot client every 8 hours ([1f114a5](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/1f114a5c918e2a93ed0514333a0078a8a462e549)), closes [#59](https://github.com/dgreif/homebridge-hatch-baby-rest/issues/59)
+* typo in homebridge logs ([3b0f0c1](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/3b0f0c1be3ee2a3a12d7a2104282935c1bfecc8c))
+* update dependencies ([979cdc7](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/979cdc71122ca631e11102888e9ce4fb517bf0aa))
+
 ### [3.2.3](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v3.2.2...v3.2.3) (2021-08-15)
 
 
