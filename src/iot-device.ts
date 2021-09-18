@@ -22,7 +22,7 @@ function assignState<T = RestPlusState>(previousState: any, changes: any): T {
 export const MAX_IOT_VALUE = 65535
 
 export function convertFromPercentage(percentage: number) {
-  return Math.floor((percentage / 100) * MAX_IOT_VALUE)
+  return Math.ceil((percentage / 100) * MAX_IOT_VALUE)
 }
 
 export function convertToPercentage(value: number) {
