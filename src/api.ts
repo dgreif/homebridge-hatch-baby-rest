@@ -12,6 +12,7 @@ import { RestMini } from './rest-mini'
 import { Restore } from './restore'
 import { BehaviorSubject } from 'rxjs'
 import { IotDevice } from './iot-device'
+import { debounceTime } from 'rxjs/operators'
 
 export interface ApiConfig extends EmailAuth {}
 
@@ -23,7 +24,8 @@ const productMap = {
   knownProducts = Object.keys(productMap),
   productFetchQueryString = knownProducts
     .map((product) => 'iotProducts=' + product)
-    .join('&')
+    .join('&'),
+  iotClientRefreshPeriod = 8 * 60 * 60 * 1000 // refresh client every 8 hours
 
 export class HatchBabyApi {
   restClient = new RestClient(this.config)
@@ -134,6 +136,13 @@ export class HatchBabyApi {
     }
 
     onIotClient = new BehaviorSubject<AwsIotDevice>(await createNewIotClient())
+
+    onIotClient.pipe(debounceTime(iotClientRefreshPeriod)).subscribe(() => {
+      createNewIotClient()
+        .then((client) => onIotClient?.next(client))
+        .catch(logError)
+    })
+
     return onIotClient
   }
 
