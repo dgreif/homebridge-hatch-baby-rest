@@ -1,6 +1,6 @@
 {
   "name": "homebridge-hatch-baby-rest",
-  "version": "3.2.4",
+  "version": "3.2.5",
   "description": "Homebridge plugin for Hatch Baby Rest bluetooth night light",
   "main": "lib/index.js",
   "scripts": {
