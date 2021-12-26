@@ -13,13 +13,16 @@ import { Restore } from './restore'
 import { BehaviorSubject } from 'rxjs'
 import { IotDevice } from './iot-device'
 import { debounceTime } from 'rxjs/operators'
+import { RestIot } from './rest-iot'
 
 export interface ApiConfig extends EmailAuth {}
 
 const productMap = {
     restPlus: RestPlus,
+    riot: RestIot,
     restMini: RestMini,
     restore: Restore,
+    restoreIot: Restore,
   },
   knownProducts = Object.keys(productMap),
   productFetchQueryString = knownProducts
@@ -151,8 +154,8 @@ export class HatchBabyApi {
         this.getIotDevices(),
         this.getOnIotClient(),
       ]),
-      createDevice = <T extends IotDevice<any>>(
-        product: string,
+      createDevices = <T extends IotDevice<any>>(
+        product: keyof typeof productMap,
         Device: new (info: IotDeviceInfo, onClient: typeof onIotClient) => T
       ): T[] => {
         return devices
@@ -161,9 +164,13 @@ export class HatchBabyApi {
       }
 
     return {
-      restPluses: createDevice('restPlus', RestPlus),
-      restMinis: createDevice('restMini', RestMini),
-      restores: createDevice('restore', Restore),
+      restPluses: createDevices('restPlus', RestPlus),
+      restIots: createDevices('riot', RestIot),
+      restMinis: createDevices('restMini', RestMini),
+      restores: [
+        ...createDevices('restore', Restore),
+        ...createDevices('restoreIot', Restore),
+      ],
     }
   }
 }

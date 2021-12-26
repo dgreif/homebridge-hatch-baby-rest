@@ -18,7 +18,7 @@ export class RestPlus
   extends IotDevice<RestPlusState>
   implements LightAndSoundMachine
 {
-  readonly model = 'Rest+'
+  readonly model: string = 'Rest+'
   audioTracks = audioTracks
 
   onVolume = this.onState.pipe(
