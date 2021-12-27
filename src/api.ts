@@ -147,9 +147,10 @@ export class HatchBabyApi {
   }
 
   async getDevices() {
-    const [devices, onIotClient] = await Promise.all([
+    const [devices, onIotClient, member] = await Promise.all([
         this.getIotDevices(),
         this.getOnIotClient(),
+        this.getMember(),
       ]),
       createDevice = <T extends IotDevice<any>>(
         product: string,
@@ -159,6 +160,12 @@ export class HatchBabyApi {
           .filter((device) => device.product === product)
           .map((info) => new Device(info, onIotClient))
       }
+
+    for (const product of member.products) {
+      if (!knownProducts.includes(product)) {
+        logInfo('Unsupported Product Found: ' + product)
+      }
+    }
 
     return {
       restPluses: createDevice('restPlus', RestPlus),
