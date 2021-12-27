@@ -9,6 +9,7 @@ import {
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { logDebug, logError, logInfo } from './util'
 import { RestPlus } from './rest-plus'
+import { RestIot } from './rest-iot'
 import { RestMini } from './rest-mini'
 import { Restore } from './restore'
 import { BehaviorSubject } from 'rxjs'
@@ -17,7 +18,13 @@ import { debounceTime } from 'rxjs/operators'
 
 export interface ApiConfig extends EmailAuth {}
 
-const knownProducts = [Product.restPlus, Product.restMini, Product.restore],
+const knownProducts = [
+    Product.restPlus,
+    Product.riot,
+    Product.restMini,
+    Product.restore,
+    Product.restoreIot,
+  ],
   productFetchQueryString = knownProducts
     .map((product) => 'iotProducts=' + product)
     .join('&'),
@@ -148,8 +155,8 @@ export class HatchBabyApi {
         this.getOnIotClient(),
         this.getMember(),
       ]),
-      createDevice = <T extends IotDevice<any>>(
-        product: string,
+      createDevices = <T extends IotDevice<any>>(
+        product: Product,
         Device: new (info: IotDeviceInfo, onClient: typeof onIotClient) => T
       ): T[] => {
         return devices
@@ -164,9 +171,13 @@ export class HatchBabyApi {
     }
 
     return {
-      restPluses: createDevice(Product.restPlus, RestPlus),
-      restMinis: createDevice(Product.restMini, RestMini),
-      restores: createDevice(Product.restore, Restore),
+      restPluses: createDevices(Product.restPlus, RestPlus),
+      restIots: createDevices(Product.riot, RestIot),
+      restMinis: createDevices(Product.restMini, RestMini),
+      restores: [
+        ...createDevices(Product.restore, Restore),
+        ...createDevices(Product.restoreIot, Restore),
+      ],
     }
   }
 }
