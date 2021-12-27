@@ -1,10 +1,13 @@
 import { ApiConfig } from './api'
 
+// eslint-disable-line no-shadow
 export const enum Product {
   rest = 'rest',
+  riot = 'riot',
   restPlus = 'restPlus',
   restMini = 'restMini',
   restore = 'restore',
+  restoreIot = 'restoreIot',
 }
 
 export interface Baby {
@@ -148,6 +151,15 @@ interface Audio {
   v: number // volume, max 65535
 }
 
+export interface IotSound {
+  id: number
+  mute: boolean
+  url: string
+  until: 'indefinite' | 'duration' | string
+  duration: number
+  v: number
+}
+
 export interface RestPlusState {
   owned: boolean
   a: Audio
@@ -225,6 +237,83 @@ export interface RestPlusState {
   rssi: number
   LWTP: boolean
   debug: number
+}
+
+export interface RestIotState {
+  env: 'prod' | string
+  alarmsDisabled: boolean
+  nightlightOn: boolean
+  nightlightIntensity: number
+  toddlerLockOn: boolean
+  snoozeDuration: 540
+  current: {
+    srId: number
+    playing: 'none' | 'remote' | 'routine' | string
+    step: number
+    color: {
+      i: number
+      id: number
+      r: number
+      g: number
+      b: number
+      w: number
+      duration: number
+      until: 'indefinite'
+    }
+    sound: IotSound
+  }
+  dataVersion: string
+  sleepScene: {
+    srId: number
+    enabled: boolean
+  }
+  timer: { s: string; d: number }
+  timezone: string
+  rF: {
+    v: string
+    i: boolean
+    u: string
+  }
+  deviceInfo: { f: string; fR: number; hwVersion: string }
+  clock: {
+    i: number
+    turnOffAt: string
+    turnOnAt: string
+    flags: number
+    turnOffMode: 'never' | string
+  }
+  toddlerLock: {
+    turnOffAt: string
+    turnOnAt: string
+    turnOnMode: 'never' | string
+  }
+  lucky: number
+  LDR: 'OK' | string
+  LWTP: boolean
+  debug: number
+  logging: number
+  owned: boolean
+  lastReset: 'PowerOn' | string
+  REX: { lock: number; key: number; command: 'none' | string }
+  connected: boolean
+  rssi: number
+  streaming: { status: 'none' | string }
+}
+
+export interface RestIotFavorite {
+  id: number
+  macAddress: string
+  name: string
+  type: 'favorite'
+  active: boolean
+  enabled: boolean
+  displayOrder: number
+  sleepScene: boolean
+  followBySleepScene: boolean
+  startTime: null
+  endTime: null
+  daysOfWeek: null
+  steps: any[]
 }
 
 export interface RestoreState {
@@ -370,25 +459,16 @@ export const restMiniAudioTracks = [
   RestMiniAudioTrack.Heartbeat,
 ]
 
-export interface RestMiniSound {
-  id: number
-  mute: boolean
-  url: string
-  until: 'indefinite' | 'duration' | string
-  duration: number
-  v: number
-}
-
 export interface RestMiniState {
   env: 'prod' | string
   current: {
     playing: 'none' | 'remote' | string
     step: number
-    sound: RestMiniSound
+    sound: IotSound
   }
   playNext: {
     enabled: boolean
-    sound: RestMiniSound & {
+    sound: IotSound & {
       ignoreVolume: boolean
     }
   }

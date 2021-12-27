@@ -1,22 +1,24 @@
 import { hap } from '../hap'
 import { PlatformAccessory } from 'homebridge'
 import { BaseAccessory } from './base-accessory'
+import { RestIot } from '../rest-iot'
 import { Restore } from '../restore'
 import { logInfo } from '../util'
 
 export class RestoreAccessory extends BaseAccessory {
-  constructor(restore: Restore, accessory: PlatformAccessory) {
+  constructor(restore: Restore | RestIot, accessory: PlatformAccessory) {
     super(restore, accessory)
 
     const { Service, Characteristic } = hap,
-      onOffService = this.getService(Service.Switch)
+      onOffService = this.getService(Service.Switch),
+      stepName = restore instanceof RestIot ? 'favorite' : 'bedtime step'
 
     this.registerCharacteristic(
       onOffService.getCharacteristic(Characteristic.On),
       restore.onSomeContentPlaying,
       (on) => {
         logInfo(
-          `Turning ${on ? 'on first bedtime step for' : 'off'} ${restore.name}`
+          `Turning ${on ? `on first ${stepName} for` : 'off'} ${restore.name}`
         )
         if (on) {
           restore.turnOnRoutine()

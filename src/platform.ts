@@ -13,6 +13,7 @@ import {
 import { HatchBabyPlatformOptions } from './hatch-sleep-types'
 import { Rest } from './rest'
 import { RestoreAccessory } from './accessories/restore-accessory'
+import { RestIot } from './rest-iot'
 import { Restore } from './restore'
 
 export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
@@ -67,19 +68,24 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         this.config.restLights?.map(
           (lightConfig) => new Rest(lightConfig.name, lightConfig.macAddress)
         ) || [],
-      { restPluses, restMinis, restores } = hatchBabyApi
+      { restPluses, restMinis, restores, restIots } = hatchBabyApi
         ? await hatchBabyApi.getDevices()
-        : { restPluses: [], restMinis: [], restores: [] },
-      lights = [...restLights, ...restPluses],
+        : { restPluses: [], restMinis: [], restores: [], restIots: [] },
       { api } = this,
       cachedAccessoryIds = Object.keys(this.homebridgeAccessories),
       platformAccessories: PlatformAccessory[] = [],
       activeAccessoryIds: string[] = [],
       debugPrefix = isTestHomebridge ? 'TEST ' : '',
-      devices = [...lights, ...restMinis, ...restores]
+      devices = [
+        ...restLights,
+        ...restPluses,
+        ...restMinis,
+        ...restIots,
+        ...restores,
+      ]
 
     this.log.info(
-      `Configuring ${restLights.length} Rest, ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, and ${restores.length} Restore Devices`
+      `Configuring ${restLights.length} Rest, ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, ${restIots.length} Rest 2nd Gens, and ${restores.length} Restore Devices`
     )
 
     devices.forEach((device) => {
@@ -102,7 +108,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         homebridgeAccessory =
           this.homebridgeAccessories[uuid] || createHomebridgeAccessory()
 
-      if (device instanceof Restore) {
+      if (device instanceof Restore || device instanceof RestIot) {
         new RestoreAccessory(device, homebridgeAccessory)
       } else if ('onBrightness' in device) {
         new LightAndSoundMachineAccessory(device, homebridgeAccessory)
