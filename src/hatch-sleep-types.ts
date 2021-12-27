@@ -1,5 +1,12 @@
 import { ApiConfig } from './api'
 
+export const enum Product {
+  rest = 'rest',
+  restPlus = 'restPlus',
+  restMini = 'restMini',
+  restore = 'restore',
+}
+
 export interface Baby {
   id: number
   createDate: string
@@ -39,7 +46,7 @@ export interface LoginResponse {
 }
 
 export interface MemberResponse {
-  products: ('rest' | 'restPlus')[]
+  products: Product[]
   debugLevel: string
   member: Member
 }
@@ -52,7 +59,7 @@ export interface IotDeviceInfo {
   owner: boolean
   name: string
   hardwareVersion: string
-  product: string
+  product: Product
   thingName: string
   email: string
   memberId: number

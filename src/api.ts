@@ -1,9 +1,10 @@
 import { apiPath, EmailAuth, requestWithRetry, RestClient } from './rest-client'
 import {
   IotCredentialsResponse,
+  IotDeviceInfo,
   IotTokenResponse,
   MemberResponse,
-  IotDeviceInfo,
+  Product,
 } from './hatch-sleep-types'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { logDebug, logError, logInfo } from './util'
@@ -16,12 +17,7 @@ import { debounceTime } from 'rxjs/operators'
 
 export interface ApiConfig extends EmailAuth {}
 
-const productMap = {
-    restPlus: RestPlus,
-    restMini: RestMini,
-    restore: Restore,
-  },
-  knownProducts = Object.keys(productMap),
+const knownProducts = [Product.restPlus, Product.restMini, Product.restore],
   productFetchQueryString = knownProducts
     .map((product) => 'iotProducts=' + product)
     .join('&'),
@@ -162,15 +158,15 @@ export class HatchBabyApi {
       }
 
     for (const product of member.products) {
-      if (!knownProducts.includes(product)) {
+      if (!knownProducts.includes(product) && product !== Product.rest) {
         logInfo('Unsupported Product Found: ' + product)
       }
     }
 
     return {
-      restPluses: createDevice('restPlus', RestPlus),
-      restMinis: createDevice('restMini', RestMini),
-      restores: createDevice('restore', Restore),
+      restPluses: createDevice(Product.restPlus, RestPlus),
+      restMinis: createDevice(Product.restMini, RestMini),
+      restores: createDevice(Product.restore, Restore),
     }
   }
 }
