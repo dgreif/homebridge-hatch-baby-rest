@@ -86,6 +86,14 @@ export class IotDevice<T> {
         if (clientToken === getClientToken) {
           const { state } = status
 
+          if (this.info.product === 'riot') {
+            // eslint-disable-next-line no-console
+            console.log(
+              'RIOT:',
+              JSON.stringify(assignState(state.reported, state.desired))
+            )
+          }
+
           this.onCurrentState.next(assignState(state.reported, state.desired))
         }
       }
