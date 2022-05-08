@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.3.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v3.2.5...v3.3.0) (2022-05-08)
+
+
+### Features
+
+* rest 2nd gen support ([ea30705](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/ea307057b14ac0f3b115901129fac5fe6f7e5a4c))
+
+
+### Bug Fixes
+
+* log unsupported products ([1d093cb](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/1d093cb9b99e53ac706b2b2d385d8eb88ef188ea))
+* update dependencies ([c1d5073](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/c1d507300bba4a47fa41fef701082aaa74c88858))
+* update dependencies ([0f29b3d](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/0f29b3dea167ddcf5dd7170c7dbf27b2abe4f2af))
+
 ## [3.3.0-beta.1](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v3.3.0-beta.0...v3.3.0-beta.1) (2021-12-27)
 
 ## [3.3.0-beta.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v3.2.5...v3.3.0-beta.0) (2021-12-26)
