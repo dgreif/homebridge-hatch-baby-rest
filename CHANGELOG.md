@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.3.1](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v3.3.0...v3.3.1) (2022-05-28)
+
+
+### Bug Fixes
+
+* remove restoreIot ([2e3d1ad](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/2e3d1ad93f844aade5cbceac5b887862c83bf663)), closes [#74](https://github.com/dgreif/homebridge-hatch-baby-rest/issues/74)
+
 ## [3.3.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v3.2.5...v3.3.0) (2022-05-08)
 
 
