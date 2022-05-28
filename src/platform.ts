@@ -85,7 +85,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
       ]
 
     this.log.info(
-      `Configuring ${restLights.length} Rest, ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, ${restIots.length} Rest 2nd Gens, and ${restores.length} Restore Devices`
+      `Configuring ${restLights.length} Rest, ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, ${restIots.length} Rest 2nd Gen, and ${restores.length} Restore`
     )
 
     devices.forEach((device) => {
