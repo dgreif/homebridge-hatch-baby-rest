@@ -1,5 +1,6 @@
 import {
   IotDeviceInfo,
+  Product,
   RestIotFavorite,
   RestIotState,
 } from './hatch-sleep-types'
@@ -11,7 +12,8 @@ import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { apiPath, RestClient } from './rest-client'
 
 export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
-  readonly model = 'Rest 2nd Gen'
+  readonly model =
+    this.info.product === Product.riotPlus ? 'Rest+ 2nd Gen' : 'Rest 2nd Gen'
 
   constructor(
     public readonly info: IotDeviceInfo,
