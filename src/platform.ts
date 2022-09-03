@@ -68,9 +68,16 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         this.config.restLights?.map(
           (lightConfig) => new Rest(lightConfig.name, lightConfig.macAddress)
         ) || [],
-      { restPluses, restMinis, restores, restIots } = hatchBabyApi
-        ? await hatchBabyApi.getDevices()
-        : { restPluses: [], restMinis: [], restores: [], restIots: [] },
+      { restPluses, restMinis, restores, restIots, restIotPluses } =
+        hatchBabyApi
+          ? await hatchBabyApi.getDevices()
+          : {
+              restPluses: [],
+              restMinis: [],
+              restores: [],
+              restIots: [],
+              restIotPluses: [],
+            },
       { api } = this,
       cachedAccessoryIds = Object.keys(this.homebridgeAccessories),
       platformAccessories: PlatformAccessory[] = [],
@@ -81,11 +88,12 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         ...restPluses,
         ...restMinis,
         ...restIots,
+        ...restIotPluses,
         ...restores,
       ]
 
     this.log.info(
-      `Configuring ${restLights.length} Rest, ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, ${restIots.length} Rest 2nd Gen, and ${restores.length} Restore`
+      `Configuring ${restLights.length} Rest, ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, ${restIots.length} Rest 2nd Gen, ${restIotPluses.length} Rest+ 2nd Gen, and ${restores.length} Restore`
     )
 
     devices.forEach((device) => {

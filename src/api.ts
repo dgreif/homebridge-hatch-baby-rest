@@ -21,6 +21,7 @@ export interface ApiConfig extends EmailAuth {}
 const knownProducts = [
     Product.restPlus,
     Product.riot,
+    Product.riotPlus,
     Product.restMini,
     Product.restore,
   ],
@@ -176,6 +177,7 @@ export class HatchBabyApi {
     return {
       restPluses: createDevices(Product.restPlus, RestPlus),
       restIots: createDevices(Product.riot, RestIot),
+      restIotPluses: createDevices(Product.riotPlus, RestIot),
       restMinis: createDevices(Product.restMini, RestMini),
       restores: createDevices(Product.restore, Restore),
     }

@@ -4,6 +4,7 @@ import { ApiConfig } from './api'
 export const enum Product {
   rest = 'rest',
   riot = 'riot',
+  riotPlus = 'riotPlus',
   restPlus = 'restPlus',
   restMini = 'restMini',
   restore = 'restore',
