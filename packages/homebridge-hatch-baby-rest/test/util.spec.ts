@@ -1,4 +1,4 @@
-import { stripMacAddress, stripUuid } from '../src/util'
+import { stripMacAddress, stripUuid } from '../util'
 import { expect } from 'chai'
 
 describe('Utils', () => {

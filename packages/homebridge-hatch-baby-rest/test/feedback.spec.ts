@@ -1,4 +1,4 @@
-import { parseFeedbackBuffer } from '../src/feedback'
+import { parseFeedbackBuffer } from '../feedback'
 import { expect } from 'chai'
 
 describe('Feedback Parsing', () => {

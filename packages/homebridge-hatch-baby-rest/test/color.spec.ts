@@ -3,7 +3,7 @@ import {
   convertToHexRange,
   hsbToRgb,
   rgbToHsb,
-} from '../src/colors'
+} from '../colors'
 import { expect } from 'chai'
 
 describe('convertToHexRange', () => {
