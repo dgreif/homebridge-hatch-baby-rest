@@ -40,8 +40,8 @@
     "tsconfig": "0.0.0"
   },
   "engines": {
-    "node": ">=10.0.0",
-    "homebridge": ">=0.4.0"
+    "node": "^16 || ^18",
+    "homebridge": ">=1.5.1"
   },
   "bugs": {
     "url": "https://github.com/dgreif/homebridge-hatch-baby-rest/issues"
