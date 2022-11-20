@@ -7,9 +7,9 @@
     "build": "turbo run build",
     "version": "changeset version && npm i",
     "release": "turbo run test lint build && changeset publish",
-    "example": "ts-node ./examples/example.ts",
-    "plus-example": "ts-node ./examples/rest-plus-example.ts",
-    "hb": "npm run build && homebridge -P . -U ./.homebridge",
+    "example": "ts-node ./packages/examples/example.ts",
+    "plus-example": "ts-node ./packages/examples/rest-plus-example.ts",
+    "hb": "npm run build && TEST_HOMEBRIDGE=true homebridge -P ./packages/homebridge-hatch-baby-rest -U ./.homebridge",
     "push-with-tags": "git push --follow-tags && node ./build/github-releaser.js",
     "deploy": "standard-version && npm publish && npm run push-with-tags",
     "deploy-beta": "standard-version --prerelease beta && npm publish --tag beta && npm run push-with-tags"

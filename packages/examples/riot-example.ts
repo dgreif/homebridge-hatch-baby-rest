@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { HatchBabyApi } from '../src/api'
+import { HatchBabyApi } from '../homebridge-hatch-baby-rest/api'
 
 const { env } = process
 
@@ -9,10 +9,10 @@ async function example() {
       password: env.HBR_PASSWORD!,
     }),
     devices = await api.getDevices(),
-    restore = devices.restores[0]
+    riot = devices.restIots[0]
 
-  restore.turnOnRoutine()
-  setTimeout(() => restore.turnOff(), 4000)
+  await riot.turnOnRoutine()
+  setTimeout(() => riot.turnOff(), 4000)
 }
 
 example()

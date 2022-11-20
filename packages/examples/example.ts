@@ -1,10 +1,10 @@
 import 'dotenv/config'
-import { Rest } from '../src/rest'
-import { delay } from '../src/util'
-import { RestColorAndBrightness } from '../src/rest-commands'
+import { Rest } from '../homebridge-hatch-baby-rest/rest'
+import { delay } from '../homebridge-hatch-baby-rest/util'
+import { RestColorAndBrightness } from '../homebridge-hatch-baby-rest/rest-commands'
 import { filter } from 'rxjs/operators'
-import { colorsMatch } from '../src/feedback'
-import { AudioTrack } from '../src/hatch-sleep-types'
+import { colorsMatch } from '../homebridge-hatch-baby-rest/feedback'
+import { AudioTrack } from '../homebridge-hatch-baby-rest/hatch-sleep-types'
 import { firstValueFrom } from 'rxjs'
 
 async function example() {

@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { HatchBabyApi } from '../src/api'
+import { HatchBabyApi } from '../homebridge-hatch-baby-rest/api'
 
 const { env } = process
 

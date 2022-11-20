@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha test/**/*.spec.ts",
-    "lint": "eslint '**/*.ts",
+    "lint": "eslint '**/*.ts'",
     "lint:fix": "eslint '**/*.ts --fix",
     "prettier": "prettier **/*.ts --write",
     "build": "rm -rf lib && tsc"
@@ -35,6 +35,9 @@
     "got": "11.8.5",
     "pure-color": "1.3.0",
     "rxjs": "7.5.7"
+  },
+  "devDependencies": {
+    "tsconfig": "0.0.0"
   },
   "engines": {
     "node": ">=10.0.0",
