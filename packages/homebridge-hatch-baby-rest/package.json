@@ -1,0 +1,62 @@
+{
+  "name": "homebridge-hatch-baby-rest",
+  "version": "3.4.0",
+  "description": "Homebridge plugin for Hatch Baby Rest bluetooth night light",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "mocha test/**/*.spec.ts",
+    "lint": "eslint '**/*.ts",
+    "lint:fix": "eslint '**/*.ts --fix",
+    "prettier": "prettier **/*.ts --write",
+    "build": "rm -rf lib && tsc"
+  },
+  "standard-version": {
+    "scripts": {
+      "prerelease": "npm run build && npm test"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dgreif/homebridge-hatch-baby-rest.git"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "hatch",
+    "baby",
+    "rest",
+    "night",
+    "light"
+  ],
+  "author": "dgreif",
+  "license": "MIT",
+  "dependencies": {
+    "@abandonware/noble": "1.9.2-15",
+    "aws-iot-device-sdk": "2.2.12",
+    "got": "11.8.5",
+    "pure-color": "1.3.0",
+    "rxjs": "7.5.7"
+  },
+  "engines": {
+    "node": ">=10.0.0",
+    "homebridge": ">=0.4.0"
+  },
+  "bugs": {
+    "url": "https://github.com/dgreif/homebridge-hatch-baby-rest/issues"
+  },
+  "homepage": "https://github.com/dgreif/homebridge-hatch-baby-rest#readme",
+  "funding": [
+    {
+      "type": "paypal",
+      "url": "https://www.paypal.me/dustingreif"
+    },
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/dgreif"
+    }
+  ],
+  "files": [
+    "lib",
+    "CHANGELOG.md",
+    "config.schema.json"
+  ]
+}

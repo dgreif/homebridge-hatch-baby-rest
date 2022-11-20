@@ -1,48 +1,23 @@
 {
-  "name": "homebridge-hatch-baby-rest",
-  "version": "3.4.0",
-  "description": "Homebridge plugin for Hatch Baby Rest bluetooth night light",
-  "main": "lib/index.js",
+  "name": "homebridge-hatch-baby-rest-repo",
+  "private": true,
   "scripts": {
-    "test": "mocha test/**/*.spec.ts && eslint '**/*.ts'",
-    "lint": "eslint '**/*.ts' --fix",
-    "prettier": "prettier **/*.ts --write",
-    "build": "rm -rf lib && tsc",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "build": "turbo run build",
     "version": "changeset version && npm i",
+    "release": "turbo run test lint build && changeset publish",
     "example": "ts-node ./examples/example.ts",
     "plus-example": "ts-node ./examples/rest-plus-example.ts",
     "hb": "npm run build && homebridge -P . -U ./.homebridge",
-    "prepare-npm-package": "./build/package.sh",
     "push-with-tags": "git push --follow-tags && node ./build/github-releaser.js",
     "deploy": "standard-version && npm publish && npm run push-with-tags",
-    "release": "npm run build && npm run lint && npm run test && changeset publish",
     "deploy-beta": "standard-version --prerelease beta && npm publish --tag beta && npm run push-with-tags"
   },
   "standard-version": {
     "scripts": {
       "prerelease": "npm run build && npm test"
     }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/dgreif/homebridge-hatch-baby-rest.git"
-  },
-  "keywords": [
-    "homebridge-plugin",
-    "hatch",
-    "baby",
-    "rest",
-    "night",
-    "light"
-  ],
-  "author": "dgreif",
-  "license": "MIT",
-  "dependencies": {
-    "@abandonware/noble": "1.9.2-15",
-    "aws-iot-device-sdk": "2.2.12",
-    "got": "11.8.5",
-    "pure-color": "1.3.0",
-    "rxjs": "7.5.7"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.7",
@@ -67,29 +42,10 @@
     "standard-version": "9.5.0",
     "ts-essentials": "9.3.0",
     "ts-node": "10.9.1",
+    "turbo": "^1.6.3",
     "typescript": "4.9.3"
   },
-  "engines": {
-    "node": ">=10.0.0",
-    "homebridge": ">=0.4.0"
-  },
-  "bugs": {
-    "url": "https://github.com/dgreif/homebridge-hatch-baby-rest/issues"
-  },
-  "homepage": "https://github.com/dgreif/homebridge-hatch-baby-rest#readme",
-  "funding": [
-    {
-      "type": "paypal",
-      "url": "https://www.paypal.me/dustingreif"
-    },
-    {
-      "type": "github",
-      "url": "https://github.com/sponsors/dgreif"
-    }
-  ],
-  "files": [
-    "lib",
-    "CHANGELOG.md",
-    "config.schema.json"
+  "workspaces": [
+    "packages/*"
   ]
 }
