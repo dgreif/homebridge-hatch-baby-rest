@@ -8,12 +8,14 @@
     "lint": "eslint '**/*.ts' --fix",
     "prettier": "prettier **/*.ts --write",
     "build": "rm -rf lib && tsc",
+    "version": "changeset version && npm i",
     "example": "ts-node ./examples/example.ts",
     "plus-example": "ts-node ./examples/rest-plus-example.ts",
     "hb": "npm run build && homebridge -P . -U ./.homebridge",
     "prepare-npm-package": "./build/package.sh",
     "push-with-tags": "git push --follow-tags && node ./build/github-releaser.js",
     "deploy": "standard-version && npm publish && npm run push-with-tags",
+    "release": "npm run build && npm run lint && npm run test && changeset publish",
     "deploy-beta": "standard-version --prerelease beta && npm publish --tag beta && npm run push-with-tags"
   },
   "standard-version": {
