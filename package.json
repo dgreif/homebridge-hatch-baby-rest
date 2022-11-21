@@ -6,7 +6,7 @@
     "lint": "turbo run lint",
     "build": "turbo run build",
     "version": "changeset version && npm i",
-    "release": "turbo run built test lint && changeset publish",
+    "release": "turbo run build test lint && changeset publish",
     "example": "ts-node ./packages/examples/example.ts",
     "plus-example": "ts-node ./packages/examples/rest-plus-example.ts",
     "hb": "npm run build && TEST_HOMEBRIDGE=true homebridge -U ./.homebridge",
