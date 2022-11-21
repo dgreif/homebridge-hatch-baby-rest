@@ -17,11 +17,6 @@
     "prepare-beta": "changeset pre enter beta && git add .changeset/pre.json && git commit -am 'Prepare for beta release'",
     "exit-beta": "changeset pre exit && commit -am 'Exit beta release'"
   },
-  "standard-version": {
-    "scripts": {
-      "prerelease": "npm run build && npm test"
-    }
-  },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.7",
     "@changesets/cli": "^2.25.2",
