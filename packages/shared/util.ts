@@ -37,14 +37,6 @@ export function enableDebug() {
   debugEnabled = true
 }
 
-export function stripUuid(uuid: string) {
-  return uuid.replace(/-/g, '').toLowerCase()
-}
-
-export function stripMacAddress(uuid: string) {
-  return uuid.replace(/-|:/g, '').toLowerCase()
-}
-
 export function delay(milliseconds: number) {
   return new Promise((resolve) => {
     setTimeout(resolve, milliseconds)

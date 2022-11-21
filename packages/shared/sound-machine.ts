@@ -1,4 +1,4 @@
-import { hap } from '../hap'
+import { hap } from './hap'
 import { filter, map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
 import { PlatformAccessory } from 'homebridge'

@@ -1,6 +1,10 @@
 import { setHap } from '../shared/hap'
-import { HatchBabyRestPlatform, platformName, pluginName } from './platform'
 import { migrateRestBluetooth } from '../shared/migrate-bluetooth'
+import {
+  HatchRestBluetoothPlatform,
+  platformName,
+  pluginName,
+} from './platform'
 
 export default function (homebridge: any) {
   setHap(homebridge.hap)
@@ -10,7 +14,7 @@ export default function (homebridge: any) {
   homebridge.registerPlatform(
     pluginName,
     platformName,
-    HatchBabyRestPlatform,
+    HatchRestBluetoothPlatform,
     true
   )
 }

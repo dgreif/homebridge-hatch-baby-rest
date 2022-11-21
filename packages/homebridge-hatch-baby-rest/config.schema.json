@@ -1,7 +1,7 @@
 {
   "pluginAlias": "HatchBabyRest",
   "pluginType": "platform",
-  "headerDisplay": "Supply email and password to load Rest+ lights.  For Rest (bluetooth) lights, please supply the name and mac address for each light.",
+  "headerDisplay": "Supply email and password to load WiFi Hatch lights",
   "schema": {
     "type": "object",
     "properties": {
@@ -16,27 +16,6 @@
         "type": "string",
         "placeholder": "Password",
         "required": false
-      },
-      "restLights": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "title": "Light Name",
-              "type": "string",
-              "placeholder": "Light Name",
-              "required": true
-            },
-            "macAddress": {
-              "title": "MAC Address",
-              "type": "string",
-              "description": "Found in device settings in the Hatch Baby Rest app",
-              "placeholder": "MAC Address",
-              "required": true
-            }
-          }
-        }
       }
     }
   }

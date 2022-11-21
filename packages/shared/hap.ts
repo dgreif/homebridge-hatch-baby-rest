@@ -1,4 +1,4 @@
-import { HAP } from 'homebridge'
+import type { HAP } from 'homebridge'
 
 export let hap: HAP
 export function setHap(hapInstance: HAP) {
@@ -6,6 +6,3 @@ export function setHap(hapInstance: HAP) {
 }
 
 export const isTestHomebridge = process.env.TEST_HOMEBRIDGE === 'true'
-
-export const pluginName = 'homebridge-hatch-baby-rest'
-export const platformName = 'HatchBabyRest'

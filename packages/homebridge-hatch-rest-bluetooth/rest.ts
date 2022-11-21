@@ -20,25 +20,26 @@ import {
   take,
   tap,
 } from 'rxjs/operators'
-import { logError, logInfo, stripMacAddress, stripUuid } from './util'
+import { logError, logInfo } from '../shared/util'
+import { stripMacAddress, stripUuid } from './util'
 import {
   formatRestCommand,
   RestColorAndBrightness,
   RestCommand,
   RestCommandValue,
-} from './rest-commands'
+} from '../shared/rest-commands'
 import { Peripheral, Service } from '@abandonware/noble'
 import { promisify } from 'util'
 import { colorsMatch, Feedback, parseFeedbackBuffer } from './feedback'
-import { AudioTrack, audioTracks } from './hatch-sleep-types'
-import { LightAndSoundMachine } from './accessories/light-and-sound-machine'
+import { AudioTrack, audioTracks } from '../shared/hatch-sleep-types'
+import { LightAndSoundMachine } from '../shared/light-and-sound-machine'
 import {
   rgbToHsb,
   convertToHexRange,
   hsbToRgb,
   HsbColor,
   convertFromHexRange,
-} from './colors'
+} from '../shared/colors'
 
 const usedPeripheralIds: string[] = []
 

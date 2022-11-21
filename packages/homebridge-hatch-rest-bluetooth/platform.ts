@@ -1,8 +1,7 @@
-import { ApiConfig, HatchBabyApi } from './api'
 import { hap, isTestHomebridge } from '../shared/hap'
 import { useLogger } from '../shared/util'
+import { stripMacAddress } from './util'
 import { LightAndSoundMachineAccessory } from '../shared/light-and-sound-machine'
-import { SoundMachineAccessory } from '../shared/sound-machine'
 import type {
   API,
   DynamicPlatformPlugin,
@@ -10,21 +9,28 @@ import type {
   PlatformAccessory,
   PlatformConfig,
 } from 'homebridge'
-import { RestoreAccessory } from './restore-accessory'
-import { RestIot } from './rest-iot'
-import { Restore } from './restore'
+import { Rest } from './rest'
 
-export const pluginName = 'homebridge-hatch-baby-rest'
-export const platformName = 'HatchBabyRest'
+export const pluginName = 'homebridge-hatch-rest-bluetooth'
+export const platformName = 'HatchRestBluetooth'
 
-export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
+interface RestLightConfig {
+  name: string
+  macAddress: string
+}
+
+export interface HatchRestBluetoothPlatformOptions {
+  restLights?: RestLightConfig[]
+}
+
+export class HatchRestBluetoothPlatform implements DynamicPlatformPlugin {
   private readonly homebridgeAccessories: {
     [uuid: string]: PlatformAccessory
   } = {}
 
   constructor(
     public log: Logging,
-    public config: PlatformConfig & ApiConfig,
+    public config: PlatformConfig & HatchRestBluetoothPlatformOptions,
     public api: API
   ) {
     useLogger({
@@ -43,10 +49,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
 
     this.api.on('didFinishLaunching', () => {
       this.log.debug('didFinishLaunching')
-      this.connectToApi().catch((e) => {
-        this.log.error('Error connecting to API')
-        this.log.error(e)
-      })
+      this.loadDevices()
     })
 
     this.homebridgeAccessories = {}
@@ -60,40 +63,22 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
     this.homebridgeAccessories[accessory.UUID] = accessory
   }
 
-  async connectToApi() {
-    const hatchBabyApi =
-        this.config.email && this.config.password
-          ? new HatchBabyApi(this.config)
-          : undefined,
-      { restPluses, restMinis, restores, restIots, restIotPluses } =
-        hatchBabyApi
-          ? await hatchBabyApi.getDevices()
-          : {
-              restPluses: [],
-              restMinis: [],
-              restores: [],
-              restIots: [],
-              restIotPluses: [],
-            },
+  loadDevices() {
+    const restLights =
+        this.config.restLights?.map(
+          (lightConfig) => new Rest(lightConfig.name, lightConfig.macAddress)
+        ) || [],
       { api } = this,
       cachedAccessoryIds = Object.keys(this.homebridgeAccessories),
       platformAccessories: PlatformAccessory[] = [],
       activeAccessoryIds: string[] = [],
       debugPrefix = isTestHomebridge ? 'TEST ' : '',
-      devices = [
-        ...restPluses,
-        ...restMinis,
-        ...restIots,
-        ...restIotPluses,
-        ...restores,
-      ]
+      devices = restLights
 
-    this.log.info(
-      `Configuring ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, ${restIots.length} Rest 2nd Gen, ${restIotPluses.length} Rest+ 2nd Gen, and ${restores.length} Restore`
-    )
+    this.log.info(`Configuring ${restLights.length} Rest Sound Machines`)
 
     devices.forEach((device) => {
-      const id = device.id,
+      const id = stripMacAddress(device.macAddress),
         uuid = hap.uuid.generate(debugPrefix + id),
         displayName = debugPrefix + device.name,
         createHomebridgeAccessory = () => {
@@ -111,13 +96,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         homebridgeAccessory =
           this.homebridgeAccessories[uuid] || createHomebridgeAccessory()
 
-      if (device instanceof Restore || device instanceof RestIot) {
-        new RestoreAccessory(device, homebridgeAccessory)
-      } else if ('onBrightness' in device) {
-        new LightAndSoundMachineAccessory(device, homebridgeAccessory)
-      } else {
-        new SoundMachineAccessory(device, homebridgeAccessory)
-      }
+      new LightAndSoundMachineAccessory(device, homebridgeAccessory)
 
       this.homebridgeAccessories[uuid] = homebridgeAccessory
       activeAccessoryIds.push(uuid)

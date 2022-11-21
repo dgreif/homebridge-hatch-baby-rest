@@ -1,6 +1,6 @@
-import { RestoreState } from './hatch-sleep-types'
+import { RestoreState } from '../shared/hatch-sleep-types'
 import { distinctUntilChanged, map } from 'rxjs/operators'
-import { BaseDevice } from './accessories/base-accessory'
+import { BaseDevice } from '../shared/base-accessory'
 import { IotDevice } from './iot-device'
 
 export class Restore extends IotDevice<RestoreState> implements BaseDevice {

@@ -1,5 +1,3 @@
-import { ApiConfig } from './api'
-
 // eslint-disable-line no-shadow
 export const enum Product {
   rest = 'rest',
@@ -492,13 +490,4 @@ export interface RestMiniState {
   REX: { lock: number; key: number; command: 'none' | string }
   connected: boolean
   rssi: number
-}
-
-interface RestLightConfig {
-  name: string
-  macAddress: string
-}
-
-export interface HatchBabyPlatformOptions extends ApiConfig {
-  restLights?: RestLightConfig[]
 }

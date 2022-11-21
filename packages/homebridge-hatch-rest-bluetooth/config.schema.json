@@ -1,0 +1,31 @@
+{
+  "pluginAlias": "HatchRestBluetooth",
+  "pluginType": "platform",
+  "headerDisplay": "Supply the name and mac address for each light",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "restLights": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "title": "Light Name",
+              "type": "string",
+              "placeholder": "Light Name",
+              "required": true
+            },
+            "macAddress": {
+              "title": "MAC Address",
+              "type": "string",
+              "description": "Found in device settings in the Hatch Baby Rest app",
+              "placeholder": "MAC Address",
+              "required": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

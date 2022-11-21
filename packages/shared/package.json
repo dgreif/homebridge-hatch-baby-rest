@@ -1,0 +1,11 @@
+{
+  "name": "shared",
+  "private": true,
+  "scripts": {
+    "test": "mocha test/**/*.spec.ts",
+    "lint": "eslint '**/*.ts'",
+    "lint:fix": "eslint '**/*.ts' --fix",
+    "prettier": "prettier **/*.ts --write",
+    "build": ""
+  }
+}

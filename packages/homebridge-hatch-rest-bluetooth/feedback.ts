@@ -1,4 +1,4 @@
-import { RestColorAndBrightness } from './rest-commands'
+import { RestColorAndBrightness } from '../shared/rest-commands'
 
 interface FeedbackField {
   name: string

@@ -1,8 +1,8 @@
-import { RestPlusState, IotDeviceInfo } from './hatch-sleep-types'
+import { RestPlusState, IotDeviceInfo } from '../shared/hatch-sleep-types'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { BehaviorSubject, firstValueFrom, skip, Subject } from 'rxjs'
 import { filter } from 'rxjs/operators'
-import { delay, logError } from './util'
+import { delay, logError } from '../shared/util'
 import { DeepPartial } from 'ts-essentials'
 
 function assignState<T = RestPlusState>(previousState: any, changes: any): T {

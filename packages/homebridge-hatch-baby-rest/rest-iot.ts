@@ -3,9 +3,9 @@ import {
   Product,
   RestIotFavorite,
   RestIotState,
-} from './hatch-sleep-types'
+} from '../shared/hatch-sleep-types'
 import { distinctUntilChanged, map } from 'rxjs/operators'
-import { BaseDevice } from './accessories/base-accessory'
+import { BaseDevice } from '../shared/base-accessory'
 import { IotDevice } from './iot-device'
 import { BehaviorSubject } from 'rxjs'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'

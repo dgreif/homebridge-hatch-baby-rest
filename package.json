@@ -9,7 +9,7 @@
     "release": "turbo run test lint build && changeset publish",
     "example": "ts-node ./packages/examples/example.ts",
     "plus-example": "ts-node ./packages/examples/rest-plus-example.ts",
-    "hb": "npm run build && TEST_HOMEBRIDGE=true homebridge -P ./packages/homebridge-hatch-baby-rest -U ./.homebridge",
+    "hb": "npm run build && TEST_HOMEBRIDGE=true homebridge -U ./.homebridge",
     "push-with-tags": "git push --follow-tags && node ./build/github-releaser.js",
     "predeploy": "git pull -r && npm run build && npm run lint && npm run test",
     "postdeploy": "npm run push-with-tags",

@@ -3,10 +3,10 @@ import {
   audioTracks,
   RestPlusColor,
   RestPlusState,
-} from './hatch-sleep-types'
+} from '../shared/hatch-sleep-types'
 import { distinctUntilChanged, map } from 'rxjs/operators'
-import { LightAndSoundMachine } from './accessories/light-and-sound-machine'
-import { HsbColor, hsbToRgb, rgbToHsb } from './colors'
+import { LightAndSoundMachine } from '../shared/light-and-sound-machine'
+import { HsbColor, hsbToRgb, rgbToHsb } from '../shared/colors'
 import {
   convertFromPercentage,
   convertToPercentage,

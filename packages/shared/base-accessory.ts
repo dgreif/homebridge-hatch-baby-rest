@@ -1,4 +1,4 @@
-import { hap, isTestHomebridge } from '../hap'
+import { hap, isTestHomebridge } from './hap'
 import { distinctUntilChanged } from 'rxjs/operators'
 import { Observable, of } from 'rxjs'
 import {

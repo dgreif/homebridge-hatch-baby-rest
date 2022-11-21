@@ -1,6 +1,6 @@
 import got, { Options as RequestOptions } from 'got'
-import { delay, logError } from './util'
-import { LoginResponse } from './hatch-sleep-types'
+import { delay, logError } from '../shared/util'
+import { LoginResponse } from '../shared/hatch-sleep-types'
 
 const apiBaseUrl = 'https://data.hatchbaby.com/',
   defaultRequestOptions: RequestOptions = {

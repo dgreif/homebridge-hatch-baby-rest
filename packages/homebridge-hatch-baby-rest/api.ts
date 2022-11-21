@@ -5,9 +5,9 @@ import {
   IotTokenResponse,
   MemberResponse,
   Product,
-} from './hatch-sleep-types'
+} from '../shared/hatch-sleep-types'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
-import { logDebug, logError, logInfo } from './util'
+import { logDebug, logError, logInfo } from '../shared/util'
 import { RestPlus } from './rest-plus'
 import { RestIot } from './rest-iot'
 import { RestMini } from './rest-mini'

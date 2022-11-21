@@ -1,9 +1,9 @@
-import { hap } from '../hap'
+import { hap } from './hap'
 import { debounceTime, map, startWith } from 'rxjs/operators'
 import { Observable, Subject } from 'rxjs'
 import { PlatformAccessory } from 'homebridge'
-import { HsbColor } from '../colors'
-import { logInfo } from '../util'
+import { HsbColor } from './colors'
+import { logInfo } from './util'
 import { SoundMachine, SoundMachineAccessory } from './sound-machine'
 
 export interface LightAndSoundMachine extends SoundMachine {

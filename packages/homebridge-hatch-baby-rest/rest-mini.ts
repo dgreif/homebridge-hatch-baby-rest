@@ -2,14 +2,14 @@ import {
   RestMiniAudioTrack,
   restMiniAudioTracks,
   RestMiniState,
-} from './hatch-sleep-types'
+} from '../shared/hatch-sleep-types'
 import { distinctUntilChanged, map } from 'rxjs/operators'
 import {
   convertFromPercentage,
   convertToPercentage,
   IotDevice,
 } from './iot-device'
-import { SoundMachine } from './accessories/sound-machine'
+import { SoundMachine } from '../shared/sound-machine'
 
 export class RestMini extends IotDevice<RestMiniState> implements SoundMachine {
   readonly model = 'Rest Mini'

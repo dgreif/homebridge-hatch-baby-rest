@@ -1,9 +1,9 @@
-import { hap } from '../hap'
+import { hap } from '../shared/hap'
 import { PlatformAccessory } from 'homebridge'
-import { BaseAccessory } from './base-accessory'
-import { RestIot } from '../rest-iot'
-import { Restore } from '../restore'
-import { logInfo } from '../util'
+import { BaseAccessory } from '../shared/base-accessory'
+import { RestIot } from './rest-iot'
+import { Restore } from './restore'
+import { logInfo } from '../shared/util'
 
 export class RestoreAccessory extends BaseAccessory {
   constructor(restore: Restore | RestIot, accessory: PlatformAccessory) {
