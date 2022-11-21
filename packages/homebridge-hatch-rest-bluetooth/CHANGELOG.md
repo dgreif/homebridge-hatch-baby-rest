@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.0
+
+### Major Changes
+
+- [`d70055f`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/d70055ff021bbf7b0ee2bbcddebfac401a65aa13) Thanks [@dgreif](https://github.com/dgreif)! - Bluetooth versions of the Hatch Rest have been moved to the `homebridge-hatch-rest-bluetooth` plugin. Configuration for these lights will automatically be migrated the first time you run homebridge after updating to verison 4. You will need to manually install this new plugin for the lights to continue working, and automations related to these lights will need to be recreated. If you _only_ have bluetooth lights, you can uninstall the `homebridge-hatch-baby-rest` plugin after migrating. These bluetooth lights require complicated dependencies and are fundementally different from the WiFi based lights, so I've decided to maintain them separately moving forward.
+
 ## [3.4.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v3.3.0...v3.4.0) (2022-09-10)
 
 ### Features
