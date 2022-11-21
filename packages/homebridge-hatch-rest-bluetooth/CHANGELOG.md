@@ -1,13 +1,5 @@
 # Changelog
 
-## 4.0.0-beta.0
-
-### Major Changes
-
-- [`b2a7958`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/b2a795881fcc7c82ca8b51a02fab1e46d8fa13d9) Thanks [@dgreif](https://github.com/dgreif)! - Require homebridge 1.5.1 or newer
-
-- [`b2a7958`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/b2a795881fcc7c82ca8b51a02fab1e46d8fa13d9) Thanks [@dgreif](https://github.com/dgreif)! - Require node 16 or 18
-
 ## [3.4.0](https://github.com/dgreif/homebridge-hatch-baby-rest/compare/v3.3.0...v3.4.0) (2022-09-10)
 
 ### Features
