@@ -1,6 +1,6 @@
 # homebridge-hatch-rest-bluetooth
 
-This plugin is specifically designed for the original Bluetooth Rest sound machine. If you have a newer WiFi model, please see the [`homebridge-hatch-baby-rest` plugin](../homebridge-hatch-baby-rest/README.md)
+This plugin is specifically designed for the original Bluetooth Rest sound machine. If you have a newer WiFi model, please see the [`homebridge-hatch-baby-rest` plugin](../homebridge-hatch-baby-rest)
 
 I no longer personally use the Bluetooth Rest as the WiFi models have more features and are more reliable. As such, this plugin is strictly in maintenance mode. PRs welcome from anyone willing to make improvements.
 
