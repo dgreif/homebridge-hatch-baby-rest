@@ -3,10 +3,11 @@ import { PlatformAccessory } from 'homebridge'
 import { BaseAccessory } from '../shared/base-accessory'
 import { RestIot } from './rest-iot'
 import { Restore } from './restore'
+import { RestoreIot } from './restore-iot'
 import { logInfo } from '../shared/util'
 
 export class RestoreAccessory extends BaseAccessory {
-  constructor(restore: Restore | RestIot, accessory: PlatformAccessory) {
+  constructor(restore: Restore | RestIot | RestoreIot, accessory: PlatformAccessory) {
     super(restore, accessory)
 
     const { Service, Characteristic } = hap,

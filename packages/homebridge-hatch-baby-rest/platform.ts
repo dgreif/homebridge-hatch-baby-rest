@@ -13,6 +13,7 @@ import type {
 import { RestoreAccessory } from './restore-accessory'
 import { RestIot } from './rest-iot'
 import { Restore } from './restore'
+import { RestoreIot } from './restore-iot'
 
 export const pluginName = 'homebridge-hatch-baby-rest'
 export const platformName = 'HatchBabyRest'
@@ -65,7 +66,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         this.config.email && this.config.password
           ? new HatchBabyApi(this.config)
           : undefined,
-      { restPluses, restMinis, restores, restIots, restIotPluses } =
+      { restPluses, restMinis, restores, restoreIots, restIots, restIotPluses } =
         hatchBabyApi
           ? await hatchBabyApi.getDevices()
           : {
@@ -74,6 +75,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
               restores: [],
               restIots: [],
               restIotPluses: [],
+              restoreIots: [],
             },
       { api } = this,
       cachedAccessoryIds = Object.keys(this.homebridgeAccessories),
@@ -86,10 +88,11 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         ...restIots,
         ...restIotPluses,
         ...restores,
+        ...restoreIots,
       ]
 
     this.log.info(
-      `Configuring ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, ${restIots.length} Rest 2nd Gen, ${restIotPluses.length} Rest+ 2nd Gen, and ${restores.length} Restore`
+      `Configuring ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, ${restIots.length} Rest 2nd Gen, ${restIotPluses.length} Rest+ 2nd Gen, ${restores.length} Restore, and ${restoreIots.length} Restore 2nd Gen`
     )
 
     devices.forEach((device) => {
@@ -111,7 +114,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         homebridgeAccessory =
           this.homebridgeAccessories[uuid] || createHomebridgeAccessory()
 
-      if (device instanceof Restore || device instanceof RestIot) {
+      if (device instanceof Restore || device instanceof RestIot || device instanceof RestoreIot) {
         new RestoreAccessory(device, homebridgeAccessory)
       } else if ('onBrightness' in device) {
         new LightAndSoundMachineAccessory(device, homebridgeAccessory)
