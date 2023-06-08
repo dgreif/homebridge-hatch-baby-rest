@@ -7,6 +7,9 @@ const apiBaseUrl = 'https://data.hatchbaby.com/',
     http2: true,
     responseType: 'json',
     method: 'GET',
+  },
+  defaultHeaders: RequestOptions['headers'] = {
+    USER_AGENT: 'hatch_rest_api',
   }
 
 export function apiPath(path: string) {
@@ -15,9 +18,17 @@ export function apiPath(path: string) {
 
 export async function requestWithRetry<T>(options: RequestOptions): Promise<T> {
   try {
-    const response = (await got({ ...defaultRequestOptions, ...options })) as {
-      body: T
-    }
+    const optionsWithDefaults = {
+        ...defaultRequestOptions,
+        ...options,
+        headers: {
+          ...defaultHeaders,
+          ...options.headers,
+        },
+      },
+      response = (await got(optionsWithDefaults)) as {
+        body: T
+      }
     return response.body
   } catch (e: any) {
     if (!e.response) {
