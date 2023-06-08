@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.1
+
+### Patch Changes
+
+- [`868d445`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/868d4450fd386b83efafc891a5e67fe582074544) Thanks [@dgreif](https://github.com/dgreif)! - Add user agent to API calls, which should resolve internal server errors in #107
+
 ## 4.0.0
 
 ### Major Changes
