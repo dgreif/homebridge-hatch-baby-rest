@@ -46,6 +46,7 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
 
   async turnOnRoutine() {
     const favorites = await this.fetchFavorites()
+    if (favorites.length === 0) return;
     this.setCurrent('routine', 1, favorites[0].id)
   }
 
