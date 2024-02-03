@@ -10,7 +10,7 @@ function assignState<T = RestPlusState>(previousState: any, changes: any): T {
 
   for (const key in changes) {
     if (typeof changes[key] === 'object') {
-      state[key] = Object.assign(previousState[key] || {}, changes[key])
+      state[key] = assignState(previousState[key] || {}, changes[key])
     } else {
       state[key] = changes[key]
     }
