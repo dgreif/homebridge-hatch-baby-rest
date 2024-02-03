@@ -36,7 +36,7 @@
     "tsconfig": "0.0.0"
   },
   "engines": {
-    "node": "^16 || ^18",
+    "node": "^16 || ^18 || ^20",
     "homebridge": ">=1.5.1"
   },
   "bugs": {
