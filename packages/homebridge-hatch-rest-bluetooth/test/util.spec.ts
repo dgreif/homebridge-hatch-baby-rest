@@ -12,7 +12,7 @@ describe('Utils', () => {
   describe('stripUuid', () => {
     it('should remove separators and to lower case', () => {
       expect(stripUuid('02260001-5eFD-47eb-9c1a-de53f7a2b232')).to.equal(
-        '022600015efd47eb9c1ade53f7a2b232'
+        '022600015efd47eb9c1ade53f7a2b232',
       )
     })
   })

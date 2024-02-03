@@ -18,14 +18,14 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
   constructor(
     public readonly info: IotDeviceInfo,
     public readonly onIotClient: BehaviorSubject<AwsIotDevice>,
-    public readonly restClient: RestClient
+    public readonly restClient: RestClient,
   ) {
     super(info, onIotClient)
   }
 
   onSomeContentPlaying = this.onState.pipe(
     map((state) => state.current.playing !== 'none'),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onFirmwareVersion = this.onState.pipe(map((state) => state.deviceInfo.f))
@@ -33,7 +33,7 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
   private setCurrent(
     playing: RestIotState['current']['playing'],
     step: number,
-    srId: number
+    srId: number,
   ) {
     this.update({
       current: {
@@ -56,8 +56,8 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
   async fetchFavorites() {
     const favoritesPath = apiPath(
         `service/app/routine/v2/fetch?macAddress=${encodeURIComponent(
-          this.info.macAddress
-        )}&types=favorite`
+          this.info.macAddress,
+        )}&types=favorite`,
       ),
       favorites = await this.restClient.request<RestIotFavorite[]>({
         url: favoritesPath,

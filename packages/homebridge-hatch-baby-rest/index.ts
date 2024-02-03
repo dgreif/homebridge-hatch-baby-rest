@@ -11,6 +11,6 @@ export default function (homebridge: any) {
     pluginName,
     platformName,
     HatchBabyRestPlatform,
-    true
+    true,
   )
 }

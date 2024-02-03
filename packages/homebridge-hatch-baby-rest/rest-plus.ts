@@ -23,22 +23,22 @@ export class RestPlus
 
   onVolume = this.onState.pipe(
     map((state) => convertToPercentage(state.a.v)),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onAudioTrack = this.onState.pipe(
     map((state) => state.a.t),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onAudioPlaying = this.onAudioTrack.pipe(
     map((track) => track !== AudioTrack.None),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onIsPowered = this.onState.pipe(
     map((state) => state.isPowered),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onBrightness = this.onState.pipe(
@@ -49,24 +49,24 @@ export class RestPlus
       }
       return convertToPercentage(c.i)
     }),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onHsb = this.onState.pipe(map((state) => rgbToHsb(state.c, MAX_IOT_VALUE)))
 
   onHue = this.onHsb.pipe(
     map(({ h }) => h),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onSaturation = this.onHsb.pipe(
     map(({ s }) => s),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onBatteryLevel = this.onState.pipe(
     map((state) => state.deviceInfo.b),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onFirmwareVersion = this.onState.pipe(map((state) => state.deviceInfo.f))

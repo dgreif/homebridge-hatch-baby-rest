@@ -8,14 +8,14 @@ export class Restore extends IotDevice<RestoreState> implements BaseDevice {
 
   onSomeContentPlaying = this.onState.pipe(
     map((state) => state.content.playing !== 'none'),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onFirmwareVersion = this.onState.pipe(map((state) => state.deviceInfo.f))
 
   private setContent(
     playing: RestoreState['content']['playing'],
-    step: number
+    step: number,
   ) {
     this.update({
       content: {

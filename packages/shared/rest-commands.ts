@@ -26,7 +26,7 @@ function zeroPaddedHex(value: number) {
 
 export function formatRestCommand(
   command: RestCommand,
-  value: RestCommandValue
+  value: RestCommandValue,
 ) {
   if (typeof value === 'number') {
     return Buffer.from(`${command}${zeroPaddedHex(value)}`)
@@ -37,6 +37,6 @@ export function formatRestCommand(
       zeroPaddedHex(value.r) +
       zeroPaddedHex(value.g) +
       zeroPaddedHex(value.b) +
-      zeroPaddedHex(value.a)
+      zeroPaddedHex(value.a),
   )
 }

@@ -18,14 +18,14 @@ export class RestoreAccessory extends BaseAccessory {
       restore.onSomeContentPlaying,
       (on) => {
         logInfo(
-          `Turning ${on ? `on first ${stepName} for` : 'off'} ${restore.name}`
+          `Turning ${on ? `on first ${stepName} for` : 'off'} ${restore.name}`,
         )
         if (on) {
           restore.turnOnRoutine()
         } else {
           restore.turnOff()
         }
-      }
+      },
     )
 
     onOffService.setPrimaryService(true)

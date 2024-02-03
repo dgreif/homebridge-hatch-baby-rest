@@ -31,7 +31,7 @@ export class HatchRestBluetoothPlatform implements DynamicPlatformPlugin {
   constructor(
     public log: Logging,
     public config: PlatformConfig & HatchRestBluetoothPlatformOptions,
-    public api: API
+    public api: API,
   ) {
     useLogger({
       logInfo(message) {
@@ -57,7 +57,7 @@ export class HatchRestBluetoothPlatform implements DynamicPlatformPlugin {
 
   configureAccessory(accessory: PlatformAccessory) {
     this.log.info(
-      `Configuring cached accessory ${accessory.UUID} ${accessory.displayName}`
+      `Configuring cached accessory ${accessory.UUID} ${accessory.displayName}`,
     )
     this.log.debug('%j', accessory)
     this.homebridgeAccessories[accessory.UUID] = accessory
@@ -66,7 +66,7 @@ export class HatchRestBluetoothPlatform implements DynamicPlatformPlugin {
   loadDevices() {
     const restLights =
         this.config.restLights?.map(
-          (lightConfig) => new Rest(lightConfig.name, lightConfig.macAddress)
+          (lightConfig) => new Rest(lightConfig.name, lightConfig.macAddress),
         ) || [],
       { api } = this,
       cachedAccessoryIds = Object.keys(this.homebridgeAccessories),
@@ -85,7 +85,7 @@ export class HatchRestBluetoothPlatform implements DynamicPlatformPlugin {
           const accessory = new api.platformAccessory(
             displayName,
             uuid,
-            hap.Categories.LIGHTBULB
+            hap.Categories.LIGHTBULB,
           )
 
           this.log.info(`Adding new Hatch ${device.model} - ${displayName}`)
@@ -106,7 +106,7 @@ export class HatchRestBluetoothPlatform implements DynamicPlatformPlugin {
       api.registerPlatformAccessories(
         pluginName,
         platformName,
-        platformAccessories
+        platformAccessories,
       )
     }
 
@@ -116,7 +116,7 @@ export class HatchRestBluetoothPlatform implements DynamicPlatformPlugin {
 
     staleAccessories.forEach((staleAccessory) => {
       this.log.info(
-        `Removing stale cached accessory ${staleAccessory.UUID} ${staleAccessory.displayName}`
+        `Removing stale cached accessory ${staleAccessory.UUID} ${staleAccessory.displayName}`,
       )
     })
 
@@ -124,7 +124,7 @@ export class HatchRestBluetoothPlatform implements DynamicPlatformPlugin {
       this.api.unregisterPlatformAccessories(
         pluginName,
         platformName,
-        staleAccessories
+        staleAccessories,
       )
     }
   }

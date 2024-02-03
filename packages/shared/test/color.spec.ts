@@ -33,7 +33,7 @@ describe('rgbToHsb', () => {
         r: 100,
         g: 150,
         b: 200,
-      })
+      }),
     ).to.eql({
       h: 210,
       s: 50,
@@ -50,8 +50,8 @@ describe('rgbToHsb', () => {
           g: (100 * maxValue) / 255,
           b: (50 * maxValue) / 255,
         },
-        maxValue
-      )
+        maxValue,
+      ),
     ).to.eql({
       h: 120,
       s: 50,
@@ -67,7 +67,7 @@ describe('hsbToRgb', () => {
         h: 210,
         s: 50,
         b: 78.4313725490196,
-      })
+      }),
     ).to.eql({
       r: 100 - 1,
       g: 150 - 1,
@@ -84,8 +84,8 @@ describe('hsbToRgb', () => {
           s: 50,
           b: 39.2156862745098,
         },
-        maxValue
-      )
+        maxValue,
+      ),
     ).to.eql({
       r: (50 * maxValue) / 255 - 1,
       g: (100 * maxValue) / 255 - 1,

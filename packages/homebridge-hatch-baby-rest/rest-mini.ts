@@ -17,17 +17,17 @@ export class RestMini extends IotDevice<RestMiniState> implements SoundMachine {
 
   onVolume = this.onState.pipe(
     map((state) => convertToPercentage(state.current.sound.v)),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onAudioPlaying = this.onState.pipe(
     map((state) => state.current.playing !== 'none'),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onAudioTrack = this.onState.pipe(
     map((state) => state.current.sound.id),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   onFirmwareVersion = this.onState.pipe(map((state) => state.deviceInfo.f))

@@ -24,34 +24,34 @@ export class SoundMachineAccessory extends BaseAccessory {
       speakerService = this.getService(Service.Speaker, 'Volume'),
       audioService = this.getService(
         Service.Fan,
-        'onBrightness' in device ? 'Audio Track' : undefined
+        'onBrightness' in device ? 'Audio Track' : undefined,
       ),
       { audioTracks } = device
 
     this.registerCharacteristic(
       speakerService.getCharacteristic(Characteristic.Volume),
       device.onVolume,
-      (volume) => device.setVolume(volume)
+      (volume) => device.setVolume(volume),
     )
     this.registerCharacteristic(
       speakerService.getCharacteristic(Characteristic.Mute),
       device.onVolume.pipe(map((volume) => volume === 0)),
       (mute) => {
         device.setVolume(mute ? 0 : 50)
-      }
+      },
     )
 
     this.registerCharacteristic(
       audioService.getCharacteristic(Characteristic.On),
       device.onAudioPlaying,
-      (on: boolean) => device.setAudioPlaying(on)
+      (on: boolean) => device.setAudioPlaying(on),
     )
 
     this.registerCharacteristic(
       audioService.getCharacteristic(Characteristic.RotationSpeed),
       device.onAudioTrack.pipe(
         filter((audioTrack) => Boolean(audioTrack)),
-        map((audioTrack) => audioTracks.indexOf(audioTrack))
+        map((audioTrack) => audioTracks.indexOf(audioTrack)),
       ),
       (level: number) => {
         const audioTrack = audioTracks[level]
@@ -59,7 +59,7 @@ export class SoundMachineAccessory extends BaseAccessory {
         if (audioTrack !== undefined) {
           device.setAudioTrack(audioTrack)
         }
-      }
+      },
     )
 
     audioService

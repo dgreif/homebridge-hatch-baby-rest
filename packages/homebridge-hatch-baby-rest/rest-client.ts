@@ -33,7 +33,7 @@ export async function requestWithRetry<T>(options: RequestOptions): Promise<T> {
   } catch (e: any) {
     if (!e.response) {
       logError(
-        `Failed to reach Hatch Baby server at ${options.url}.  ${e.message}.  Trying again in 5 seconds...`
+        `Failed to reach Hatch Baby server at ${options.url}.  ${e.message}.  Trying again in 5 seconds...`,
       )
       await delay(5000)
       return requestWithRetry(options)
@@ -79,7 +79,7 @@ export class RestClient {
   }
 
   async request<T = void>(
-    options: RequestOptions & { url: string }
+    options: RequestOptions & { url: string },
   ): Promise<T> {
     try {
       const loginResponse = await this.loginPromise,
@@ -106,7 +106,7 @@ export class RestClient {
         logError('404 from endpoint ' + url)
 
         throw new Error(
-          'Not found with response: ' + JSON.stringify(response.data)
+          'Not found with response: ' + JSON.stringify(response.data),
         )
       }
 

@@ -25,7 +25,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
   constructor(
     public log: Logging,
     public config: PlatformConfig & ApiConfig,
-    public api: API
+    public api: API,
   ) {
     useLogger({
       logInfo(message) {
@@ -54,7 +54,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
 
   configureAccessory(accessory: PlatformAccessory) {
     this.log.info(
-      `Configuring cached accessory ${accessory.UUID} ${accessory.displayName}`
+      `Configuring cached accessory ${accessory.UUID} ${accessory.displayName}`,
     )
     this.log.debug('%j', accessory)
     this.homebridgeAccessories[accessory.UUID] = accessory
@@ -89,7 +89,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
       ]
 
     this.log.info(
-      `Configuring ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, ${restIots.length} Rest 2nd Gen, ${restIotPluses.length} Rest+ 2nd Gen, and ${restores.length} Restore`
+      `Configuring ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, ${restIots.length} Rest 2nd Gen, ${restIotPluses.length} Rest+ 2nd Gen, and ${restores.length} Restore`,
     )
 
     devices.forEach((device) => {
@@ -100,7 +100,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
           const accessory = new api.platformAccessory(
             displayName,
             uuid,
-            hap.Categories.LIGHTBULB
+            hap.Categories.LIGHTBULB,
           )
 
           this.log.info(`Adding new Hatch ${device.model} - ${displayName}`)
@@ -127,7 +127,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
       api.registerPlatformAccessories(
         pluginName,
         platformName,
-        platformAccessories
+        platformAccessories,
       )
     }
 
@@ -137,7 +137,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
 
     staleAccessories.forEach((staleAccessory) => {
       this.log.info(
-        `Removing stale cached accessory ${staleAccessory.UUID} ${staleAccessory.displayName}`
+        `Removing stale cached accessory ${staleAccessory.UUID} ${staleAccessory.displayName}`,
       )
     })
 
@@ -145,7 +145,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
       this.api.unregisterPlatformAccessories(
         pluginName,
         platformName,
-        staleAccessories
+        staleAccessories,
       )
     }
   }

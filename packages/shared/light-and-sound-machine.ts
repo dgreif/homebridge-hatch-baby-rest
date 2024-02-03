@@ -46,12 +46,12 @@ export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
       (on) => {
         logInfo(`Turning ${on ? 'on' : 'off'} ${name}`)
         light.setPower(on)
-      }
+      },
     )
 
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.On),
-      onBrightness.pipe(map((brightness) => Boolean(brightness)))
+      onBrightness.pipe(map((brightness) => Boolean(brightness))),
     )
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.Hue),
@@ -59,7 +59,7 @@ export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
       (hue) => {
         context.h = hue
         onHsbSet.next(null)
-      }
+      },
     )
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.Saturation),
@@ -67,7 +67,7 @@ export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
       (saturation) => {
         context.s = saturation
         onHsbSet.next(null)
-      }
+      },
     )
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.Brightness),
@@ -75,7 +75,7 @@ export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
       (brightness) => {
         context.b = brightness
         onHsbSet.next(null)
-      }
+      },
     )
 
     if (light.onBatteryLevel) {
@@ -83,13 +83,13 @@ export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
 
       this.registerCharacteristic(
         batteryService.getCharacteristic(Characteristic.BatteryLevel),
-        light.onBatteryLevel
+        light.onBatteryLevel,
       )
       this.registerCharacteristic(
         batteryService.getCharacteristic(Characteristic.StatusLowBattery),
         light.onBatteryLevel.pipe(
-          map((batteryLevel) => (batteryLevel < 20 ? 1 : 0))
-        )
+          map((batteryLevel) => (batteryLevel < 20 ? 1 : 0)),
+        ),
       )
 
       batteryService

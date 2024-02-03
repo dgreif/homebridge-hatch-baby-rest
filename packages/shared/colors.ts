@@ -16,7 +16,7 @@ export function convertFromHexRange(value: number, maxValue: number) {
 // r,g,b
 export function rgbToHsb({ r, g, b }: RgbColor, maxValue = HEX_MAX) {
   const [h, s, v] = rgb2hsv(
-    [r, g, b].map((value) => convertToHexRange(value, maxValue))
+    [r, g, b].map((value) => convertToHexRange(value, maxValue)),
   )
   return { h, s, b: v } as { h: number; s: number; b: number }
 }
@@ -29,7 +29,7 @@ export interface HsbColor {
 
 export function hsbToRgb(hsb: HsbColor, maxValue = HEX_MAX): RgbColor {
   const [r, g, b] = hsv2rgb([hsb.h, hsb.s, hsb.b]).map((value: number) =>
-    convertFromHexRange(value, maxValue)
+    convertFromHexRange(value, maxValue),
   )
   return { r, g, b }
 }
