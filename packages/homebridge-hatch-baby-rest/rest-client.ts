@@ -2,7 +2,7 @@ import got, { Options as RequestOptions } from 'got'
 import { delay, logError } from '../shared/util'
 import { LoginResponse } from '../shared/hatch-sleep-types'
 
-const apiBaseUrl = 'https://data.hatchbaby.com/',
+const apiBaseUrl = 'https://prod-sleep.hatchbaby.com/',
   defaultRequestOptions: RequestOptions = {
     http2: true,
     responseType: 'json',
