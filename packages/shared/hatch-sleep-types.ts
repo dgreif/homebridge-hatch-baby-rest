@@ -492,3 +492,83 @@ export interface RestMiniState {
   connected: boolean
   rssi: number
 }
+
+export interface RestoreIotState {
+  env: 'prod' | string
+  alarmsDisabled: boolean
+  nightlightOn: boolean
+  nightlightIntensity: number
+  toddlerLockOn: boolean
+  snoozeDuration: number
+  current: {
+    srId: number
+    playing: 'none' | 'remote' | 'routine' | string
+    step: number
+    color: {
+      i: number
+      id: number
+      r: number
+      g: number
+      b: number
+      w: number
+      duration: number
+      until: 'indefinite'
+    }
+    sound: IotSound
+  }
+  dataVersion: string
+  sleepScene: {
+    srId: number
+    enabled: boolean
+  }
+  timer: { s: string; d: number }
+  timezone: string
+  rF: {
+    v: string
+    i: boolean
+    u: string
+  }
+  deviceInfo: { f: string; fR: number; hwVersion: string }
+  clock: {
+    i: number
+    turnOffAt: string
+    turnOnAt: string
+    flags: number
+    turnOffMode: 'never' | string
+    turnDimAt: string
+    turnBrightAt: string
+  }
+  toddlerLock: {
+    turnOffAt: string
+    turnOnAt: string
+    turnOnMode: 'never' | string
+  }
+  lucky: number
+  LDR: 'OK' | string
+  LWTP: boolean
+  debug: number
+  logging: number
+  owned: boolean
+  lastReset: 'PowerOn' | string
+  ota: { status: string; downloadProgress: number; installProgress: number }
+  REX: { lock: number; key: number; command: 'none' | string }
+  connected: boolean
+  rssi: number
+  streaming: { status: 'none' | string }
+  knockThreshold: number
+  knockDuration: number
+  activeTap: boolean
+  knockAxis: number
+  snooze: {
+    active: boolean
+    startTime: string
+  }
+  hwDebugFlags: number
+  touch: {
+    flags: number
+    poll_rate_hz: number
+    refire_delay_ms: number
+    refire_rate_hz: number
+    step_size: number
+  }
+}
