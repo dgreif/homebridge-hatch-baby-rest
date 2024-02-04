@@ -63,10 +63,14 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
         url: routinesPath,
         method: 'GET',
       }),
-      sortedRoutines = allRoutines.sort((a, b) => a.displayOrder - b.displayOrder),
+      sortedRoutines = allRoutines.sort(
+        (a, b) => a.displayOrder - b.displayOrder,
+      ),
       touchRingRoutines = sortedRoutines.filter((routine) => {
-        return routine.type === 'favorite' // Before upgrade, only favorites were on touch ring
-        || routine.button0 // After upgrade, many routine types can be on touch ring but will have `button0: true`
+        return (
+          routine.type === 'favorite' || // Before upgrade, only favorites were on touch ring
+          routine.button0
+        ) // After upgrade, many routine types can be on touch ring but will have `button0: true`
       })
 
     return touchRingRoutines
