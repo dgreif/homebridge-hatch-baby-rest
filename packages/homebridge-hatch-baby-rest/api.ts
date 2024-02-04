@@ -24,6 +24,7 @@ const knownProducts = [
     Product.riotPlus,
     Product.restMini,
     Product.restore,
+    Product.restoreIot,
   ],
   productFetchQueryString = knownProducts
     .map((product) => 'iotProducts=' + product)
@@ -180,6 +181,7 @@ export class HatchBabyApi {
       restIotPluses: createDevices(Product.riotPlus, RestIot),
       restMinis: createDevices(Product.restMini, RestMini),
       restores: createDevices(Product.restore, Restore),
+      restoreIots: createDevices(Product.restoreIot, RestIot),
     }
   }
 }

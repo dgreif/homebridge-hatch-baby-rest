@@ -13,7 +13,11 @@ import { apiPath, RestClient } from './rest-client'
 
 export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
   readonly model =
-    this.info.product === Product.riotPlus ? 'Rest+ 2nd Gen' : 'Rest 2nd Gen'
+    this.info.product === Product.restoreIot
+      ? 'Restore IoT'
+      : Product.riotPlus
+        ? 'Rest+ 2nd Gen'
+        : 'Rest 2nd Gen'
 
   constructor(
     public readonly info: IotDeviceInfo,
@@ -69,8 +73,8 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
       touchRingRoutines = sortedRoutines.filter((routine) => {
         return (
           routine.type === 'favorite' || // Before upgrade, only favorites were on touch ring
-          routine.button0
-        ) // After upgrade, many routine types can be on touch ring but will have `button0: true`
+          routine.button0 // After upgrade, many routine types can be on touch ring but will have `button0: true`
+        )
       })
 
     return touchRingRoutines

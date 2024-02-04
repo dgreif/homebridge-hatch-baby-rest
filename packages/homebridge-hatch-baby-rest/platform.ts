@@ -65,16 +65,23 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         this.config.email && this.config.password
           ? new HatchBabyApi(this.config)
           : undefined,
-      { restPluses, restMinis, restores, restIots, restIotPluses } =
-        hatchBabyApi
-          ? await hatchBabyApi.getDevices()
-          : {
-              restPluses: [],
-              restMinis: [],
-              restores: [],
-              restIots: [],
-              restIotPluses: [],
-            },
+      {
+        restPluses,
+        restMinis,
+        restores,
+        restoreIots,
+        restIots,
+        restIotPluses,
+      } = hatchBabyApi
+        ? await hatchBabyApi.getDevices()
+        : {
+            restPluses: [],
+            restMinis: [],
+            restores: [],
+            restIots: [],
+            restIotPluses: [],
+            restoreIots: [],
+          },
       { api } = this,
       cachedAccessoryIds = Object.keys(this.homebridgeAccessories),
       platformAccessories: PlatformAccessory[] = [],
@@ -86,11 +93,27 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         ...restIots,
         ...restIotPluses,
         ...restores,
+        ...restoreIots,
       ]
 
-    this.log.info(
-      `Configuring ${restPluses.length} Rest+, ${restMinis.length} Rest Mini, ${restIots.length} Rest 2nd Gen, ${restIotPluses.length} Rest+ 2nd Gen, and ${restores.length} Restore`,
-    )
+    this.log.info('Configuring Hatch Devices:')
+
+    if (devices.length) {
+      const countByModel = devices.reduce(
+        (acc, device) => {
+          const model = device.model
+          acc[model] = (acc[model] || 0) + 1
+          return acc
+        },
+        {} as Record<string, number>,
+      )
+
+      Object.entries(countByModel).forEach(([model, count]) => {
+        this.log.info(`  ${model}: ${count}`)
+      })
+    } else {
+      this.log.info('  No supported devices found')
+    }
 
     devices.forEach((device) => {
       const id = device.id,

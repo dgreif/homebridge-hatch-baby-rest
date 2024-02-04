@@ -11,7 +11,7 @@ export class RestoreAccessory extends BaseAccessory {
 
     const { Service, Characteristic } = hap,
       onOffService = this.getService(Service.Switch),
-      stepName = restore instanceof RestIot ? 'favorite' : 'bedtime step'
+      stepName = restore instanceof RestIot ? 'routine' : 'bedtime step'
 
     this.registerCharacteristic(
       onOffService.getCharacteristic(Characteristic.On),
