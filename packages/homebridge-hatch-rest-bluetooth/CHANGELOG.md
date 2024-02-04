@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.1.0
+
+### Minor Changes
+
+- [`9e1f253`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/9e1f25340c9811bb3acb29b0743930a09d897f49) Thanks [@dgreif](https://github.com/dgreif)! - Support Node 20
+
+### Patch Changes
+
+- [`171696f`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/171696f50b43ea130734e0c63978e59f21db7ed2) Thanks [@dgreif](https://github.com/dgreif)! - Update dependencies
+
 ## 4.0.0
 
 ### Major Changes
