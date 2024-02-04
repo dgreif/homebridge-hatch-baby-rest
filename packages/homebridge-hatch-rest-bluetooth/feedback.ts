@@ -84,7 +84,7 @@ export function parseFeedbackBuffer(feedbackBuffer: Buffer) {
 
 export function colorsMatch(
   a: RestColorAndBrightness,
-  b: RestColorAndBrightness
+  b: RestColorAndBrightness,
 ) {
   return a.a === b.a && a.r === b.r && a.g === b.g && a.b === b.b
 }

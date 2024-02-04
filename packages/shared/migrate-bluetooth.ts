@@ -5,7 +5,7 @@ const hatchRestBluetoothPlatformName = 'HatchRestBluetooth',
 
 function updateHomebridgeConfig(
   homebridge: any,
-  update: (config: string) => string
+  update: (config: string) => string,
 ) {
   const configPath = homebridge.user.configPath(),
     config = readFileSync(configPath).toString(),
@@ -21,7 +21,7 @@ export function migrateRestBluetooth(homebridge: any) {
     try {
       const config = JSON.parse(originalConfig),
         hbrPlatform = config.platforms?.find(
-          (p: { platform: string }) => p.platform === hatchBabyRestPlatformName
+          (p: { platform: string }) => p.platform === hatchBabyRestPlatformName,
         ),
         restLights = hbrPlatform?.restLights
 
@@ -33,7 +33,7 @@ export function migrateRestBluetooth(homebridge: any) {
       // find or create the hatch rest bluetooth platform
       const hrbPlatform = config.platforms.find(
         (platform: { platform: string }) =>
-          platform.platform === hatchRestBluetoothPlatformName
+          platform.platform === hatchRestBluetoothPlatformName,
       ) || { platform: hatchRestBluetoothPlatformName }
 
       if (!config.platforms.includes(hrbPlatform)) {

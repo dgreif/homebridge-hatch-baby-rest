@@ -21,7 +21,7 @@ export interface BaseDevice {
 export class BaseAccessory {
   constructor(
     private device: BaseDevice,
-    protected accessory: PlatformAccessory
+    protected accessory: PlatformAccessory,
   ) {
     const { Service, Characteristic } = hap,
       accessoryInfoService = this.getService(Service.AccessoryInformation)
@@ -38,15 +38,19 @@ export class BaseAccessory {
 
     this.registerCharacteristic(
       accessoryInfoService.getCharacteristic(Characteristic.FirmwareRevision),
-      device.onFirmwareVersion || of('')
+      device.onFirmwareVersion || of(''),
     )
     this.registerCharacteristic(
       accessoryInfoService.getCharacteristic(Characteristic.Name),
-      of(device.name)
+      of(device.name),
     )
   }
 
-  getService(serviceType: WithUUID<typeof ServiceClass>, nameSuffix?: string) {
+  getService(
+    serviceType: WithUUID<typeof ServiceClass>,
+    nameSuffix?: string,
+    subType?: string,
+  ) {
     let name = nameSuffix
       ? this.device.name + ' ' + nameSuffix
       : this.device.name
@@ -56,13 +60,15 @@ export class BaseAccessory {
     }
 
     const existingService = this.accessory.getService(serviceType)
-    return existingService || this.accessory.addService(serviceType, name)
+    return (
+      existingService || this.accessory.addService(serviceType, name, subType!)
+    )
   }
 
   registerCharacteristic(
     characteristic: CharacteristicClass,
     onValue: Observable<any>,
-    setValue?: (value: any) => any
+    setValue?: (value: any) => any,
   ) {
     if (setValue) {
       characteristic.on(
@@ -70,7 +76,7 @@ export class BaseAccessory {
         (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
           callback()
           setValue(value)
-        }
+        },
       )
     }
 

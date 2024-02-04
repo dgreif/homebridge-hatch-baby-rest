@@ -10,7 +10,7 @@ function assignState<T = RestPlusState>(previousState: any, changes: any): T {
 
   for (const key in changes) {
     if (typeof changes[key] === 'object') {
-      state[key] = Object.assign(previousState[key] || {}, changes[key])
+      state[key] = assignState(previousState[key] || {}, changes[key])
     } else {
       state[key] = changes[key]
     }
@@ -38,7 +38,7 @@ export class IotDevice<T> {
   private previousUpdatePromise: Promise<any> = Promise.resolve()
 
   onState = this.onCurrentState.pipe(
-    filter((state): state is T => state !== null)
+    filter((state): state is T => state !== null),
   )
 
   get id() {
@@ -55,7 +55,7 @@ export class IotDevice<T> {
 
   constructor(
     public readonly info: IotDeviceInfo,
-    public readonly onIotClient: BehaviorSubject<AwsIotDevice>
+    public readonly onIotClient: BehaviorSubject<AwsIotDevice>,
   ) {
     onIotClient
       .pipe(skip(1))
@@ -74,7 +74,7 @@ export class IotDevice<T> {
         topic,
         message,
         clientToken,
-        status: { state: { desired: T; reported: T } }
+        status: { state: { desired: T; reported: T } },
       ) => {
         if (topic !== thingName) {
           // status for a different thing
@@ -88,7 +88,7 @@ export class IotDevice<T> {
 
           this.onCurrentState.next(assignState(state.reported, state.desired))
         }
-      }
+      },
     )
 
     mqttClient.on('foreignStateChange', (topic, message, s) => {
@@ -101,8 +101,8 @@ export class IotDevice<T> {
       this.onCurrentState.next(
         assignState(
           assignState(currentState, s.state.reported),
-          s.state.desired
-        )
+          s.state.desired,
+        ),
       )
     })
 
@@ -120,13 +120,13 @@ export class IotDevice<T> {
                 resolve(
                   firstValueFrom(
                     this.onStatusToken.pipe(
-                      filter((token) => token === getClientToken)
-                    )
-                  )
+                      filter((token) => token === getClientToken),
+                    ),
+                  ),
                 )
               })
             })
-          })
+          }),
       )
   }
 
@@ -156,12 +156,12 @@ export class IotDevice<T> {
           logError(
             `Failed to apply update to ${
               this.name
-            } because another update was in progress: ${JSON.stringify(update)}`
+            } because another update was in progress: ${JSON.stringify(update)}`,
           )
         }
 
         const requestComplete = firstValueFrom(
-          this.onStatusToken.pipe(filter((token) => token === updateToken))
+          this.onStatusToken.pipe(filter((token) => token === updateToken)),
         )
 
         // wait a max of 30 seconds to finish request

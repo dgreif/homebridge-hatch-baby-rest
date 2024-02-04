@@ -50,7 +50,7 @@ export class HatchBabyApi {
     const devices =
       (await this.restClient.request<IotDeviceInfo[] | null>({
         url: apiPath(
-          'service/app/iotDevice/v2/fetch?' + productFetchQueryString
+          'service/app/iotDevice/v2/fetch?' + productFetchQueryString,
         ),
       })) || []
 
@@ -162,8 +162,8 @@ export class HatchBabyApi {
         Device: new (
           info: IotDeviceInfo,
           onClient: typeof onIotClient,
-          restClient: RestClient
-        ) => T
+          restClient: RestClient,
+        ) => T,
       ): T[] => {
         return devices
           .filter((device) => device.product === product)

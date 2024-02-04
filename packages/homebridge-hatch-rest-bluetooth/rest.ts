@@ -72,11 +72,11 @@ export class Rest implements LightAndSoundMachine {
 
   private fromFeedback<T>(
     retrieveProperty: (feedback: Feedback) => T,
-    distinctCheck?: (a: any, b: any) => boolean
+    distinctCheck?: (a: any, b: any) => boolean,
   ) {
     return this.onFeedback.pipe(
       map(retrieveProperty),
-      distinctUntilChanged(distinctCheck)
+      distinctUntilChanged(distinctCheck),
     )
   }
 
@@ -84,21 +84,21 @@ export class Rest implements LightAndSoundMachine {
   onVolume = this.fromFeedback((feedback) => feedback.volume)
   onColor = this.fromFeedback((feedback) => feedback.color, colorsMatch)
   onBrightness = this.fromFeedback((feedback) =>
-    convertFromHexRange(feedback.color.a, 100)
+    convertFromHexRange(feedback.color.a, 100),
   )
   onHsb = this.onColor.pipe(map((color) => rgbToHsb(color, 255)))
   onHue = this.onHsb.pipe(
     map((hsb) => hsb.h),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
   onSaturation = this.onHsb.pipe(
     map((hsb) => hsb.s),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
   onAudioTrack = this.fromFeedback((feedback) => feedback.audioTrack)
   onAudioPlaying = this.onAudioTrack.pipe(
     map((track) => track !== AudioTrack.None),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
   onUsingConnection = new Subject()
 
@@ -106,7 +106,7 @@ export class Rest implements LightAndSoundMachine {
 
   constructor(
     public readonly name: string,
-    public readonly macAddress: string
+    public readonly macAddress: string,
   ) {
     this.getDevice().then((device) => {
       device.on('connect', () => {
@@ -130,8 +130,8 @@ export class Rest implements LightAndSoundMachine {
     await firstValueFrom(
       fromEvent(this.noble, 'stateChange').pipe(
         startWith(this.noble.state),
-        filter((state) => state === 'poweredOn')
-      )
+        filter((state) => state === 'poweredOn'),
+      ),
     )
 
     const stripedAddress = stripMacAddress(address),
@@ -150,22 +150,22 @@ export class Rest implements LightAndSoundMachine {
             logInfo(
               `Found device ${
                 peripheral.advertisement.localName
-              } with address ${peripheral.address || peripheral.addressType}`
+              } with address ${peripheral.address || peripheral.addressType}`,
             )
 
             if (peripheral.addressType === 'unknown') {
               logInfo(
-                `${peripheral.advertisement.localName} has an unknown address.  This happens on OSX when you discover a device which you have never connected to.  Once connected, OSX will remember the address of this device.  If this is not the correct device, please restart homebridge and this device should be skipped over.`
+                `${peripheral.advertisement.localName} has an unknown address.  This happens on OSX when you discover a device which you have never connected to.  Once connected, OSX will remember the address of this device.  If this is not the correct device, please restart homebridge and this device should be skipped over.`,
               )
 
               // Force the device to connect, which will load the address into OSX for the next run
               this.getCharacteristic(
                 CharacteristicUuid.CurrentFeedback,
-                ServiceUuid.Advertising
+                ServiceUuid.Advertising,
               )
             }
-          })
-        )
+          }),
+        ),
       )
 
     logInfo('Scanning for ' + this.name)
@@ -205,8 +205,8 @@ export class Rest implements LightAndSoundMachine {
     if (!this.discoverServicesPromise) {
       this.discoverServicesPromise = this.connect().then((device) =>
         promisify(
-          device.discoverAllServicesAndCharacteristics.bind(device) as any
-        )()
+          device.discoverAllServicesAndCharacteristics.bind(device) as any,
+        )(),
       )
     }
 
@@ -232,7 +232,7 @@ export class Rest implements LightAndSoundMachine {
     const service = await this.getService(serviceUuid),
       targetUuid = stripUuid(characteristicUuid),
       characteristic = service.characteristics.find(
-        (c) => stripUuid(c.uuid) === targetUuid
+        (c) => stripUuid(c.uuid) === targetUuid,
       )
 
     if (!characteristic) {
@@ -263,13 +263,13 @@ export class Rest implements LightAndSoundMachine {
 
     const writeCharacteristic = await this.getCharacteristic(
         CharacteristicUuid.Tx,
-        ServiceUuid.Rest
+        ServiceUuid.Rest,
       ),
       restCommand = formatRestCommand(command, value)
 
     await promisify(writeCharacteristic.write.bind(writeCharacteristic) as any)(
       restCommand,
-      false
+      false,
     )
 
     this.onUsingConnection.next(null)
@@ -308,7 +308,7 @@ export class Rest implements LightAndSoundMachine {
 
     return this.setCommand(
       RestCommand.SetVolume,
-      convertToHexRange(volume, 100)
+      convertToHexRange(volume, 100),
     )
   }
 
@@ -319,7 +319,7 @@ export class Rest implements LightAndSoundMachine {
   async subscribeToFeedback() {
     const feedbackCharacteristic = await this.getCharacteristic(
       CharacteristicUuid.CurrentFeedback,
-      ServiceUuid.Advertising
+      ServiceUuid.Advertising,
     )
 
     feedbackCharacteristic.on('read', (data: Buffer) => {

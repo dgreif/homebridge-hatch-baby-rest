@@ -15,6 +15,6 @@ export default function (homebridge: any) {
     pluginName,
     platformName,
     HatchRestBluetoothPlatform,
-    true
+    true,
   )
 }

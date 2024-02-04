@@ -5,8 +5,8 @@ describe('Feedback Parsing', () => {
   it('should parse an empty feedback buffer', () => {
     expect(
       parseFeedbackBuffer(
-        Buffer.from('54dfff1261430000000053000050006500000000', 'hex')
-      )
+        Buffer.from('54dfff1261430000000053000050006500000000', 'hex'),
+      ),
     ).to.eql({
       time: 3758035553,
       power: false,
@@ -24,8 +24,8 @@ describe('Feedback Parsing', () => {
   it('should parse an active feedback buffer', () => {
     expect(
       parseFeedbackBuffer(
-        Buffer.from('54dfff1d1543fefefe53530e4950016500000000', 'hex')
-      )
+        Buffer.from('54dfff1d1543fefefe53530e4950016500000000', 'hex'),
+      ),
     ).to.eql({
       time: 3758038293,
       power: true,
@@ -43,26 +43,26 @@ describe('Feedback Parsing', () => {
   it('should handle different power presets', () => {
     expect(
       parseFeedbackBuffer(
-        Buffer.from('54dfff1d1543fefefe53530e4950DF6500000000', 'hex')
-      ).power
+        Buffer.from('54dfff1d1543fefefe53530e4950DF6500000000', 'hex'),
+      ).power,
     ).to.be.false
 
     expect(
       parseFeedbackBuffer(
-        Buffer.from('54dfff1d1543fefefe53530e4950006500000000', 'hex')
-      ).power
+        Buffer.from('54dfff1d1543fefefe53530e4950006500000000', 'hex'),
+      ).power,
     ).to.be.false
 
     expect(
       parseFeedbackBuffer(
-        Buffer.from('54dfff1d1543fefefe53530e49501F6500000000', 'hex')
-      ).power
+        Buffer.from('54dfff1d1543fefefe53530e49501F6500000000', 'hex'),
+      ).power,
     ).to.be.true
 
     expect(
       parseFeedbackBuffer(
-        Buffer.from('54dfff1d1543fefefe53530e49501F6500000000', 'hex')
-      ).power
+        Buffer.from('54dfff1d1543fefefe53530e49501F6500000000', 'hex'),
+      ).power,
     ).to.be.true
   })
 })
