@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.2.0
+
+### Minor Changes
+
+- [`f434fd7`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/f434fd771ae478263101e444c3f8c1cdf2df9b7d) Thanks [@dgreif](https://github.com/dgreif)! - Add support for Restore 2 (restoreIot). Note, this is untested so please open an issue if you find the device does not work as expected.
+
 ## 4.1.0
 
 ### Minor Changes
