@@ -1,7 +1,7 @@
 import {
   IotDeviceInfo,
   Product,
-  RestIotFavorite,
+  RestIotRoutine,
   RestIotState,
 } from '../shared/hatch-sleep-types'
 import { distinctUntilChanged, map } from 'rxjs/operators'
@@ -45,25 +45,30 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
   }
 
   async turnOnRoutine() {
-    const favorites = await this.fetchFavorites()
-    this.setCurrent('routine', 1, favorites[0].id)
+    const routines = await this.fetchRoutines()
+    this.setCurrent('routine', 1, routines[0].id)
   }
 
   turnOff() {
     this.setCurrent('none', 0, 0)
   }
 
-  async fetchFavorites() {
-    const favoritesPath = apiPath(
+  async fetchRoutines() {
+    const routinesPath = apiPath(
         `service/app/routine/v2/fetch?macAddress=${encodeURIComponent(
           this.info.macAddress,
-        )}&types=favorite`,
+        )}`,
       ),
-      favorites = await this.restClient.request<RestIotFavorite[]>({
-        url: favoritesPath,
+      allRoutines = await this.restClient.request<RestIotRoutine[]>({
+        url: routinesPath,
         method: 'GET',
+      }),
+      sortedRoutines = allRoutines.sort((a, b) => a.displayOrder - b.displayOrder),
+      touchRingRoutines = sortedRoutines.filter((routine) => {
+        return routine.type === 'favorite' // Before upgrade, only favorites were on touch ring
+        || routine.button0 // After upgrade, many routine types can be on touch ring but will have `button0: true`
       })
 
-    return favorites.sort((a, b) => a.displayOrder - b.displayOrder)
+    return touchRingRoutines
   }
 }

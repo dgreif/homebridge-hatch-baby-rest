@@ -299,19 +299,20 @@ export interface RestIotState {
   streaming: { status: 'none' | string }
 }
 
-export interface RestIotFavorite {
+export interface RestIotRoutine {
   id: number
   macAddress: string
   name: string
-  type: 'favorite'
+  type: 'favorite' | 'sleep' | 'wake' | 'flex'
   active: boolean
   enabled: boolean
   displayOrder: number
   sleepScene: boolean
   followBySleepScene: boolean
-  startTime: null
-  endTime: null
-  daysOfWeek: null
+  button0: boolean // true if this routine is available on touch ring
+  startTime: null | string
+  endTime: null | string
+  daysOfWeek: null | any
   steps: any[]
 }
 
