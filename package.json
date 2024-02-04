@@ -8,8 +8,8 @@
     "build": "turbo run build",
     "version": "changeset version && npm i",
     "release": "turbo run build test lint && changeset publish",
-    "example": "ts-node ./packages/examples/example.ts",
-    "plus-example": "ts-node ./packages/examples/rest-plus-example.ts",
+    "example": "node -r @swc-node/register ./packages/examples/example.ts",
+    "plus-example": "node -r @swc-node/register ./packages/examples/rest-plus-example.ts",
     "hb": "npm run build && TEST_HOMEBRIDGE=true homebridge -U ./.homebridge",
     "push-with-tags": "git push --follow-tags && node ./build/github-releaser.js",
     "predeploy": "git pull -r && turbo run build test lint",
@@ -21,6 +21,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.1",
+    "@swc-node/register": "^1.8.0",
     "@types/aws-iot-device-sdk": "2.2.8",
     "@types/chai": "4.3.11",
     "@types/mocha": "10.0.6",
