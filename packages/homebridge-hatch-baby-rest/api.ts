@@ -16,7 +16,9 @@ import { BehaviorSubject } from 'rxjs'
 import { IotDevice } from './iot-device'
 import { debounceTime } from 'rxjs/operators'
 
-export interface ApiConfig extends EmailAuth {}
+export interface ApiConfig extends EmailAuth {
+  debug?: boolean
+}
 
 const knownProducts = [
     Product.restPlus,
@@ -180,6 +182,36 @@ export class HatchBabyApi {
         !ignoredProducts.includes(product)
       ) {
         logInfo('Unsupported Product Found: ' + product)
+
+        if (this.config.debug) {
+          const debugDevices = createDevices(product, IotDevice)
+          for (const device of debugDevices) {
+            try {
+              logInfo(`Debug info for ${product} ${device.info.name}:`)
+              logInfo(
+                JSON.stringify(
+                  {
+                    ...device.info,
+                    id: '***',
+                    macAddress: '***',
+                    thingName: '***',
+                    memberId: '***',
+                    email: '***',
+                  },
+                  null,
+                  2,
+                ),
+              )
+              logInfo(`State for ${product} ${device.info.name}:`)
+              logInfo(JSON.stringify(await device.getCurrentState(), null, 2))
+            } catch (e) {
+              logError(
+                `Failed to get debug info for ${product} ${device.info.name}`,
+              )
+              logError(e)
+            }
+          }
+        }
       }
     }
 
