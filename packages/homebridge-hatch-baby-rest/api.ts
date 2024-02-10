@@ -26,6 +26,10 @@ const knownProducts = [
     Product.restore,
     Product.restoreIot,
   ],
+  ignoredProducts = [
+    // Known, but not supported
+    Product.alexa,
+  ],
   productFetchQueryString = knownProducts
     .map((product) => 'iotProducts=' + product)
     .join('&'),
@@ -170,7 +174,11 @@ export class HatchBabyApi {
       }
 
     for (const product of member.products) {
-      if (!knownProducts.includes(product) && product !== Product.rest) {
+      if (
+        !knownProducts.includes(product) &&
+        product !== Product.rest &&
+        !ignoredProducts.includes(product)
+      ) {
         logInfo('Unsupported Product Found: ' + product)
       }
     }

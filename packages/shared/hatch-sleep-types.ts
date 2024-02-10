@@ -7,6 +7,7 @@ export const enum Product {
   restMini = 'restMini',
   restore = 'restore',
   restoreIot = 'restoreIot',
+  alexa = 'alexa',
 }
 
 export interface Baby {
