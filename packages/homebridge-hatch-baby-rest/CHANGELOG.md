@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.3.0
+
+### Minor Changes
+
+- [`53769b7`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/53769b79e06f2608d262dd9fbea1ff11ca861e96) Thanks [@dgreif](https://github.com/dgreif)! - Add `debug` option which logs unknown product details
+
+### Patch Changes
+
+- [`d220117`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/d220117174390d203f95a83848bf719df68f1b52) Thanks [@dgreif](https://github.com/dgreif)! - Prevent unsupported device logging for `alexa` devices
+
 ## 4.2.0
 
 ### Minor Changes
