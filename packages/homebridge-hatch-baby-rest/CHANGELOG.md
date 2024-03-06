@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.1
+
+### Patch Changes
+
+- [`072f68d`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/072f68d7d63335fbac080fee63774f753274a0f7) Thanks [@dgreif](https://github.com/dgreif)! - Fetch all products for the account, rather than just fetching known device types. This will allow us to log info for new unknown device types.
+
 ## 4.3.0
 
 ### Minor Changes
