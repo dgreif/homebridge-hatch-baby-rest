@@ -32,9 +32,6 @@ const knownProducts = [
     // Known, but not supported
     Product.alexa,
   ],
-  productFetchQueryString = knownProducts
-    .map((product) => 'iotProducts=' + product)
-    .join('&'),
   iotClientRefreshPeriod = 8 * 60 * 60 * 1000 // refresh client every 8 hours
 
 export class HatchBabyApi {
@@ -51,19 +48,16 @@ export class HatchBabyApi {
     })
   }
 
-  async getIotDevices() {
-    const devices =
-      (await this.restClient.request<IotDeviceInfo[] | null>({
-        url: apiPath(
-          'service/app/iotDevice/v2/fetch?' + productFetchQueryString,
-        ),
-      })) || []
-
-    devices.forEach((device) => {
-      if (!knownProducts.includes(device.product)) {
-        logInfo('Unsupported Light Found: ' + JSON.stringify(device))
-      }
-    })
+  async getIotDevices(products: string[]) {
+    const productFetchQueryString = products
+        .map((product) => 'iotProducts=' + product)
+        .join('&'),
+      devices =
+        (await this.restClient.request<IotDeviceInfo[] | null>({
+          url: apiPath(
+            'service/app/iotDevice/v2/fetch?' + productFetchQueryString,
+          ),
+        })) || []
 
     return devices
   }
@@ -157,10 +151,13 @@ export class HatchBabyApi {
   }
 
   async getDevices() {
-    const [devices, onIotClient, member] = await Promise.all([
-        this.getIotDevices(),
+    const member = await this.getMember(),
+      products = member.products.filter(
+        (product: string) => product !== Product.rest,
+      ),
+      [devices, onIotClient] = await Promise.all([
+        this.getIotDevices(products),
         this.getOnIotClient(),
-        this.getMember(),
       ]),
       createDevices = <T extends IotDevice<any>>(
         product: Product,
