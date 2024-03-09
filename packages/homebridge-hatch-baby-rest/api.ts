@@ -30,6 +30,7 @@ const knownProducts = [
   ],
   ignoredProducts = [
     // Known, but not supported
+    Product.rest,
     Product.alexa,
   ],
   iotClientRefreshPeriod = 8 * 60 * 60 * 1000 // refresh client every 8 hours
@@ -48,8 +49,12 @@ export class HatchBabyApi {
     })
   }
 
-  async getIotDevices(products: string[]) {
-    const productFetchQueryString = products
+  async getIotDevices(memberProducts: string[]) {
+    // Combine the user's products with the known products to ensure we get all devices
+    const allProducts = Array.from(
+        new Set([...memberProducts, ...knownProducts]),
+      ),
+      productFetchQueryString = allProducts
         .map((product) => 'iotProducts=' + product)
         .join('&'),
       devices =
@@ -152,11 +157,11 @@ export class HatchBabyApi {
 
   async getDevices() {
     const member = await this.getMember(),
-      products = member.products.filter(
-        (product: string) => product !== Product.rest,
+      memberProducts = member.products.filter(
+        (product: Product) => !ignoredProducts.includes(product),
       ),
       [devices, onIotClient] = await Promise.all([
-        this.getIotDevices(products),
+        this.getIotDevices(memberProducts),
         this.getOnIotClient(),
       ]),
       createDevices = <T extends IotDevice<any>>(
@@ -175,10 +180,12 @@ export class HatchBabyApi {
     for (const product of member.products) {
       if (
         !knownProducts.includes(product) &&
-        product !== Product.rest &&
         !ignoredProducts.includes(product)
       ) {
-        logInfo('Unsupported Product Found: ' + product)
+        const debugMessage = this.config.debug
+          ? ''
+          : '. Set `"debug": true` in your config to see more device details.'
+        logInfo('Unsupported Product Found: ' + product + debugMessage)
 
         if (this.config.debug) {
           const debugDevices = createDevices(product, IotDevice)
