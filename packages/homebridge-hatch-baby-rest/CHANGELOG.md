@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.3.2
+
+### Patch Changes
+
+- [`71eb805`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/71eb8053e214275c460e6b85e98f5f2c927b9690) Thanks [@dgreif](https://github.com/dgreif)! - Fetch both known and unknown device types in case Hatch does not give us a complete list of user devices. Might fix #123
+
+- [`52cfcf1`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/52cfcf1126e570ecd80853f66dedde70d5110bfd) Thanks [@dgreif](https://github.com/dgreif)! - Mark `grow` as a known but unsupported device
+
 ## 4.3.1
 
 ### Patch Changes
