@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.3
+
+### Patch Changes
+
+- [`b8d93fa`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/b8d93fa68989635174b5087d49edca727833bd1a) Thanks [@dgreif](https://github.com/dgreif)! - Only fetch known products to avoid accidentally sending a bad device request. Should fix #125
+
 ## 4.3.2
 
 ### Patch Changes
