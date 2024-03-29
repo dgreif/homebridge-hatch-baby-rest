@@ -50,12 +50,9 @@ export class HatchBabyApi {
     })
   }
 
-  async getIotDevices(memberProducts: string[]) {
+  async getIotDevices(...products: Product[]) {
     // Combine the user's products with the known products to ensure we get all devices
-    const allProducts = Array.from(
-        new Set([...memberProducts, ...knownProducts]),
-      ),
-      productFetchQueryString = allProducts
+    const productFetchQueryString = products
         .map((product) => 'iotProducts=' + product)
         .join('&'),
       devices =
@@ -157,12 +154,9 @@ export class HatchBabyApi {
   }
 
   async getDevices() {
-    const member = await this.getMember(),
-      memberProducts = member.products.filter(
-        (product: Product) => !ignoredProducts.includes(product),
-      ),
-      [devices, onIotClient] = await Promise.all([
-        this.getIotDevices(memberProducts),
+    const [devices, member, onIotClient] = await Promise.all([
+        this.getIotDevices(...knownProducts),
+        this.getMember(),
         this.getOnIotClient(),
       ]),
       createDevices = <T extends IotDevice<any>>(
@@ -189,33 +183,44 @@ export class HatchBabyApi {
         logInfo('Unsupported Product Found: ' + product + debugMessage)
 
         if (this.config.debug) {
-          const debugDevices = createDevices(product, IotDevice)
-          for (const device of debugDevices) {
-            try {
-              logInfo(`Debug info for ${product} ${device.info.name}:`)
-              logInfo(
-                JSON.stringify(
-                  {
-                    ...device.info,
-                    id: '***',
-                    macAddress: '***',
-                    thingName: '***',
-                    memberId: '***',
-                    email: '***',
-                  },
-                  null,
-                  2,
-                ),
+          this.getIotDevices(product)
+            .then(async (unknownDevices) => {
+              const debugDevices = unknownDevices.map(
+                (device) => new IotDevice(device, onIotClient),
               )
-              logInfo(`State for ${product} ${device.info.name}:`)
-              logInfo(JSON.stringify(await device.getCurrentState(), null, 2))
-            } catch (e) {
-              logError(
-                `Failed to get debug info for ${product} ${device.info.name}`,
-              )
-              logError(e)
-            }
-          }
+              for (const device of debugDevices) {
+                try {
+                  logInfo(`Debug info for ${product} ${device.info.name}:`)
+                  logInfo(
+                    JSON.stringify(
+                      {
+                        ...device.info,
+                        id: '***',
+                        macAddress: '***',
+                        thingName: '***',
+                        memberId: '***',
+                        email: '***',
+                      },
+                      null,
+                      2,
+                    ),
+                  )
+                  logInfo(`State for ${product} ${device.info.name}:`)
+                  logInfo(
+                    JSON.stringify(await device.getCurrentState(), null, 2),
+                  )
+                } catch (e) {
+                  logError(
+                    `Failed to get debug info for ${product} ${device.info.name}`,
+                  )
+                  logError(e)
+                }
+              }
+            })
+            .catch((error) => {
+              logError('Failed to get debug info for ' + product)
+              logError(error)
+            })
         }
       }
     }
