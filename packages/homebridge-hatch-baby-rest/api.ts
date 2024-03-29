@@ -33,6 +33,7 @@ const knownProducts = [
     Product.rest,
     Product.alexa,
     Product.grow,
+    Product.answeredReader,
   ],
   iotClientRefreshPeriod = 8 * 60 * 60 * 1000 // refresh client every 8 hours
 
