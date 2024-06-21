@@ -38,10 +38,11 @@
     "prettier": "3.2.4",
     "ts-essentials": "9.4.1",
     "ts-node": "10.9.2",
-    "turbo": "^1.12.2",
+    "turbo": "^2.0.4",
     "typescript": "5.3.3"
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "packageManager": "npm@10.2.3"
 }
