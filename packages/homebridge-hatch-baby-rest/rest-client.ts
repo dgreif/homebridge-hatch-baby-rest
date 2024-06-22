@@ -1,35 +1,51 @@
-import got, { Options as RequestOptions } from 'got'
 import { delay, logError } from '../shared/util'
 import { LoginResponse } from '../shared/hatch-sleep-types'
+import { RequestInit, HeadersInit } from 'undici-types'
 
 const apiBaseUrl = 'https://prod-sleep.hatchbaby.com/',
-  defaultRequestOptions: RequestOptions = {
-    http2: true,
-    responseType: 'json',
+  defaultRequestOptions: RequestInit = {
     method: 'GET',
   },
-  defaultHeaders: RequestOptions['headers'] = {
+  defaultHeaders: HeadersInit = {
     USER_AGENT: 'hatch_rest_api',
+    'content-type': 'application/json',
   }
 
 export function apiPath(path: string) {
   return apiBaseUrl + path
 }
 
-export async function requestWithRetry<T>(options: RequestOptions): Promise<T> {
+export async function requestWithRetry<T>(
+  options: RequestInit & { url: string; json?: object },
+): Promise<T> {
   try {
-    const optionsWithDefaults = {
-        ...defaultRequestOptions,
-        ...options,
-        headers: {
-          ...defaultHeaders,
-          ...options.headers,
-        },
+    const optionsWithDefaults: RequestInit = {
+      ...defaultRequestOptions,
+      ...options,
+      headers: {
+        ...defaultHeaders,
+        ...options.headers,
       },
-      response = (await got(optionsWithDefaults)) as {
-        body: T
-      }
-    return response.body
+    }
+
+    if (options.json) {
+      optionsWithDefaults.body = JSON.stringify(options.json)
+    }
+
+    const response = await fetch(new Request(options.url, optionsWithDefaults))
+
+    if (!response.ok) {
+      const errorWithResponse = new Error(
+        `Failed to fetch ${options.url}.  Response: ${response.status} ${response.statusText}. ${await response.text()}`,
+      )
+
+      ;(errorWithResponse as any).response = response
+      throw errorWithResponse
+    }
+
+    const responseJson = await response.json()
+
+    return responseJson as T
   } catch (e: any) {
     if (!e.response) {
       logError(
@@ -78,12 +94,10 @@ export class RestClient {
     this.loginPromise = this.logIn()
   }
 
-  async request<T = void>(
-    options: RequestOptions & { url: string },
-  ): Promise<T> {
+  async request<T = void>(options: RequestInit & { url: string }): Promise<T> {
     try {
       const loginResponse = await this.loginPromise,
-        headers: { [key: string]: string } = {
+        headers: HeadersInit = {
           ...options.headers,
           'X-HatchBaby-Auth': loginResponse.token,
         },
