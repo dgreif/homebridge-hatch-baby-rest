@@ -1,0 +1,10 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "homebridge-hatch-baby-rest": "4.3.4",
+    "homebridge-hatch-rest-bluetooth": "4.1.1",
+    "tsconfig": "0.0.0"
+  },
+  "changesets": []
+}
