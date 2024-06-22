@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.4
+
+### Patch Changes
+
+- [`7d87cfd`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/7d87cfdb357f6ef05d84378513d26ddb222d506e) Thanks [@dgreif](https://github.com/dgreif)! - Updated dependencies
+
 ## 4.3.3
 
 ### Patch Changes
