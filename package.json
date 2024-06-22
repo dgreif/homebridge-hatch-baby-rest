@@ -14,7 +14,7 @@
     "push-with-tags": "git push --follow-tags && node ./build/github-releaser.js",
     "predeploy": "git pull -r && turbo run build test lint",
     "postdeploy": "npm run push-with-tags",
-    "deploy": "changeset version && git commit -am 'Bump versions for release' && changeset publish",
+    "deploy": "changeset version && git commit -am 'Bump versions for release' && ./run-with-env changeset publish",
     "prepare-beta": "changeset pre enter beta && git add .changeset/pre.json && git commit -am 'Prepare for beta release'",
     "exit-beta": "changeset pre exit && commit -am 'Exit beta release'"
   },
