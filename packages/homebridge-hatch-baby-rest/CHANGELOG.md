@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.0-beta.0
+
+### Major Changes
+
+- [`fdedff7`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/fdedff7638fd796a8394c17eaa84882a624c15bf) Thanks [@dgreif](https://github.com/dgreif)! - Dropped support for Node 16. Please update to Node 18 or Node 20. This allows us to drop a dependency on `got` and use the native `fetch` from Node.js.
+
 ## 4.3.4
 
 ### Patch Changes
