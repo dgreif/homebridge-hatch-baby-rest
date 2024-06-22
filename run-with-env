@@ -1,8 +1,0 @@
-#!/bin/bash
-# Load and export variables from .env file
-set -a
-source .env
-set +a
-
-# Execute the command passed as arguments to this script
-exec "$@"
