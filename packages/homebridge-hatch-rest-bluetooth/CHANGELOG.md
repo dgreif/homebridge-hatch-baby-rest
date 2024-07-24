@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.1
+
+### Patch Changes
+
+- [`74bc9ee`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/74bc9eeef7741311512aca5375924242f4bbbc2d) Thanks [@dgreif](https://github.com/dgreif)! - Prepare for Homebridge v2
+
 ## 5.0.0
 
 ### Major Changes
