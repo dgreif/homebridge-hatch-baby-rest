@@ -68,7 +68,7 @@ export function parseFeedbackBuffer(feedbackBuffer: Buffer) {
       break
     }
 
-    const data = feedbackBuffer.slice(i + 1, i + field.length + 1)
+    const data = feedbackBuffer.subarray(i + 1, i + field.length + 1)
 
     if (field.mapper) {
       Object.assign(feedback, field.mapper(data))

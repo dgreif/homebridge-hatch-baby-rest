@@ -79,7 +79,7 @@ export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
     )
 
     if (light.onBatteryLevel) {
-      const batteryService = this.getService(Service.BatteryService, name)
+      const batteryService = this.getService(Service.Battery, name)
 
       this.registerCharacteristic(
         batteryService.getCharacteristic(Characteristic.BatteryLevel),

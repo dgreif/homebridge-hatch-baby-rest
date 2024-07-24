@@ -2,7 +2,8 @@
   "parser": "@typescript-eslint/parser",
   "extends": [
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:deprecation/recommended"
   ],
   "ignorePatterns": [
     "lib",
@@ -10,7 +11,8 @@
   ],
   "parserOptions": {
     "ecmaVersion": 2018,
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
   "env": {
     "node": true,
