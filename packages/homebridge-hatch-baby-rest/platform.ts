@@ -1,8 +1,3 @@
-import { ApiConfig, HatchBabyApi } from './api'
-import { hap, isTestHomebridge } from '../shared/hap'
-import { useLogger } from '../shared/util'
-import { LightAndSoundMachineAccessory } from '../shared/light-and-sound-machine'
-import { SoundMachineAccessory } from '../shared/sound-machine'
 import type {
   API,
   DynamicPlatformPlugin,
@@ -10,9 +5,16 @@ import type {
   PlatformAccessory,
   PlatformConfig,
 } from 'homebridge'
-import { RestoreAccessory } from './restore-accessory'
+import { hap, isTestHomebridge } from '../shared/hap'
+import { LightAndSoundMachineAccessory } from '../shared/light-and-sound-machine'
+import { SoundMachineAccessory } from '../shared/sound-machine'
+import { useLogger } from '../shared/util'
+import { ApiConfig, HatchBabyApi } from './api'
 import { RestIot } from './rest-iot'
 import { Restore } from './restore'
+import { RestoreAccessory } from './restore-accessory'
+import { Restore2 } from './restore-v4'
+import { RestoreV2Accessory } from './restorev2-accessory'
 
 export const pluginName = 'homebridge-hatch-baby-rest'
 export const platformName = 'HatchBabyRest'
@@ -62,9 +64,9 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
 
   async connectToApi() {
     const hatchBabyApi =
-        this.config.email && this.config.password
-          ? new HatchBabyApi(this.config)
-          : undefined,
+      this.config.email && this.config.password
+        ? new HatchBabyApi(this.config)
+        : undefined,
       {
         restPluses,
         restMinis,
@@ -72,15 +74,17 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         restoreIots,
         restIots,
         restIotPluses,
+        restore2s,
       } = hatchBabyApi
-        ? await hatchBabyApi.getDevices()
-        : {
+          ? await hatchBabyApi.getDevices()
+          : {
             restPluses: [],
             restMinis: [],
             restores: [],
             restIots: [],
             restIotPluses: [],
             restoreIots: [],
+            restore2s: [],
           },
       { api } = this,
       cachedAccessoryIds = Object.keys(this.homebridgeAccessories),
@@ -94,6 +98,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         ...restIotPluses,
         ...restores,
         ...restoreIots,
+        ...restore2s
       ]
 
     this.log.info('Configuring Hatch Devices:')
@@ -136,7 +141,8 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
 
       if (device instanceof Restore || device instanceof RestIot) {
         new RestoreAccessory(device, homebridgeAccessory)
-      } else if ('onBrightness' in device) {
+      } else if (device instanceof Restore2) { new RestoreV2Accessory(device, homebridgeAccessory) }
+      else if ('onBrightness' in device) {
         new LightAndSoundMachineAccessory(device, homebridgeAccessory)
       } else {
         new SoundMachineAccessory(device, homebridgeAccessory)

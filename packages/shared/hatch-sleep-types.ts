@@ -7,6 +7,7 @@ export const enum Product {
   restMini = 'restMini',
   restore = 'restore',
   restoreIot = 'restoreIot',
+  restore2 = 'restoreV4',
   alexa = 'alexa',
   grow = 'grow',
   answeredReader = 'answeredReader',
@@ -436,6 +437,118 @@ export interface RestoreState {
   }
   lastReset: string
   encryption: number
+}
+
+export interface Restore2State {
+  alarmsDisabled: boolean,
+  snoozeDuration: number,
+  env: "prod" | string,
+  nightlightOn: false,
+  nightlightIntensity: 32780,
+  toddlerLockOn: false,
+  current: {
+    srId: string,
+    playing: string,
+    step: number,
+    color: {
+      id: number,
+      r: number,
+      g: number,
+      b: number,
+      w: number,
+      i: number,
+      duration: number,
+      until: "indefinite" | string
+    },
+    sound: {
+      id: number,
+      v: number,
+      mute: boolean,
+      url: string,
+      duration: number,
+      until: "indefinite" | string
+    },
+    paused: boolean
+  },
+  dataVersion: string,
+  sleepScene: {
+    srId: number,
+    enabled: boolean
+  },
+  timer: {
+    s: string,
+    d: number
+  },
+  streaming: {
+    status: "none" | string
+  },
+  timezone: string,
+  rF: {
+    v: string,
+    i: boolean,
+    u: string
+  },
+  deviceInfo: {
+    f: string,
+    fR: number,
+    hwVersion: string,
+    powerStatus: number,
+    sdCardVersionInfo: {
+      releaseDate: "unknown" | string,
+      hashType: string,
+      hashCode: string
+    }
+  },
+  clock: {
+    i: number,
+    turnOffAt: string,
+    turnOnAt: string,
+    flags: number,
+    turnOffMode: string,
+    turnDimAt: string,
+    turnBrightAt: string
+  },
+  toddlerLock: {
+    turnOffAt: string,
+    turnOnAt: string,
+    turnOnMode: "never" | string
+  },
+  lucky: number,
+  LDR: "UpgReset" | string,
+  LWTP: boolean,
+  debug: number,
+  logging: number,
+  owned: boolean,
+  lastReset: "PowerOn_OtherWDT" | string,
+  ota: {
+    status: "none" | string,
+    downloadProgress: number,
+    installProgress: number
+  },
+  REX: {
+    lock: number,
+    key: number,
+    command: "RB" | string,
+    auth: number
+  },
+  connected: boolean,
+  rssi: number,
+  hwDebugFlags: number,
+  knockThreshold: number,
+  knockDuration: number,
+  activeTap: boolean,
+  knockAxis: number,
+  snooze: {
+    active: boolean,
+    startTime: string
+  },
+  touch: {
+    flags: number,
+    poll_rate_hz: number,
+    refire_delay_ms: number,
+    refire_rate_hz: number,
+    step_size: number
+  }
 }
 
 // eslint-disable-next-line no-shadow
