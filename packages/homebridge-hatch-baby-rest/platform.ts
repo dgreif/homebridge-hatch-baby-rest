@@ -13,8 +13,8 @@ import { ApiConfig, HatchBabyApi } from './api'
 import { RestIot } from './rest-iot'
 import { Restore } from './restore'
 import { RestoreAccessory } from './restore-accessory'
-import { Restore2 } from './restore-v4'
-import { RestoreV2Accessory } from './restorev2-accessory'
+import { Restore2 } from './restore-v2'
+import { RestoreV2Accessory } from './restore-v2-accessory'
 
 export const pluginName = 'homebridge-hatch-baby-rest'
 export const platformName = 'HatchBabyRest'
@@ -141,8 +141,9 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
 
       if (device instanceof Restore || device instanceof RestIot) {
         new RestoreAccessory(device, homebridgeAccessory)
-      } else if (device instanceof Restore2) { new RestoreV2Accessory(device, homebridgeAccessory) }
-      else if ('onBrightness' in device) {
+      } else if (device instanceof Restore2) {
+        new RestoreV2Accessory(device, homebridgeAccessory)
+      } else if ('onBrightness' in device) {
         new LightAndSoundMachineAccessory(device, homebridgeAccessory)
       } else {
         new SoundMachineAccessory(device, homebridgeAccessory)

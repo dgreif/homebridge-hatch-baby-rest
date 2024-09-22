@@ -15,7 +15,7 @@ import { RestIot } from './rest-iot'
 import { RestMini } from './rest-mini'
 import { RestPlus } from './rest-plus'
 import { Restore } from './restore'
-import { Restore2 } from './restore-v4'
+import { Restore2 } from './restore-v2'
 
 export interface ApiConfig extends EmailAuth {
   debug?: boolean

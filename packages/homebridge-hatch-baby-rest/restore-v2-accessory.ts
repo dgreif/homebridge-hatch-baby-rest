@@ -1,12 +1,12 @@
 import { PlatformAccessory } from 'homebridge'
-import { BaseAccessory } from '../shared/base-accessory'
 import { hap } from '../shared/hap'
+import { LightAndSoundMachineAccessory } from '../shared/light-and-sound-machine'
 import { logInfo } from '../shared/util'
 import { RestIot } from './rest-iot'
-import { Restore2 } from './restore-v4'
+import { Restore2 } from './restore-v2'
 
-export class RestoreV2Accessory extends BaseAccessory {
-  constructor(restore: Restore2 | RestIot, accessory: PlatformAccessory) {
+export class RestoreV2Accessory extends LightAndSoundMachineAccessory {
+  constructor(restore: Restore2, accessory: PlatformAccessory) {
     super(restore, accessory)
 
     const { Service, Characteristic } = hap,

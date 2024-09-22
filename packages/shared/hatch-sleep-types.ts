@@ -119,6 +119,18 @@ export const audioTracks = [
   AudioTrack.RockABye,
 ]
 
+export const enum SoundId {
+  None = 19998,
+  ForestWind = 7,
+  RollingThunder = 31021
+}
+
+export const soundIds = [
+  SoundId.None,
+  SoundId.ForestWind,
+  SoundId.RollingThunder
+]
+
 export interface RgbColor {
   r: number
   g: number
@@ -129,6 +141,21 @@ export interface RestPlusColor extends RgbColor {
   i: number // intensity, max 65535
   R: boolean // rainbow if true, rgb 0
   W: boolean // white if true, rgb 0
+}
+
+/**
+ * Restore2Color is the object used to represent the current light state of 
+ * a RestoreV2 device.
+ */
+export interface Restore2Color extends RgbColor {
+  /**Unknown */
+  id: number,
+  /** If w is true, the light is pure white */
+  w: boolean,
+  /** The intensity/brightness of the light */
+  i: number,
+  duration: number,
+  until: "indefinite" | string
 }
 
 // NOTE: rgb are used for Rest, RW used for Rest+
@@ -450,16 +477,7 @@ export interface Restore2State {
     srId: string,
     playing: string,
     step: number,
-    color: {
-      id: number,
-      r: number,
-      g: number,
-      b: number,
-      w: number,
-      i: number,
-      duration: number,
-      until: "indefinite" | string
-    },
+    color: Restore2Color,
     sound: {
       id: number,
       v: number,
@@ -492,7 +510,7 @@ export interface Restore2State {
     f: string,
     fR: number,
     hwVersion: string,
-    powerStatus: number,
+    powerStatus: boolean,
     sdCardVersionInfo: {
       releaseDate: "unknown" | string,
       hashType: string,
