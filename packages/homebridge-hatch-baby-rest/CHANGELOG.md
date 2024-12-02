@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.2
+
+### Patch Changes
+
+- [`c2b72ac`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/c2b72ac07b4471fe1c3cf00a2d62282e132659b4) Thanks [@dgreif](https://github.com/dgreif)! - Add support for Node 22
+
 ## 5.0.1
 
 ### Patch Changes
