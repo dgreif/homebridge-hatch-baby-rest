@@ -1,4 +1,6 @@
-import { apiPath, EmailAuth, requestWithRetry, RestClient } from './rest-client'
+import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
+import { BehaviorSubject } from 'rxjs'
+import { debounceTime } from 'rxjs/operators'
 import {
   IotCredentialsResponse,
   IotDeviceInfo,
@@ -6,28 +8,28 @@ import {
   MemberResponse,
   Product,
 } from '../shared/hatch-sleep-types'
-import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { logDebug, logError, logInfo } from '../shared/util'
-import { RestPlus } from './rest-plus'
+import { IotDevice } from './iot-device'
+import { apiPath, EmailAuth, requestWithRetry, RestClient } from './rest-client'
 import { RestIot } from './rest-iot'
 import { RestMini } from './rest-mini'
+import { RestPlus } from './rest-plus'
 import { Restore } from './restore'
-import { BehaviorSubject } from 'rxjs'
-import { IotDevice } from './iot-device'
-import { debounceTime } from 'rxjs/operators'
+import { Restore2 } from './restore-v2'
 
 export interface ApiConfig extends EmailAuth {
   debug?: boolean
 }
 
 const knownProducts = [
-    Product.restPlus,
-    Product.riot,
-    Product.riotPlus,
-    Product.restMini,
-    Product.restore,
-    Product.restoreIot,
-  ],
+  Product.restPlus,
+  Product.riot,
+  Product.riotPlus,
+  Product.restMini,
+  Product.restore,
+  Product.restoreIot,
+  Product.restore2
+],
   ignoredProducts = [
     // Known, but not supported
     Product.rest,
@@ -39,7 +41,7 @@ const knownProducts = [
 
 export class HatchBabyApi {
   restClient = new RestClient(this.config)
-  constructor(private config: ApiConfig) {}
+  constructor(private config: ApiConfig) { }
 
   getAccount() {
     return this.restClient.getAccount()
@@ -54,8 +56,8 @@ export class HatchBabyApi {
   async getIotDevices(...products: Product[]) {
     // Combine the user's products with the known products to ensure we get all devices
     const productFetchQueryString = products
-        .map((product) => 'iotProducts=' + product)
-        .join('&'),
+      .map((product) => 'iotProducts=' + product)
+      .join('&'),
       devices =
         (await this.restClient.request<IotDeviceInfo[] | null>({
           url: apiPath(
@@ -68,8 +70,8 @@ export class HatchBabyApi {
 
   async createAwsIotClient() {
     const iotResponse = await this.restClient.request<IotTokenResponse>({
-        url: apiPath('service/app/restPlus/token/v1/fetch'),
-      }),
+      url: apiPath('service/app/restPlus/token/v1/fetch'),
+    }),
       { Credentials: credentials } =
         await requestWithRetry<IotCredentialsResponse>({
           url: `https://cognito-identity.${iotResponse.region}.amazonaws.com`,
@@ -156,10 +158,10 @@ export class HatchBabyApi {
 
   async getDevices() {
     const [devices, member, onIotClient] = await Promise.all([
-        this.getIotDevices(...knownProducts),
-        this.getMember(),
-        this.getOnIotClient(),
-      ]),
+      this.getIotDevices(...knownProducts),
+      this.getMember(),
+      this.getOnIotClient(),
+    ]),
       createDevices = <T extends IotDevice<any>>(
         product: Product,
         Device: new (
@@ -233,6 +235,7 @@ export class HatchBabyApi {
       restMinis: createDevices(Product.restMini, RestMini),
       restores: createDevices(Product.restore, Restore),
       restoreIots: createDevices(Product.restoreIot, RestIot),
+      restore2s: createDevices(Product.restore2, Restore2)
     }
   }
 }

@@ -7,6 +7,7 @@ export const enum Product {
   restMini = 'restMini',
   restore = 'restore',
   restoreIot = 'restoreIot',
+  restore2 = 'restoreV4',
   alexa = 'alexa',
   grow = 'grow',
   answeredReader = 'answeredReader',
@@ -118,6 +119,18 @@ export const audioTracks = [
   AudioTrack.RockABye,
 ]
 
+export const enum SoundId {
+  None = 19998,
+  ForestWind = 7,
+  RollingThunder = 31021
+}
+
+export const soundIds = [
+  SoundId.None,
+  SoundId.ForestWind,
+  SoundId.RollingThunder
+]
+
 export interface RgbColor {
   r: number
   g: number
@@ -128,6 +141,21 @@ export interface RestPlusColor extends RgbColor {
   i: number // intensity, max 65535
   R: boolean // rainbow if true, rgb 0
   W: boolean // white if true, rgb 0
+}
+
+/**
+ * Restore2Color is the object used to represent the current light state of 
+ * a RestoreV2 device.
+ */
+export interface Restore2Color extends RgbColor {
+  /**Unknown */
+  id: number,
+  /** If w is true, the light is pure white */
+  w: boolean,
+  /** The intensity/brightness of the light */
+  i: number,
+  duration: number,
+  until: "indefinite" | string
 }
 
 // NOTE: rgb are used for Rest, RW used for Rest+
@@ -436,6 +464,109 @@ export interface RestoreState {
   }
   lastReset: string
   encryption: number
+}
+
+export interface Restore2State {
+  alarmsDisabled: boolean,
+  snoozeDuration: number,
+  env: "prod" | string,
+  nightlightOn: false,
+  nightlightIntensity: 32780,
+  toddlerLockOn: false,
+  current: {
+    srId: string,
+    playing: string,
+    step: number,
+    color: Restore2Color,
+    sound: {
+      id: number,
+      v: number,
+      mute: boolean,
+      url: string,
+      duration: number,
+      until: "indefinite" | string
+    },
+    paused: boolean
+  },
+  dataVersion: string,
+  sleepScene: {
+    srId: number,
+    enabled: boolean
+  },
+  timer: {
+    s: string,
+    d: number
+  },
+  streaming: {
+    status: "none" | string
+  },
+  timezone: string,
+  rF: {
+    v: string,
+    i: boolean,
+    u: string
+  },
+  deviceInfo: {
+    f: string,
+    fR: number,
+    hwVersion: string,
+    powerStatus: boolean,
+    sdCardVersionInfo: {
+      releaseDate: "unknown" | string,
+      hashType: string,
+      hashCode: string
+    }
+  },
+  clock: {
+    i: number,
+    turnOffAt: string,
+    turnOnAt: string,
+    flags: number,
+    turnOffMode: string,
+    turnDimAt: string,
+    turnBrightAt: string
+  },
+  toddlerLock: {
+    turnOffAt: string,
+    turnOnAt: string,
+    turnOnMode: "never" | string
+  },
+  lucky: number,
+  LDR: "UpgReset" | string,
+  LWTP: boolean,
+  debug: number,
+  logging: number,
+  owned: boolean,
+  lastReset: "PowerOn_OtherWDT" | string,
+  ota: {
+    status: "none" | string,
+    downloadProgress: number,
+    installProgress: number
+  },
+  REX: {
+    lock: number,
+    key: number,
+    command: "RB" | string,
+    auth: number
+  },
+  connected: boolean,
+  rssi: number,
+  hwDebugFlags: number,
+  knockThreshold: number,
+  knockDuration: number,
+  activeTap: boolean,
+  knockAxis: number,
+  snooze: {
+    active: boolean,
+    startTime: string
+  },
+  touch: {
+    flags: number,
+    poll_rate_hz: number,
+    refire_delay_ms: number,
+    refire_rate_hz: number,
+    step_size: number
+  }
 }
 
 // eslint-disable-next-line no-shadow
