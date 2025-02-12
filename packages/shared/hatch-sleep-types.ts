@@ -7,6 +7,7 @@ export const enum Product {
   restMini = 'restMini',
   restore = 'restore',
   restoreIot = 'restoreIot',
+  restoreV4 = 'restoreV4',
   alexa = 'alexa',
   grow = 'grow',
   answeredReader = 'answeredReader',
