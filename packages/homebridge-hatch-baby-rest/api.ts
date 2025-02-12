@@ -27,6 +27,7 @@ const knownProducts = [
     Product.restMini,
     Product.restore,
     Product.restoreIot,
+    Product.restoreV4,
   ],
   ignoredProducts = [
     // Known, but not supported
@@ -233,6 +234,7 @@ export class HatchBabyApi {
       restMinis: createDevices(Product.restMini, RestMini),
       restores: createDevices(Product.restore, Restore),
       restoreIots: createDevices(Product.restoreIot, RestIot),
+      restoreV4s: createDevices(Product.restoreV4, RestIot),
     }
   }
 }
