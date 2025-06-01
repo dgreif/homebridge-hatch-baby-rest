@@ -28,11 +28,19 @@ export class HatchRestBluetoothPlatform implements DynamicPlatformPlugin {
     [uuid: string]: PlatformAccessory
   } = {}
 
+  public log
+  public config
+  public api
+
   constructor(
-    public log: Logging,
-    public config: PlatformConfig & HatchRestBluetoothPlatformOptions,
-    public api: API,
+    log: Logging,
+    config: PlatformConfig & HatchRestBluetoothPlatformOptions,
+    api: API,
   ) {
+    this.log = log
+    this.config = config
+    this.api = api
+
     useLogger({
       logInfo(message) {
         log.info(message)

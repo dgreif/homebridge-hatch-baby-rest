@@ -19,12 +19,19 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
         ? 'Rest+ 2nd Gen'
         : 'Rest 2nd Gen'
 
+  public readonly info
+  public readonly onIotClient
+  public readonly restClient
+
   constructor(
-    public readonly info: IotDeviceInfo,
-    public readonly onIotClient: BehaviorSubject<AwsIotDevice>,
-    public readonly restClient: RestClient,
+    info: IotDeviceInfo,
+    onIotClient: BehaviorSubject<AwsIotDevice>,
+    restClient: RestClient,
   ) {
     super(info, onIotClient)
+    this.info = info
+    this.onIotClient = onIotClient
+    this.restClient = restClient
   }
 
   onSomeContentPlaying = this.onState.pipe(

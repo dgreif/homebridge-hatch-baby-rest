@@ -53,10 +53,12 @@ export class IotDevice<T> {
     return this.info.macAddress
   }
 
-  constructor(
-    public readonly info: IotDeviceInfo,
-    public readonly onIotClient: BehaviorSubject<AwsIotDevice>,
-  ) {
+  public readonly info
+  public readonly onIotClient
+
+  constructor(info: IotDeviceInfo, onIotClient: BehaviorSubject<AwsIotDevice>) {
+    this.info = info
+    this.onIotClient = onIotClient
     onIotClient
       .pipe(skip(1))
       .subscribe((client) => this.registerMqttClient(client))

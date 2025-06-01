@@ -18,15 +18,17 @@ export const pluginName = 'homebridge-hatch-baby-rest'
 export const platformName = 'HatchBabyRest'
 
 export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
+  public log
+  public config
+  public api
   private readonly homebridgeAccessories: {
     [uuid: string]: PlatformAccessory
   } = {}
 
-  constructor(
-    public log: Logging,
-    public config: PlatformConfig & ApiConfig,
-    public api: API,
-  ) {
+  constructor(log: Logging, config: PlatformConfig & ApiConfig, api: API) {
+    this.log = log
+    this.config = config
+    this.api = api
     useLogger({
       logInfo(message) {
         log.info(message)

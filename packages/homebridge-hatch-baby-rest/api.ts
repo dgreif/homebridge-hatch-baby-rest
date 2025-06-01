@@ -20,7 +20,7 @@ export interface ApiConfig extends EmailAuth {
   debug?: boolean
 }
 
-const knownProducts = [
+const knownProducts: Product[] = [
     Product.restPlus,
     Product.riot,
     Product.riotPlus,
@@ -28,7 +28,7 @@ const knownProducts = [
     Product.restore,
     Product.restoreIot,
   ],
-  ignoredProducts = [
+  ignoredProducts: Product[] = [
     // Known, but not supported
     Product.rest,
     Product.alexa,
@@ -38,8 +38,13 @@ const knownProducts = [
   iotClientRefreshPeriod = 8 * 60 * 60 * 1000 // refresh client every 8 hours
 
 export class HatchBabyApi {
-  restClient = new RestClient(this.config)
-  constructor(private config: ApiConfig) {}
+  public readonly config
+  restClient
+
+  constructor(config: ApiConfig) {
+    this.config = config
+    this.restClient = new RestClient(this.config)
+  }
 
   getAccount() {
     return this.restClient.getAccount()

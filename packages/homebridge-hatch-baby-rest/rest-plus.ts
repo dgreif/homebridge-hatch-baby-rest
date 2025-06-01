@@ -79,10 +79,10 @@ export class RestPlus
     })
   }
 
-  setAudioTrack(audioTrack: AudioTrack) {
+  setAudioTrack(audioTrack: number) {
     this.update({
       a: {
-        t: audioTrack,
+        t: audioTrack as AudioTrack,
       },
     })
   }

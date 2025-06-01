@@ -60,7 +60,7 @@ export class RestMini extends IotDevice<RestMiniState> implements SoundMachine {
     }
   }
 
-  setAudioTrack(audioTrack: RestMiniAudioTrack) {
+  setAudioTrack(audioTrack: number) {
     if (audioTrack === RestMiniAudioTrack.None) {
       return
     }
@@ -70,7 +70,7 @@ export class RestMini extends IotDevice<RestMiniState> implements SoundMachine {
         playing: 'remote',
         step: 1,
         sound: {
-          id: audioTrack,
+          id: audioTrack as RestMiniAudioTrack,
           until: 'indefinite',
         },
       },

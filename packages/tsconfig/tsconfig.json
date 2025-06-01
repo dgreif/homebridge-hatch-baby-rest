@@ -5,7 +5,8 @@
     "module": "commonjs",
     "outDir": "./lib",
     "esModuleInterop": true,
-    "strict": true
+    "strict": true,
+    "erasableSyntaxOnly": true
   },
   "include": ["packages/homebridge-hatch-baby-rest/src/**/*.ts"]
 }

@@ -41,24 +41,25 @@ import {
   convertFromHexRange,
 } from '../shared/colors'
 
-const usedPeripheralIds: string[] = []
-
-const enum ServiceUuid {
-  Advertising = '02260001-5efd-47eb-9c1a-de53f7a2b232',
-  Rest = '02240001-5efd-47eb-9c1a-de53f7a2b232',
-}
-
-const enum CharacteristicUuid {
-  Tx = '02240002-5efd-47eb-9c1a-de53f7a2b232',
-  Rx = '02240003-5efd-47eb-9c1a-de53f7a2b232',
-  CurrentFeedback = '02260002-5efd-47eb-9c1a-de53f7a2b232',
-}
+const usedPeripheralIds: string[] = [],
+  ServiceUuid = {
+    Advertising: '02260001-5efd-47eb-9c1a-de53f7a2b232',
+    Rest: '02240001-5efd-47eb-9c1a-de53f7a2b232',
+  } as const,
+  CharacteristicUuid = {
+    Tx: '02240002-5efd-47eb-9c1a-de53f7a2b232',
+    Rx: '02240003-5efd-47eb-9c1a-de53f7a2b232',
+    CurrentFeedback: '02260002-5efd-47eb-9c1a-de53f7a2b232',
+  } as const
 
 export class Rest implements LightAndSoundMachine {
   readonly model = 'Rest'
   audioTracks = audioTracks
   noble = require('@abandonware/noble')
-  peripheralPromise = this.getPeripheralByAddress(this.macAddress)
+  peripheralPromise
+
+  public readonly name
+  public readonly macAddress
 
   onFeedback = new BehaviorSubject<Feedback>({
     time: 0,
@@ -102,10 +103,11 @@ export class Rest implements LightAndSoundMachine {
 
   reconnectSubscription?: Subscription
 
-  constructor(
-    public readonly name: string,
-    public readonly macAddress: string,
-  ) {
+  constructor(name: string, macAddress: string) {
+    this.name = name
+    this.macAddress = macAddress
+    this.peripheralPromise = this.getPeripheralByAddress(this.macAddress)
+
     this.getDevice().then((device) => {
       device.on('connect', () => {
         return this.subscribeToFeedback()
@@ -273,7 +275,7 @@ export class Rest implements LightAndSoundMachine {
     this.onUsingConnection.next(null)
   }
 
-  setAudioTrack(track: AudioTrack) {
+  setAudioTrack(track: number) {
     return this.setCommand(RestCommand.SetTrackNumber, track)
   }
 

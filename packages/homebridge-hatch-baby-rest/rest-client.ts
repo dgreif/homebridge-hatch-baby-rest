@@ -65,9 +65,12 @@ export interface EmailAuth {
 }
 
 export class RestClient {
+  private readonly authOptions
   private loginPromise = this.logIn()
 
-  constructor(private authOptions: EmailAuth) {}
+  constructor(authOptions: EmailAuth) {
+    this.authOptions = authOptions
+  }
 
   async logIn(): Promise<LoginResponse> {
     try {
