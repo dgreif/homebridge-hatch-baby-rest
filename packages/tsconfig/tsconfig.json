@@ -1,12 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
+    "target": "ES2022",
     "lib": ["ES2023"],
-    "module": "commonjs",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "outDir": "./lib",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "strict": true,
-    "erasableSyntaxOnly": true
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "noEmit": false
   },
   "include": ["packages/homebridge-hatch-baby-rest/src/**/*.ts"]
 }

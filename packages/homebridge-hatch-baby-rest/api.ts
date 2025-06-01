@@ -1,19 +1,24 @@
-import { apiPath, EmailAuth, requestWithRetry, RestClient } from './rest-client'
+import {
+  apiPath,
+  EmailAuth,
+  requestWithRetry,
+  RestClient,
+} from './rest-client.ts'
 import {
   IotCredentialsResponse,
   IotDeviceInfo,
   IotTokenResponse,
   MemberResponse,
   Product,
-} from '../shared/hatch-sleep-types'
+} from '../shared/hatch-sleep-types.ts'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
-import { logDebug, logError, logInfo } from '../shared/util'
-import { RestPlus } from './rest-plus'
-import { RestIot } from './rest-iot'
-import { RestMini } from './rest-mini'
-import { Restore } from './restore'
+import { logDebug, logError, logInfo } from '../shared/util.ts'
+import { RestPlus } from './rest-plus.ts'
+import { RestIot } from './rest-iot.ts'
+import { RestMini } from './rest-mini.ts'
+import { Restore } from './restore.ts'
 import { BehaviorSubject } from 'rxjs'
-import { IotDevice } from './iot-device'
+import { IotDevice } from './iot-device.ts'
 import { debounceTime } from 'rxjs/operators'
 
 export interface ApiConfig extends EmailAuth {

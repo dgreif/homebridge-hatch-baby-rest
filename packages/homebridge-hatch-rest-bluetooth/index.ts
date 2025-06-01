@@ -1,10 +1,10 @@
-import { setHap } from '../shared/hap'
-import { migrateRestBluetooth } from '../shared/migrate-bluetooth'
+import { setHap } from '../shared/hap.ts'
+import { migrateRestBluetooth } from '../shared/migrate-bluetooth.ts'
 import {
   HatchRestBluetoothPlatform,
   platformName,
   pluginName,
-} from './platform'
+} from './platform.ts'
 
 export default function (homebridge: any) {
   setHap(homebridge.hap)

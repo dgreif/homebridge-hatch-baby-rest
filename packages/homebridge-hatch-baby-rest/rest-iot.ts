@@ -3,25 +3,26 @@ import {
   Product,
   RestIotRoutine,
   RestIotState,
-} from '../shared/hatch-sleep-types'
+} from '../shared/hatch-sleep-types.ts'
 import { distinctUntilChanged, map } from 'rxjs/operators'
-import { BaseDevice } from '../shared/base-accessory'
-import { IotDevice } from './iot-device'
+import { BaseDevice } from '../shared/base-accessory.ts'
+import { IotDevice } from './iot-device.ts'
 import { BehaviorSubject } from 'rxjs'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
-import { apiPath, RestClient } from './rest-client'
+import { apiPath, RestClient } from './rest-client.ts'
 
 export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
-  readonly model =
-    this.info.product === Product.restoreIot
+  public readonly info
+  public readonly onIotClient
+  public readonly restClient
+
+  get model() {
+    return this.info.product === Product.restoreIot
       ? 'Restore IoT'
       : Product.riotPlus
         ? 'Rest+ 2nd Gen'
         : 'Rest 2nd Gen'
-
-  public readonly info
-  public readonly onIotClient
-  public readonly restClient
+  }
 
   constructor(
     info: IotDeviceInfo,

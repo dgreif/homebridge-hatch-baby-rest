@@ -1,6 +1,7 @@
 {
   "name": "homebridge-hatch-rest-bluetooth",
   "version": "5.0.1",
+  "type": "module",
   "description": "Homebridge plugin for Hatch Rest bluetooth sound machine",
   "main": "lib/homebridge-hatch-rest-bluetooth/index.js",
   "scripts": {

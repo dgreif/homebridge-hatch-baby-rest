@@ -1,8 +1,8 @@
-import { ApiConfig, HatchBabyApi } from './api'
-import { hap, isTestHomebridge } from '../shared/hap'
-import { useLogger } from '../shared/util'
-import { LightAndSoundMachineAccessory } from '../shared/light-and-sound-machine'
-import { SoundMachineAccessory } from '../shared/sound-machine'
+import { ApiConfig, HatchBabyApi } from './api.ts'
+import { hap, isTestHomebridge } from '../shared/hap.ts'
+import { useLogger } from '../shared/util.ts'
+import { LightAndSoundMachineAccessory } from '../shared/light-and-sound-machine.ts'
+import { SoundMachineAccessory } from '../shared/sound-machine.ts'
 import type {
   API,
   DynamicPlatformPlugin,
@@ -10,9 +10,9 @@ import type {
   PlatformAccessory,
   PlatformConfig,
 } from 'homebridge'
-import { RestoreAccessory } from './restore-accessory'
-import { RestIot } from './rest-iot'
-import { Restore } from './restore'
+import { RestoreAccessory } from './restore-accessory.ts'
+import { RestIot } from './rest-iot.ts'
+import { Restore } from './restore.ts'
 
 export const pluginName = 'homebridge-hatch-baby-rest'
 export const platformName = 'HatchBabyRest'

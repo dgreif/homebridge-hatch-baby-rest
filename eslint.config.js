@@ -2,10 +2,8 @@
 // ESLint 9 Flat Configuration
 // Note: eslint-plugin-deprecation is not yet compatible with ESLint 9
 // so it has been temporarily removed until an ESLint 9 compatible version is available
-import js from '@eslint/js'
 import tsParser from '@typescript-eslint/parser'
 import tsEslint from '@typescript-eslint/eslint-plugin'
-import prettier from 'eslint-config-prettier'
 import prettierPlugin from 'eslint-plugin-prettier'
 
 export default [

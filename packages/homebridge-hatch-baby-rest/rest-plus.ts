@@ -3,16 +3,16 @@ import {
   audioTracks,
   RestPlusColor,
   RestPlusState,
-} from '../shared/hatch-sleep-types'
+} from '../shared/hatch-sleep-types.ts'
 import { distinctUntilChanged, map } from 'rxjs/operators'
-import { LightAndSoundMachine } from '../shared/light-and-sound-machine'
-import { HsbColor, hsbToRgb, rgbToHsb } from '../shared/colors'
+import { LightAndSoundMachine } from '../shared/light-and-sound-machine.ts'
+import { HsbColor, hsbToRgb, rgbToHsb } from '../shared/colors.ts'
 import {
   convertFromPercentage,
   convertToPercentage,
   IotDevice,
   MAX_IOT_VALUE,
-} from './iot-device'
+} from './iot-device.ts'
 
 export class RestPlus
   extends IotDevice<RestPlusState>

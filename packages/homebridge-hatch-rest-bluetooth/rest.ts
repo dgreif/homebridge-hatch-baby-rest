@@ -20,26 +20,26 @@ import {
   take,
   tap,
 } from 'rxjs/operators'
-import { logError, logInfo } from '../shared/util'
-import { stripMacAddress, stripUuid } from './util'
+import { logError, logInfo } from '../shared/util.ts'
+import { stripMacAddress, stripUuid } from './util.ts'
 import {
   formatRestCommand,
   RestColorAndBrightness,
   RestCommand,
   RestCommandValue,
-} from '../shared/rest-commands'
+} from '../shared/rest-commands.ts'
 import { Peripheral, Service } from '@abandonware/noble'
 import { promisify } from 'util'
-import { colorsMatch, Feedback, parseFeedbackBuffer } from './feedback'
-import { AudioTrack, audioTracks } from '../shared/hatch-sleep-types'
-import { LightAndSoundMachine } from '../shared/light-and-sound-machine'
+import { colorsMatch, Feedback, parseFeedbackBuffer } from './feedback.ts'
+import { AudioTrack, audioTracks } from '../shared/hatch-sleep-types.ts'
+import { LightAndSoundMachine } from '../shared/light-and-sound-machine.ts'
 import {
   rgbToHsb,
   convertToHexRange,
   hsbToRgb,
   HsbColor,
   convertFromHexRange,
-} from '../shared/colors'
+} from '../shared/colors.ts'
 
 const usedPeripheralIds: string[] = [],
   ServiceUuid = {

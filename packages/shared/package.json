@@ -1,6 +1,7 @@
 {
   "name": "shared",
   "private": true,
+  "type": "module",
   "version": "0.0.0-dev",
   "scripts": {
     "test": "mocha test/**/*.spec.ts",

@@ -1,7 +1,7 @@
-import { hap, isTestHomebridge } from '../shared/hap'
-import { useLogger } from '../shared/util'
-import { stripMacAddress } from './util'
-import { LightAndSoundMachineAccessory } from '../shared/light-and-sound-machine'
+import { hap, isTestHomebridge } from '../shared/hap.ts'
+import { useLogger } from '../shared/util.ts'
+import { stripMacAddress } from './util.ts'
+import { LightAndSoundMachineAccessory } from '../shared/light-and-sound-machine.ts'
 import type {
   API,
   DynamicPlatformPlugin,
@@ -9,7 +9,7 @@ import type {
   PlatformAccessory,
   PlatformConfig,
 } from 'homebridge'
-import { Rest } from './rest'
+import { Rest } from './rest.ts'
 
 export const pluginName = 'homebridge-hatch-rest-bluetooth'
 export const platformName = 'HatchRestBluetooth'

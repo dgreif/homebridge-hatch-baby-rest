@@ -1,6 +1,7 @@
 {
   "name": "homebridge-hatch-baby-rest",
   "version": "5.0.2",
+  "type": "module",
   "description": "Homebridge plugin for Hatch Rest/Restore WiFi sound machines",
   "main": "lib/homebridge-hatch-baby-rest/index.js",
   "scripts": {

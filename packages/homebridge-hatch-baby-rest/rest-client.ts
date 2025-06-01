@@ -1,5 +1,5 @@
-import { delay, logError } from '../shared/util'
-import { LoginResponse } from '../shared/hatch-sleep-types'
+import { delay, logError } from '../shared/util.ts'
+import { LoginResponse } from '../shared/hatch-sleep-types.ts'
 import { RequestInit, HeadersInit } from 'undici-types'
 
 const apiBaseUrl = 'https://prod-sleep.hatchbaby.com/',

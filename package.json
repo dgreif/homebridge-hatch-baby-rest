@@ -1,5 +1,6 @@
 {
   "name": "homebridge-hatch-baby-rest-repo",
+  "type": "module",
   "private": true,
   "scripts": {
     "test": "turbo run test",
