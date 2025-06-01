@@ -2,10 +2,8 @@
 // ESLint 9 Flat Configuration
 // Note: eslint-plugin-deprecation is not yet compatible with ESLint 9
 // so it has been temporarily removed until an ESLint 9 compatible version is available
-import js from '@eslint/js'
 import tsParser from '@typescript-eslint/parser'
 import tsEslint from '@typescript-eslint/eslint-plugin'
-import prettier from 'eslint-config-prettier'
 import prettierPlugin from 'eslint-plugin-prettier'
 
 export default [
@@ -17,7 +15,7 @@ export default [
       ecmaVersion: 2018,
       sourceType: 'module',
       parserOptions: {
-        project: './tsconfig.json'
+        project: './tsconfig.json',
       },
       globals: {
         Buffer: 'readonly',
@@ -36,20 +34,20 @@ export default [
         fetch: 'readonly',
         Request: 'readonly',
         Response: 'readonly',
-        Headers: 'readonly'
-      }
+        Headers: 'readonly',
+      },
     },
     plugins: {
       '@typescript-eslint': tsEslint,
-      prettier: prettierPlugin
+      prettier: prettierPlugin,
     },
     rules: {
       // TypeScript recommended rules
       ...tsEslint.configs.recommended.rules,
-      
+
       // Prettier integration
       'prettier/prettier': 'error',
-      
+
       // Core ESLint rules
       'comma-dangle': [2, 'only-multiline'],
       'no-cond-assign': [2, 'except-parens'],
@@ -81,12 +79,12 @@ export default [
       'prefer-const': 2,
 
       'block-scoped-var': 0,
-      'complexity': 0,
+      complexity: 0,
       'consistent-return': 0,
-      'curly': [2, 'multi-line'],
+      curly: [2, 'multi-line'],
       'default-case': 0,
       'dot-notation': 2,
-      'eqeqeq': 2,
+      eqeqeq: 2,
       'guard-for-in': 0,
       'no-alert': 2,
       'no-caller': 2,
@@ -123,10 +121,10 @@ export default [
       'no-void': 0,
       'no-warning-comments': 2,
       'no-with': 2,
-      'radix': 2,
+      radix: 2,
       'vars-on-top': 0,
       'wrap-iife': 2,
-      'yoda': 0,
+      yoda: 0,
 
       'no-catch-shadow': 2,
       'no-delete-var': 2,
@@ -139,7 +137,7 @@ export default [
       'no-unused-vars': 0,
       'no-use-before-define': 2,
 
-      'strict': [2, 'never'],
+      strict: [2, 'never'],
 
       'handle-callback-err': 2,
       'no-mixed-requires': 2,
@@ -149,14 +147,14 @@ export default [
       'no-restricted-modules': 0,
       'no-sync': 0,
 
-      'camelcase': 0,
-      'comma-spacing': [2, { 'before': false, 'after': true }],
+      camelcase: 0,
+      'comma-spacing': [2, { before: false, after: true }],
       'comma-style': 2,
       'consistent-this': 0,
       'eol-last': 2,
       'func-names': 0,
       'func-style': 0,
-      'key-spacing': [2, { 'beforeColon': false, 'afterColon': true }],
+      'key-spacing': [2, { beforeColon: false, afterColon: true }],
       'linebreak-style': [2, 'unix'],
       'max-nested-callbacks': [2, 4],
       'new-parens': 2,
@@ -164,10 +162,10 @@ export default [
       'no-inline-comments': 0,
       'no-lonely-if': 2,
       'no-mixed-spaces-and-tabs': 2,
-      'no-multiple-empty-lines': [2, { 'max': 1 }],
+      'no-multiple-empty-lines': [2, { max: 1 }],
       'no-nested-ternary': 0,
       'no-new-object': 2,
-      'semi-spacing': [2, { 'before': false, 'after': true }],
+      'semi-spacing': [2, { before: false, after: true }],
       'no-spaced-func': 0,
       'no-ternary': 0,
       'no-trailing-spaces': 2,
@@ -176,10 +174,10 @@ export default [
       'operator-assignment': [2, 'always'],
       'padded-blocks': 0,
       'quote-props': 0,
-      'quotes': [2, 'single', 'avoid-escape'],
-      'semi': [2, 'never'],
+      quotes: [2, 'single', 'avoid-escape'],
+      semi: [2, 'never'],
       'sort-vars': 0,
-      'keyword-spacing': [2, { 'before': true, 'after': true }],
+      'keyword-spacing': [2, { before: true, after: true }],
       'space-before-blocks': [2, 'always'],
       'space-before-function-paren': 0,
       'object-curly-spacing': [2, 'always'],
@@ -187,7 +185,7 @@ export default [
       'computed-property-spacing': [2, 'never'],
       'space-in-parens': [2, 'never'],
       'space-infix-ops': 2,
-      'space-unary-ops': [2, { 'words': true, 'nonwords': false }],
+      'space-unary-ops': [2, { words: true, nonwords: false }],
       'spaced-line-comment': 0,
       'wrap-regex': 0,
       'require-await': 2,
@@ -208,19 +206,22 @@ export default [
       '@typescript-eslint/no-var-requires': 0,
       '@typescript-eslint/no-require-imports': 0,
       '@typescript-eslint/explicit-module-boundary-types': 0,
-      '@typescript-eslint/no-unused-vars': ['error', { 
-        'argsIgnorePattern': '^_',
-        'varsIgnorePattern': '^_',
-        'caughtErrorsIgnorePattern': '^_'
-      }]
-    }
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
   },
   // Examples directory - allow console.log
   {
     files: ['packages/examples/**/*.{js,ts}'],
     rules: {
-      'no-console': 0
-    }
+      'no-console': 0,
+    },
   },
   // Test directories - add Mocha globals
   {
@@ -232,18 +233,15 @@ export default [
         before: 'readonly',
         after: 'readonly',
         beforeEach: 'readonly',
-        afterEach: 'readonly'
-      }
+        afterEach: 'readonly',
+      },
     },
     rules: {
-      '@typescript-eslint/no-unused-expressions': 0
-    }
+      '@typescript-eslint/no-unused-expressions': 0,
+    },
   },
   // Ignore patterns
   {
-    ignores: [
-      'lib/**',
-      '.homebridge/**'
-    ]
-  }
+    ignores: ['lib/**', '.homebridge/**'],
+  },
 ]
