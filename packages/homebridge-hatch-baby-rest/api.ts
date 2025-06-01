@@ -103,7 +103,6 @@ export class HatchBabyApi {
 
     const createNewIotClient = async (): Promise<AwsIotDevice> => {
       try {
-        // eslint-disable-next-line no-use-before-define
         const previousMqttClient = onIotClient?.getValue()
         if (previousMqttClient) {
           try {
@@ -127,7 +126,6 @@ export class HatchBabyApi {
           }
 
           try {
-            // eslint-disable-next-line no-use-before-define
             onIotClient?.next(await createNewIotClient())
           } catch (_) {
             // ignore, already logged

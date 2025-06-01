@@ -1,4 +1,3 @@
-// eslint-disable-line no-shadow
 export const enum Product {
   rest = 'rest',
   riot = 'riot',
@@ -88,7 +87,6 @@ export interface IotCredentialsResponse {
   IdentityId: string
 }
 
-// eslint-disable-next-line no-shadow
 export const enum AudioTrack {
   None = 0,
   Stream = 2,
@@ -438,7 +436,6 @@ export interface RestoreState {
   encryption: number
 }
 
-// eslint-disable-next-line no-shadow
 export const enum RestMiniAudioTrack {
   None = 0,
   Heartbeat = 10124,

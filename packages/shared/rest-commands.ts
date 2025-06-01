@@ -1,6 +1,5 @@
 import { RgbColor } from './hatch-sleep-types'
 
-// eslint-disable-next-line no-shadow
 export const enum RestCommand {
   SetPower = 'SI',
   SetColor = 'SC',
