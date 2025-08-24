@@ -11,7 +11,7 @@
     "erasableSyntaxOnly": true,
     "allowImportingTsExtensions": true,
     "rewriteRelativeImportExtensions": true,
+    "typeRoots": ["../../node_modules/tsconfig", "../../node_modules/@types"],
     "noEmit": false
-  },
-  "include": ["packages/homebridge-hatch-baby-rest/src/**/*.ts"]
+  }
 }
