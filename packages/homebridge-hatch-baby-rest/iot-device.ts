@@ -2,7 +2,7 @@ import { RestPlusState, IotDeviceInfo } from '../shared/hatch-sleep-types.ts'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { BehaviorSubject, firstValueFrom, skip, Subject } from 'rxjs'
 import { filter } from 'rxjs/operators'
-import { delay, logError } from '../shared/util.ts'
+import { delay, logDebug, logError } from '../shared/util.ts'
 import { DeepPartial } from 'ts-essentials'
 
 function assignState<T = RestPlusState>(previousState: any, changes: any): T {
@@ -69,6 +69,14 @@ export class IotDevice<T> {
   private registerMqttClient(mqttClient: AwsIotDevice) {
     const { thingName } = this.info
     let getClientToken: string
+
+    mqttClient.on('close', () => {
+      logDebug('MQTT client closed')
+    })
+
+    mqttClient.on('offline', () => {
+      logDebug('MQTT client offline')
+    })
 
     mqttClient.on(
       'status',
