@@ -1,10 +1,10 @@
-import { hap } from './hap'
+import { hap } from './hap.ts'
 import { debounceTime, map, startWith } from 'rxjs/operators'
 import { Observable, Subject } from 'rxjs'
 import { PlatformAccessory } from 'homebridge'
-import { HsbColor } from './colors'
-import { logInfo } from './util'
-import { SoundMachine, SoundMachineAccessory } from './sound-machine'
+import { HsbColor } from './colors.ts'
+import { logInfo } from './util.ts'
+import { SoundMachine, SoundMachineAccessory } from './sound-machine.ts'
 
 export interface LightAndSoundMachine extends SoundMachine {
   onIsPowered: Observable<boolean>

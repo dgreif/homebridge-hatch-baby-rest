@@ -4,25 +4,25 @@ import {
   hsbToRgb,
   rgbToHsb,
 } from '../colors'
-import { expect } from 'chai'
+import { describe, it, expect } from 'vitest'
 
 describe('convertToHexRange', () => {
   it('should convert a value into the hex range', () => {
-    expect(convertToHexRange(50, 100)).to.equal(Math.floor((50 / 100) * 255))
+    expect(convertToHexRange(50, 100)).toBe(Math.floor((50 / 100) * 255))
   })
 
   it('should handle 0', () => {
-    expect(convertToHexRange(0, 200)).to.equal(0)
+    expect(convertToHexRange(0, 200)).toBe(0)
   })
 })
 
 describe('convertFromHexRange', () => {
   it('should convert a value into the hex range', () => {
-    expect(convertFromHexRange(50, 100)).to.equal(Math.floor((50 * 100) / 255))
+    expect(convertFromHexRange(50, 100)).toBe(Math.floor((50 * 100) / 255))
   })
 
   it('should handle 0', () => {
-    expect(convertFromHexRange(0, 200)).to.equal(0)
+    expect(convertFromHexRange(0, 200)).toBe(0)
   })
 })
 
@@ -52,7 +52,7 @@ describe('rgbToHsb', () => {
         },
         maxValue,
       ),
-    ).to.eql({
+    ).toEqual({
       h: 120,
       s: 50,
       b: 39.2156862745098,
@@ -68,7 +68,7 @@ describe('hsbToRgb', () => {
         s: 50,
         b: 78.4313725490196,
       }),
-    ).to.eql({
+    ).toEqual({
       r: 100 - 1,
       g: 150 - 1,
       b: 200 - 1,
@@ -86,7 +86,7 @@ describe('hsbToRgb', () => {
         },
         maxValue,
       ),
-    ).to.eql({
+    ).toEqual({
       r: (50 * maxValue) / 255 - 1,
       g: (100 * maxValue) / 255 - 1,
       b: (50 * maxValue) / 255 - 1,

@@ -1,8 +1,8 @@
-import { RestPlusState, IotDeviceInfo } from '../shared/hatch-sleep-types'
+import { RestPlusState, IotDeviceInfo } from '../shared/hatch-sleep-types.ts'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { BehaviorSubject, firstValueFrom, skip, Subject } from 'rxjs'
 import { filter } from 'rxjs/operators'
-import { delay, logDebug, logError } from '../shared/util'
+import { delay, logDebug, logError } from '../shared/util.ts'
 import { DeepPartial } from 'ts-essentials'
 
 function assignState<T = RestPlusState>(previousState: any, changes: any): T {
@@ -53,10 +53,12 @@ export class IotDevice<T> {
     return this.info.macAddress
   }
 
-  constructor(
-    public readonly info: IotDeviceInfo,
-    public readonly onIotClient: BehaviorSubject<AwsIotDevice>,
-  ) {
+  public readonly info
+  public readonly onIotClient
+
+  constructor(info: IotDeviceInfo, onIotClient: BehaviorSubject<AwsIotDevice>) {
+    this.info = info
+    this.onIotClient = onIotClient
     onIotClient
       .pipe(skip(1))
       .subscribe((client) => this.registerMqttClient(client))

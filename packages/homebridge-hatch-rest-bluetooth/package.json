@@ -1,10 +1,11 @@
 {
   "name": "homebridge-hatch-rest-bluetooth",
   "version": "5.0.1",
+  "type": "module",
   "description": "Homebridge plugin for Hatch Rest bluetooth sound machine",
   "main": "lib/homebridge-hatch-rest-bluetooth/index.js",
   "scripts": {
-    "test": "mocha test/**/*.spec.ts",
+    "test": "vitest run",
     "lint": "eslint '**/*.ts'",
     "lint:fix": "eslint '**/*.ts' --fix",
     "prettier": "prettier **/*.ts --write",
@@ -38,7 +39,7 @@
     "shared": "*"
   },
   "engines": {
-    "node": "^18 || ^20 || ^22",
+    "node": "^20 || ^22 || ^24",
     "homebridge": "^1.5.1 || ^2.0.0-beta.0"
   },
   "bugs": {

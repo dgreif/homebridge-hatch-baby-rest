@@ -1,6 +1,5 @@
-import { delay, logError } from '../shared/util'
-import { LoginResponse } from '../shared/hatch-sleep-types'
-import { RequestInit, HeadersInit } from 'undici-types'
+import { delay, logError } from '../shared/util.ts'
+import { LoginResponse } from '../shared/hatch-sleep-types.ts'
 
 const apiBaseUrl = 'https://prod-sleep.hatchbaby.com/',
   defaultRequestOptions: RequestInit = {
@@ -65,9 +64,12 @@ export interface EmailAuth {
 }
 
 export class RestClient {
+  private readonly authOptions
   private loginPromise = this.logIn()
 
-  constructor(private authOptions: EmailAuth) {}
+  constructor(authOptions: EmailAuth) {
+    this.authOptions = authOptions
+  }
 
   async logIn(): Promise<LoginResponse> {
     try {

@@ -1,4 +1,4 @@
-import { hap, isTestHomebridge } from './hap'
+import { hap, isTestHomebridge } from './hap.ts'
 import { distinctUntilChanged } from 'rxjs/operators'
 import { Observable, of } from 'rxjs'
 import {
@@ -19,10 +19,13 @@ export interface BaseDevice {
 }
 
 export class BaseAccessory {
-  constructor(
-    private device: BaseDevice,
-    protected accessory: PlatformAccessory,
-  ) {
+  private device
+  protected accessory
+
+  constructor(device: BaseDevice, accessory: PlatformAccessory) {
+    this.device = device
+    this.accessory = accessory
+
     const { Service, Characteristic } = hap,
       accessoryInfoService = this.getService(Service.AccessoryInformation)
 

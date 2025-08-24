@@ -1,10 +1,10 @@
 import 'dotenv/config'
-import { Rest } from '../homebridge-hatch-rest-bluetooth/rest'
-import { delay } from '../shared/util'
-import { RestColorAndBrightness } from '../shared/rest-commands'
+import { Rest } from '../homebridge-hatch-rest-bluetooth/rest.ts'
+import { delay } from '../shared/util.ts'
+import { RestColorAndBrightness } from '../shared/rest-commands.ts'
 import { filter } from 'rxjs/operators'
-import { colorsMatch } from '../homebridge-hatch-rest-bluetooth/feedback'
-import { AudioTrack } from '../shared/hatch-sleep-types'
+import { colorsMatch } from '../homebridge-hatch-rest-bluetooth/feedback.ts'
+import { AudioTrack } from '../shared/hatch-sleep-types.ts'
 import { firstValueFrom } from 'rxjs'
 
 async function example() {
