@@ -1,5 +1,5 @@
 import { parseFeedbackBuffer } from '../feedback'
-import { expect } from 'chai'
+import { describe, it, expect } from 'vitest'
 
 describe('Feedback Parsing', () => {
   it('should parse an empty feedback buffer', () => {
@@ -7,7 +7,7 @@ describe('Feedback Parsing', () => {
       parseFeedbackBuffer(
         Buffer.from('54dfff1261430000000053000050006500000000', 'hex'),
       ),
-    ).to.eql({
+    ).toEqual({
       time: 3758035553,
       power: false,
       volume: 0,
@@ -26,7 +26,7 @@ describe('Feedback Parsing', () => {
       parseFeedbackBuffer(
         Buffer.from('54dfff1d1543fefefe53530e4950016500000000', 'hex'),
       ),
-    ).to.eql({
+    ).toEqual({
       time: 3758038293,
       power: true,
       volume: 29,
@@ -45,24 +45,24 @@ describe('Feedback Parsing', () => {
       parseFeedbackBuffer(
         Buffer.from('54dfff1d1543fefefe53530e4950DF6500000000', 'hex'),
       ).power,
-    ).to.be.false
+    ).toBe(false)
 
     expect(
       parseFeedbackBuffer(
         Buffer.from('54dfff1d1543fefefe53530e4950006500000000', 'hex'),
       ).power,
-    ).to.be.false
+    ).toBe(false)
 
     expect(
       parseFeedbackBuffer(
         Buffer.from('54dfff1d1543fefefe53530e49501F6500000000', 'hex'),
       ).power,
-    ).to.be.true
+    ).toBe(true)
 
     expect(
       parseFeedbackBuffer(
         Buffer.from('54dfff1d1543fefefe53530e49501F6500000000', 'hex'),
       ).power,
-    ).to.be.true
+    ).toBe(true)
   })
 })

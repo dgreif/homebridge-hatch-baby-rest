@@ -1,26 +1,31 @@
-import { apiPath, EmailAuth, requestWithRetry, RestClient } from './rest-client'
+import {
+  apiPath,
+  EmailAuth,
+  requestWithRetry,
+  RestClient,
+} from './rest-client.ts'
 import {
   IotCredentialsResponse,
   IotDeviceInfo,
   IotTokenResponse,
   MemberResponse,
   Product,
-} from '../shared/hatch-sleep-types'
+} from '../shared/hatch-sleep-types.ts'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
-import { logDebug, logError, logInfo } from '../shared/util'
-import { RestPlus } from './rest-plus'
-import { RestIot } from './rest-iot'
-import { RestMini } from './rest-mini'
-import { Restore } from './restore'
+import { logDebug, logError, logInfo } from '../shared/util.ts'
+import { RestPlus } from './rest-plus.ts'
+import { RestIot } from './rest-iot.ts'
+import { RestMini } from './rest-mini.ts'
+import { Restore } from './restore.ts'
 import { BehaviorSubject } from 'rxjs'
-import { IotDevice } from './iot-device'
+import { IotDevice } from './iot-device.ts'
 import { debounceTime } from 'rxjs/operators'
 
 export interface ApiConfig extends EmailAuth {
   debug?: boolean
 }
 
-const knownProducts = [
+const knownProducts: Product[] = [
     Product.restPlus,
     Product.riot,
     Product.riotPlus,
@@ -29,7 +34,7 @@ const knownProducts = [
     Product.restoreIot,
     Product.restoreV4,
   ],
-  ignoredProducts = [
+  ignoredProducts: Product[] = [
     // Known, but not supported
     Product.rest,
     Product.alexa,
@@ -39,8 +44,13 @@ const knownProducts = [
   iotClientRefreshPeriod = 8 * 60 * 60 * 1000 // refresh client every 8 hours
 
 export class HatchBabyApi {
-  restClient = new RestClient(this.config)
-  constructor(private config: ApiConfig) {}
+  public readonly config
+  restClient
+
+  constructor(config: ApiConfig) {
+    this.config = config
+    this.restClient = new RestClient(this.config)
+  }
 
   getAccount() {
     return this.restClient.getAccount()
@@ -104,7 +114,6 @@ export class HatchBabyApi {
 
     const createNewIotClient = async (): Promise<AwsIotDevice> => {
       try {
-        // eslint-disable-next-line no-use-before-define
         const previousMqttClient = onIotClient?.getValue()
         if (previousMqttClient) {
           try {
@@ -128,7 +137,6 @@ export class HatchBabyApi {
           }
 
           try {
-            // eslint-disable-next-line no-use-before-define
             onIotClient?.next(await createNewIotClient())
           } catch (_) {
             // ignore, already logged

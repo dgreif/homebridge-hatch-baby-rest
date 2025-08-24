@@ -1,18 +1,18 @@
-import { formatRestCommand, RestCommand } from '../rest-commands'
-import { expect } from 'chai'
-import { AudioTrack } from '../hatch-sleep-types'
+import { formatRestCommand, RestCommand } from '../rest-commands.ts'
+import { describe, it, expect } from 'vitest'
+import { AudioTrack } from '../hatch-sleep-types.ts'
 
 describe('Feedback Parsing', () => {
   it('should format a number command into a buffer', () => {
-    expect(formatRestCommand(RestCommand.SetPower, 1)).to.eql(
+    expect(formatRestCommand(RestCommand.SetPower, 1)).toEqual(
       Buffer.from('SI01'),
     )
-    expect(formatRestCommand(RestCommand.SetVolume, 254)).to.eql(
+    expect(formatRestCommand(RestCommand.SetVolume, 254)).toEqual(
       Buffer.from('SVFE'),
     )
     expect(
       formatRestCommand(RestCommand.SetTrackNumber, AudioTrack.Crickets),
-    ).to.eql(Buffer.from('SN0A'))
+    ).toEqual(Buffer.from('SN0A'))
   })
 
   it('should format a color command into a buffer', () => {

@@ -1,5 +1,10 @@
 {
   "name": "tsconfig",
   "private": true,
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "types": "types/index.d.ts",
+  "devDependencies": {
+    "@types/node": "22.15.29",
+    "typescript": "5.8.3"
+  }
 }

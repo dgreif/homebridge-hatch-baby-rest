@@ -1,17 +1,19 @@
-// eslint-disable-line no-shadow
-export const enum Product {
-  rest = 'rest',
-  riot = 'riot',
-  riotPlus = 'riotPlus',
-  restPlus = 'restPlus',
-  restMini = 'restMini',
-  restore = 'restore',
-  restoreIot = 'restoreIot',
+export const Product = {
+  rest: 'rest',
+  riot: 'riot',
+  riotPlus: 'riotPlus',
+  restPlus: 'restPlus',
+  restMini: 'restMini',
+  restore: 'restore',
+  restoreIot: 'restoreIot',
   restoreV4 = 'restoreV4',
-  alexa = 'alexa',
-  grow = 'grow',
-  answeredReader = 'answeredReader',
-}
+  alexa: 'alexa',
+  grow: 'grow',
+  answeredReader: 'answeredReader',
+} as const
+
+// eslint-disable-next-line no-redeclare
+export type Product = (typeof Product)[keyof typeof Product]
 
 export interface Baby {
   id: number
@@ -89,21 +91,24 @@ export interface IotCredentialsResponse {
   IdentityId: string
 }
 
-// eslint-disable-next-line no-shadow
-export const enum AudioTrack {
-  None = 0,
-  Stream = 2,
-  PinkNoise = 3,
-  Dryer = 4,
-  Ocean = 5,
-  Wind = 6,
-  Rain = 7,
-  Bird = 9,
-  Crickets = 10,
-  Brahms = 11,
-  Twinkle = 13,
-  RockABye = 14,
-}
+export const AudioTrack = {
+  None: 0,
+  Stream: 2,
+  PinkNoise: 3,
+  Dryer: 4,
+  Ocean: 5,
+  Wind: 6,
+  Rain: 7,
+  Bird: 9,
+  Crickets: 10,
+  Brahms: 11,
+  Twinkle: 13,
+  RockABye: 14,
+} as const
+
+// eslint-disable-next-line no-redeclare
+export type AudioTrack = (typeof AudioTrack)[keyof typeof AudioTrack]
+
 export const audioTracks = [
   AudioTrack.None,
   AudioTrack.Stream,
@@ -439,18 +444,22 @@ export interface RestoreState {
   encryption: number
 }
 
-// eslint-disable-next-line no-shadow
-export const enum RestMiniAudioTrack {
-  None = 0,
-  Heartbeat = 10124,
-  Water = 10125,
-  WhiteNoise = 10126,
-  Dryer = 10127,
-  Ocean = 10128,
-  Wind = 10129,
-  Rain = 10130,
-  Birds = 10131,
-}
+export const RestMiniAudioTrack = {
+  None: 0,
+  Heartbeat: 10124,
+  Water: 10125,
+  WhiteNoise: 10126,
+  Dryer: 10127,
+  Ocean: 10128,
+  Wind: 10129,
+  Rain: 10130,
+  Birds: 10131,
+} as const
+
+// eslint-disable-next-line no-redeclare
+export type RestMiniAudioTrack =
+  (typeof RestMiniAudioTrack)[keyof typeof RestMiniAudioTrack]
+
 export const restMiniAudioTracks = [
   RestMiniAudioTrack.None,
   RestMiniAudioTrack.WhiteNoise,

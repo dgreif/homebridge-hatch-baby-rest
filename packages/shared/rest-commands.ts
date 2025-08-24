@@ -1,12 +1,14 @@
 import { RgbColor } from './hatch-sleep-types'
 
-// eslint-disable-next-line no-shadow
-export const enum RestCommand {
-  SetPower = 'SI',
-  SetColor = 'SC',
-  SetTrackNumber = 'SN',
-  SetVolume = 'SV',
-}
+export const RestCommand = {
+  SetPower: 'SI',
+  SetColor: 'SC',
+  SetTrackNumber: 'SN',
+  SetVolume: 'SV',
+} as const
+
+// eslint-disable-next-line no-redeclare
+export type RestCommand = (typeof RestCommand)[keyof typeof RestCommand]
 
 export interface RestColorAndBrightness extends RgbColor {
   a: number

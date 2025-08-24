@@ -20,47 +20,46 @@ import {
   take,
   tap,
 } from 'rxjs/operators'
-import { logError, logInfo } from '../shared/util'
-import { stripMacAddress, stripUuid } from './util'
+import { logError, logInfo } from '../shared/util.ts'
+import { stripMacAddress, stripUuid } from './util.ts'
 import {
   formatRestCommand,
   RestColorAndBrightness,
   RestCommand,
   RestCommandValue,
-} from '../shared/rest-commands'
+} from '../shared/rest-commands.ts'
 import { Peripheral, Service } from '@abandonware/noble'
 import { promisify } from 'util'
-import { colorsMatch, Feedback, parseFeedbackBuffer } from './feedback'
-import { AudioTrack, audioTracks } from '../shared/hatch-sleep-types'
-import { LightAndSoundMachine } from '../shared/light-and-sound-machine'
+import { colorsMatch, Feedback, parseFeedbackBuffer } from './feedback.ts'
+import { AudioTrack, audioTracks } from '../shared/hatch-sleep-types.ts'
+import { LightAndSoundMachine } from '../shared/light-and-sound-machine.ts'
 import {
   rgbToHsb,
   convertToHexRange,
   hsbToRgb,
   HsbColor,
   convertFromHexRange,
-} from '../shared/colors'
+} from '../shared/colors.ts'
 
-const usedPeripheralIds: string[] = []
-
-// eslint-disable-next-line no-shadow
-const enum ServiceUuid {
-  Advertising = '02260001-5efd-47eb-9c1a-de53f7a2b232',
-  Rest = '02240001-5efd-47eb-9c1a-de53f7a2b232',
-}
-
-// eslint-disable-next-line no-shadow
-const enum CharacteristicUuid {
-  Tx = '02240002-5efd-47eb-9c1a-de53f7a2b232',
-  Rx = '02240003-5efd-47eb-9c1a-de53f7a2b232',
-  CurrentFeedback = '02260002-5efd-47eb-9c1a-de53f7a2b232',
-}
+const usedPeripheralIds: string[] = [],
+  ServiceUuid = {
+    Advertising: '02260001-5efd-47eb-9c1a-de53f7a2b232',
+    Rest: '02240001-5efd-47eb-9c1a-de53f7a2b232',
+  } as const,
+  CharacteristicUuid = {
+    Tx: '02240002-5efd-47eb-9c1a-de53f7a2b232',
+    Rx: '02240003-5efd-47eb-9c1a-de53f7a2b232',
+    CurrentFeedback: '02260002-5efd-47eb-9c1a-de53f7a2b232',
+  } as const
 
 export class Rest implements LightAndSoundMachine {
   readonly model = 'Rest'
   audioTracks = audioTracks
   noble = require('@abandonware/noble')
-  peripheralPromise = this.getPeripheralByAddress(this.macAddress)
+  peripheralPromise
+
+  public readonly name
+  public readonly macAddress
 
   onFeedback = new BehaviorSubject<Feedback>({
     time: 0,
@@ -104,10 +103,11 @@ export class Rest implements LightAndSoundMachine {
 
   reconnectSubscription?: Subscription
 
-  constructor(
-    public readonly name: string,
-    public readonly macAddress: string,
-  ) {
+  constructor(name: string, macAddress: string) {
+    this.name = name
+    this.macAddress = macAddress
+    this.peripheralPromise = this.getPeripheralByAddress(this.macAddress)
+
     this.getDevice().then((device) => {
       device.on('connect', () => {
         return this.subscribeToFeedback()
@@ -275,7 +275,7 @@ export class Rest implements LightAndSoundMachine {
     this.onUsingConnection.next(null)
   }
 
-  setAudioTrack(track: AudioTrack) {
+  setAudioTrack(track: number) {
     return this.setCommand(RestCommand.SetTrackNumber, track)
   }
 
