@@ -8,5 +8,11 @@
     "shared": "0.0.0-dev",
     "tsconfig": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "green-plums-yawn",
+    "odd-parts-unite",
+    "smooth-rabbits-cheat",
+    "two-clouds-cry",
+    "yellow-states-look"
+  ]
 }
