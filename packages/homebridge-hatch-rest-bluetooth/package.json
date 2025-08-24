@@ -5,7 +5,7 @@
   "description": "Homebridge plugin for Hatch Rest bluetooth sound machine",
   "main": "lib/homebridge-hatch-rest-bluetooth/index.js",
   "scripts": {
-    "test": "mocha test/**/*.spec.ts",
+    "test": "vitest run",
     "lint": "eslint '**/*.ts'",
     "lint:fix": "eslint '**/*.ts' --fix",
     "prettier": "prettier **/*.ts --write",

@@ -5,6 +5,7 @@
   "description": "Homebridge plugin for Hatch Rest/Restore WiFi sound machines",
   "main": "lib/homebridge-hatch-baby-rest/index.js",
   "scripts": {
+    "test": "vitest run --passWithNoTests",
     "lint": "eslint '**/*.ts'",
     "lint:fix": "eslint '**/*.ts' --fix",
     "prettier": "prettier **/*.ts --write",
@@ -33,7 +34,10 @@
     "rxjs": "7.8.1"
   },
   "devDependencies": {
-    "tsconfig": "0.0.0"
+    "@types/aws-iot-device-sdk": "2.2.8",
+    "shared": "*",
+    "tsconfig": "*",
+    "ts-essentials": "10.0.4"
   },
   "engines": {
     "node": "^20 || ^22 || ^24",

@@ -1,5 +1,5 @@
 import { hap } from '../shared/hap.ts'
-import { PlatformAccessory } from 'homebridge'
+import type { PlatformAccessory } from 'homebridge'
 import { BaseAccessory } from '../shared/base-accessory.ts'
 import { RestIot } from './rest-iot.ts'
 import { Restore } from './restore.ts'

@@ -1,7 +1,4 @@
 // @ts-check
-// ESLint 9 Flat Configuration
-// Note: eslint-plugin-deprecation is not yet compatible with ESLint 9
-// so it has been temporarily removed until an ESLint 9 compatible version is available
 import tsParser from '@typescript-eslint/parser'
 import tsEslint from '@typescript-eslint/eslint-plugin'
 import prettierPlugin from 'eslint-plugin-prettier'
@@ -221,23 +218,6 @@ export default [
     files: ['packages/examples/**/*.{js,ts}'],
     rules: {
       'no-console': 0,
-    },
-  },
-  // Test directories - add Mocha globals
-  {
-    files: ['**/test/**/*.{js,ts}'],
-    languageOptions: {
-      globals: {
-        describe: 'readonly',
-        it: 'readonly',
-        before: 'readonly',
-        after: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-      },
-    },
-    rules: {
-      '@typescript-eslint/no-unused-expressions': 0,
     },
   },
   // Ignore patterns
