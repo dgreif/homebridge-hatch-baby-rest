@@ -1,9 +1,8 @@
 import { hap, isTestHomebridge } from './hap.ts'
 import { distinctUntilChanged } from 'rxjs/operators'
 import { Observable, of } from 'rxjs'
-import {
+import type {
   Characteristic as CharacteristicClass,
-  CharacteristicEventTypes,
   CharacteristicSetCallback,
   CharacteristicValue,
   PlatformAccessory,
@@ -75,7 +74,7 @@ export class BaseAccessory {
   ) {
     if (setValue) {
       characteristic.on(
-        CharacteristicEventTypes.SET,
+        'set',
         (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
           callback()
           setValue(value)

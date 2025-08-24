@@ -1,4 +1,4 @@
-import { RgbColor } from './hatch-sleep-types'
+import type { RgbColor } from './hatch-sleep-types.ts'
 
 import rgb2hsv from 'pure-color/convert/rgb2hsv'
 import hsv2rgb from 'pure-color/convert/hsv2rgb'

@@ -3,7 +3,7 @@ import {
   convertToHexRange,
   hsbToRgb,
   rgbToHsb,
-} from '../colors'
+} from '../colors.ts'
 import { describe, it, expect } from 'vitest'
 
 describe('convertToHexRange', () => {

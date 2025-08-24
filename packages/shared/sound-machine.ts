@@ -1,7 +1,7 @@
 import { hap } from './hap.ts'
 import { filter, map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
-import { PlatformAccessory } from 'homebridge'
+import type { PlatformAccessory } from 'homebridge'
 import { BaseAccessory, BaseDevice } from './base-accessory.ts'
 
 export interface SoundMachine extends BaseDevice {

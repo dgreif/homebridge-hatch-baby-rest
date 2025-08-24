@@ -1,7 +1,7 @@
 import { hap } from './hap.ts'
 import { debounceTime, map, startWith } from 'rxjs/operators'
 import { Observable, Subject } from 'rxjs'
-import { PlatformAccessory } from 'homebridge'
+import type { PlatformAccessory } from 'homebridge'
 import { HsbColor } from './colors.ts'
 import { logInfo } from './util.ts'
 import { SoundMachine, SoundMachineAccessory } from './sound-machine.ts'

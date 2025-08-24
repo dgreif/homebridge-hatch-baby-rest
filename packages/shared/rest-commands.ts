@@ -1,4 +1,4 @@
-import { RgbColor } from './hatch-sleep-types'
+import type { RgbColor } from './hatch-sleep-types.ts'
 
 export const RestCommand = {
   SetPower: 'SI',
