@@ -40,8 +40,10 @@ import {
   HsbColor,
   convertFromHexRange,
 } from '../shared/colors.ts'
+import { createRequire } from 'module'
 
-const usedPeripheralIds: string[] = [],
+const require = createRequire(import.meta.url),
+  usedPeripheralIds: string[] = [],
   ServiceUuid = {
     Advertising: '02260001-5efd-47eb-9c1a-de53f7a2b232',
     Rest: '02240001-5efd-47eb-9c1a-de53f7a2b232',
