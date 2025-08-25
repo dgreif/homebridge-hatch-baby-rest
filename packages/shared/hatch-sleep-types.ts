@@ -53,6 +53,14 @@ export interface LoginResponse {
   token: string
 }
 
+export interface LoginFailureResponse {
+  status: 'failure'
+  message: string
+  payload: null
+  sync: null
+  errorCode: string
+}
+
 export interface MemberResponse {
   products: Product[]
   debugLevel: string

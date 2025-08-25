@@ -1,5 +1,8 @@
 import { delay, logError } from '../shared/util.ts'
-import { LoginResponse } from '../shared/hatch-sleep-types.ts'
+import {
+  LoginFailureResponse,
+  LoginResponse,
+} from '../shared/hatch-sleep-types.ts'
 
 const apiBaseUrl = 'https://prod-sleep.hatchbaby.com/',
   defaultRequestOptions: RequestInit = {
@@ -65,24 +68,31 @@ export interface EmailAuth {
 
 export class RestClient {
   private readonly authOptions
-  private loginPromise = this.logIn()
+  private loginPromise
 
   constructor(authOptions: EmailAuth) {
     this.authOptions = authOptions
+    this.loginPromise = this.logIn()
   }
 
   async logIn(): Promise<LoginResponse> {
     try {
-      const resp = await requestWithRetry<LoginResponse>({
-        url: apiPath('public/v1/login'),
-        json: {
-          email: this.authOptions.email,
-          password: this.authOptions.password,
+      const resp = await requestWithRetry<LoginResponse | LoginFailureResponse>(
+        {
+          url: apiPath('public/v1/login'),
+          json: {
+            email: this.authOptions.email,
+            password: this.authOptions.password,
+          },
+          method: 'POST',
         },
-        method: 'POST',
-      })
+      )
 
-      return resp
+      if ('status' in resp && resp.status === 'failure') {
+        throw new Error(resp.message)
+      }
+
+      return resp as LoginResponse
     } catch (requestError: any) {
       const errorMessage =
         'Failed to fetch oauth token from Hatch Baby. Verify that your email and password are correct.'
