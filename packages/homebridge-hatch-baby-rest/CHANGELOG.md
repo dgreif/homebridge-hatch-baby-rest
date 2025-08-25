@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.0.0-beta.1
+
+### Patch Changes
+
+- [`eded6ca`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/eded6ca1705ba91d1dc841609ca272f42a8e014f) Thanks [@dgreif](https://github.com/dgreif)! - Handle login failures more gracefully
+
 ## 6.0.0-beta.0
 
 ### Major Changes
