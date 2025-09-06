@@ -17,7 +17,7 @@
     "postdeploy": "npm run push-with-tags",
     "deploy": "changeset version && git commit -am 'Bump versions for release' && changeset publish",
     "prepare-beta": "changeset pre enter beta && git add .changeset/pre.json && git commit -am 'Prepare for beta release'",
-    "exit-beta": "changeset pre exit && commit -am 'Exit beta release'"
+    "exit-beta": "changeset pre exit && git commit -am 'Exit beta release'"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
