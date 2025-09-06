@@ -1,5 +1,19 @@
 # Changelog
 
+## 6.0.0
+
+### Major Changes
+
+- [`f06010a`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/f06010ad206baaf5f66fba209f304334e9791b23) Thanks [@dgreif](https://github.com/dgreif)! - Converted from commonjs to esm
+
+- [`5fd5731`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/5fd5731324f7ac998b12ea0cdf8fd7fbaeebb612) Thanks [@dgreif](https://github.com/dgreif)! - Drop Node 18 support and add Node 22 and 24
+
+### Patch Changes
+
+- [`2caf9e0`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/2caf9e07c8a7ce15ba12ae475708b3abea51f3e6) Thanks [@dgreif](https://github.com/dgreif)! - Updated all dependencies
+
+- [`74a0245`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/74a02451598051ded6b23abebd0f0a1a0db0d4f6) Thanks [@dgreif](https://github.com/dgreif)! - Enable erasableSyntaxOnly TypeScript option
+
 ## 6.0.0-beta.0
 
 ### Major Changes
