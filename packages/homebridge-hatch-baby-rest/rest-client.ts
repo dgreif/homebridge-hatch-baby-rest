@@ -49,20 +49,13 @@ export async function requestWithRetry<T>(
     return responseJson as T
   } catch (e: any) {
     if (!e.response) {
-      // Maximum number of retries
-      const MAX_RETRIES = 10
-      if (retryCount >= MAX_RETRIES) {
-        throw new Error(
-          `Failed to reach Hatch Baby server at ${options.url} after ${MAX_RETRIES} retries. Giving up.`,
-        )
-      }
 
       // Exponential backoff doubled each retry
-      // Cap at 30 seconds to avoid extremely long waits
-      const backoffTime = Math.min(1000 * Math.pow(2, retryCount), 30000)
+      // Cap at 60 seconds to avoid extremely long waits
+      const backoffTime = Math.min(1000 * Math.pow(2, retryCount), 60000)
 
       logError(
-        `Failed to reach Hatch Baby server at ${options.url}. ${e.message}. Trying again in ${backoffTime / 1000} seconds... (Attempt ${retryCount + 1}/${MAX_RETRIES})`,
+        `Failed to reach Hatch Baby server at ${options.url}. ${e.message}. Trying again in ${backoffTime / 1000} seconds... (Attempt ${retryCount + 1})`,
       )
       await delay(backoffTime)
       return requestWithRetry(options, retryCount + 1)
