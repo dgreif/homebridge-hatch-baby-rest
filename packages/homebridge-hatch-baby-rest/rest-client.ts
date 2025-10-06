@@ -19,6 +19,7 @@ export function apiPath(path: string) {
 
 export async function requestWithRetry<T>(
   options: RequestInit & { url: string; json?: object },
+  retryCount: number = 1,
 ): Promise<T> {
   try {
     const optionsWithDefaults: RequestInit = {
@@ -50,11 +51,16 @@ export async function requestWithRetry<T>(
     return responseJson as T
   } catch (e: any) {
     if (!e.response) {
+
+      // Exponential backoff doubled each retry
+      // Cap at 60 seconds to avoid extremely long waits
+      const backoffTime = Math.min(1000 * Math.pow(2, retryCount), 60000)
+
       logError(
-        `Failed to reach Hatch Baby server at ${options.url}.  ${e.message}.  Trying again in 5 seconds...`,
+        `Failed to reach Hatch Baby server at ${options.url}. ${e.message}. Trying again in ${backoffTime / 1000} seconds... (Attempt ${retryCount + 1})`,
       )
-      await delay(5000)
-      return requestWithRetry(options)
+      await delay(backoffTime)
+      return requestWithRetry(options, retryCount + 1)
     }
 
     throw e
