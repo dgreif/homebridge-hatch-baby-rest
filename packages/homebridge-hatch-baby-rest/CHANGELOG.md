@@ -1,5 +1,15 @@
 # Changelog
 
+## 6.1.0
+
+### Minor Changes
+
+- [`9ceacdd`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/9ceacdddbcd94dc9f41639e7afb2b465eeef4ab9) Thanks [@mkaz](https://github.com/mkaz)! - Failed network requests will retry less often with exponential backoff up to 1 minute
+
+### Patch Changes
+
+- [`73d0dcd`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/73d0dcdbab038636a3f2656d2d90db7cb1209925) Thanks [@dgreif](https://github.com/dgreif)! - Update dependencies
+
 ## 6.0.0
 
 ### Major Changes
