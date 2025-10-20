@@ -51,7 +51,6 @@ export async function requestWithRetry<T>(
     return responseJson as T
   } catch (e: any) {
     if (!e.response) {
-
       // Exponential backoff doubled each retry
       // Cap at 60 seconds to avoid extremely long waits
       const backoffTime = Math.min(1000 * Math.pow(2, retryCount), 60000)
