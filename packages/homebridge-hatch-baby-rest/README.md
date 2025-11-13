@@ -41,6 +41,10 @@ The Hatch sounds machines use WiFi to directly interact with Hatch's api. This a
 }
 ```
 
+### Logging
+
+You can suppress some logging such as on/off events by adding `"reduceLogging": true` to your config and restarting homebridge.
+
 ### Device Discovery
 
 If you have a new device which is not yet supported, you will see a message like `Unsupported Product Found: restoreV4`. In this case, add `"debug": true` to your config and restart homebridge. This will log the device information and IoT state to the console. Please open an issue with this information and we will see if we can add support for your device.

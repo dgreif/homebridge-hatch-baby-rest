@@ -6,7 +6,7 @@ import { Restore } from './restore.ts'
 import { logInfo } from '../shared/util.ts'
 
 export class RestoreAccessory extends BaseAccessory {
-  constructor(restore: Restore | RestIot, accessory: PlatformAccessory) {
+  constructor(restore: Restore | RestIot, accessory: PlatformAccessory, reduceLogging: boolean) {
     super(restore, accessory)
 
     const { Service, Characteristic } = hap,
@@ -17,9 +17,11 @@ export class RestoreAccessory extends BaseAccessory {
       onOffService.getCharacteristic(Characteristic.On),
       restore.onSomeContentPlaying,
       (on) => {
-        logInfo(
-          `Turning ${on ? `on first ${stepName} for` : 'off'} ${restore.name}`,
-        )
+        if (!reduceLogging) {
+          logInfo(
+            `Turning ${on ? `on first ${stepName} for` : 'off'} ${restore.name}`,
+          )
+        }
         if (on) {
           restore.turnOnRoutine()
         } else {

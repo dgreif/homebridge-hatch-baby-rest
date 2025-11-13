@@ -18,7 +18,7 @@ export interface LightAndSoundMachine extends SoundMachine {
 }
 
 export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
-  constructor(light: LightAndSoundMachine, accessory: PlatformAccessory) {
+  constructor(light: LightAndSoundMachine, accessory: PlatformAccessory, reduceLogging: boolean = false) {
     super(light, accessory)
 
     const { Service, Characteristic } = hap,
@@ -44,7 +44,9 @@ export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
       onOffService.getCharacteristic(Characteristic.On),
       light.onIsPowered,
       (on) => {
-        logInfo(`Turning ${on ? 'on' : 'off'} ${name}`)
+        if (!reduceLogging) {
+          logInfo(`Turning ${on ? 'on' : 'off'} ${name}`)
+        }
         light.setPower(on)
       },
     )

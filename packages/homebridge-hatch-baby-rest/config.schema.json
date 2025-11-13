@@ -16,6 +16,11 @@
         "type": "string",
         "placeholder": "Password",
         "required": false
+      },
+      "reduceLogging": {
+        "title": "Reduce Logging",
+        "type": "boolean",
+        "required": false
       }
     }
   }
