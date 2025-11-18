@@ -140,9 +140,9 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
           this.homebridgeAccessories[uuid] || createHomebridgeAccessory()
 
       if (device instanceof Restore || device instanceof RestIot) {
-        new RestoreAccessory(device, homebridgeAccessory)
+        new RestoreAccessory(device, homebridgeAccessory, this.config.reduceLogging)
       } else if ('onBrightness' in device) {
-        new LightAndSoundMachineAccessory(device, homebridgeAccessory)
+        new LightAndSoundMachineAccessory(device, homebridgeAccessory, this.config.reduceLogging)
       } else {
         new SoundMachineAccessory(device, homebridgeAccessory)
       }
