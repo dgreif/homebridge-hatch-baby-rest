@@ -70,6 +70,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
       {
         restPluses,
         restMinis,
+        restBabies,
         restores,
         restoreIots,
         restIots,
@@ -80,6 +81,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         : {
             restPluses: [],
             restMinis: [],
+            restBabies: [],
             restores: [],
             restIots: [],
             restIotPluses: [],
@@ -94,6 +96,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
       devices = [
         ...restPluses,
         ...restMinis,
+        ...restBabies,
         ...restIots,
         ...restIotPluses,
         ...restores,

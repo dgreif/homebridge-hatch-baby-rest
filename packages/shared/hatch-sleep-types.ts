@@ -4,6 +4,7 @@ export const Product = {
   riotPlus: 'riotPlus',
   restPlus: 'restPlus',
   restMini: 'restMini',
+  restBaby: 'restBaby',
   restore: 'restore',
   restoreIot: 'restoreIot',
   restoreV4: 'restoreV4',
