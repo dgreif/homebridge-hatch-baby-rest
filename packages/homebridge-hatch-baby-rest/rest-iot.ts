@@ -17,11 +17,15 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
   public readonly restClient
 
   get model() {
-    return this.info.product === Product.restoreIot
-      ? 'Restore IoT'
-      : Product.riotPlus
-        ? 'Rest+ 2nd Gen'
-        : 'Rest 2nd Gen'
+    if (this.info.product === Product.restoreIot) {
+      return 'Restore IoT'
+    } else if (this.info.product === Product.riotPlus) {
+      return 'Rest+ 2nd Gen'
+    } else if (this.info.product === Product.restBaby) {
+      return 'restBaby'
+    } else {
+      return 'Rest 2nd Gen'
+    }
   }
 
   constructor(
