@@ -26,14 +26,15 @@ export interface ApiConfig extends EmailAuth {
 }
 
 const knownProducts: Product[] = [
-    Product.restPlus,
-    Product.riot,
-    Product.riotPlus,
-    Product.restMini,
-    Product.restore,
-    Product.restoreIot,
-    Product.restoreV4,
-  ],
+  Product.restPlus,
+  Product.riot,
+  Product.riotPlus,
+  Product.restMini,
+  Product.restore,
+  Product.restoreIot,
+  Product.restoreV4,
+  Product.restBaby,
+],
   ignoredProducts: Product[] = [
     // Known, but not supported
     Product.rest,
@@ -243,6 +244,7 @@ export class HatchBabyApi {
       restores: createDevices(Product.restore, Restore),
       restoreIots: createDevices(Product.restoreIot, RestIot),
       restoreV4s: createDevices(Product.restoreV4, RestIot),
+      restBabies: createDevices(Product.restBaby, RestIot),
     }
   }
 }
