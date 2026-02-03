@@ -56,6 +56,24 @@ export class RestoreV5Accessory extends BaseAccessory {
       (brightness) => restore.setNightlightBrightness(brightness),
     )
 
+    // Track current HSB for color changes
+    let currentHsb = { h: 0, s: 0, b: 50 }
+    restore.onNightlightHsb.subscribe((hsb) => {
+      currentHsb = hsb
+    })
+
+    this.registerCharacteristic(
+      nightlightService.getCharacteristic(Characteristic.Hue),
+      restore.onNightlightHue,
+      (hue) => restore.setNightlightColor({ ...currentHsb, h: hue }),
+    )
+
+    this.registerCharacteristic(
+      nightlightService.getCharacteristic(Characteristic.Saturation),
+      restore.onNightlightSaturation,
+      (saturation) => restore.setNightlightColor({ ...currentHsb, s: saturation }),
+    )
+
     // === Volume (Lightbulb for slider access) ===
     const volumeService = this.getService(Service.Lightbulb, 'Volume', 'volume')
     volumeService.updateCharacteristic(Characteristic.Name, 'Volume')

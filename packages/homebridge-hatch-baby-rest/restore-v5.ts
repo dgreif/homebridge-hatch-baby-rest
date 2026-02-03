@@ -1,6 +1,7 @@
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { BehaviorSubject } from 'rxjs'
 import { distinctUntilChanged, map } from 'rxjs/operators'
+import { HsbColor, hsbToRgb, rgbToHsb } from '../shared/colors.ts'
 import {
   IotDeviceInfo,
   RestIotRoutine,
@@ -10,6 +11,7 @@ import {
   convertFromPercentage,
   convertToPercentage,
   IotDevice,
+  MAX_IOT_VALUE,
 } from './iot-device.ts'
 import { apiPath, RestClient } from './rest-client.ts'
 
@@ -94,6 +96,41 @@ export class RestoreV5 extends IotDevice<RestoreV5State> {
 
   setNightlightBrightness(percentage: number) {
     this.update({ nightlightIntensity: convertFromPercentage(percentage) })
+  }
+
+  // Nightlight color (HSB)
+  onNightlightHsb = this.onState.pipe(
+    map((state) => {
+      const color = state.nightlightColor
+      // Handle white-only light
+      if (color.w > 0 && color.r === 0 && color.g === 0 && color.b === 0) {
+        return { h: 0, s: 0, b: convertToPercentage(state.nightlightIntensity || 0) }
+      }
+      return rgbToHsb(color, MAX_IOT_VALUE)
+    }),
+  )
+
+  onNightlightHue = this.onNightlightHsb.pipe(
+    map(({ h }) => h),
+    distinctUntilChanged(),
+  )
+
+  onNightlightSaturation = this.onNightlightHsb.pipe(
+    map(({ s }) => s),
+    distinctUntilChanged(),
+  )
+
+  setNightlightColor({ h, s, b }: HsbColor) {
+    const rgb = hsbToRgb({ h, s, b: 100 }, MAX_IOT_VALUE)
+
+    this.update({
+      nightlightColor: {
+        ...rgb,
+        w: 0,
+        id: 0,
+      },
+      nightlightIntensity: convertFromPercentage(b),
+    })
   }
 
   // === Volume Controls ===
