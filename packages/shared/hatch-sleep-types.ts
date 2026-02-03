@@ -514,3 +514,115 @@ export interface RestMiniState {
   connected: boolean
   rssi: number
 }
+
+// RestoreV5 (Restore 2 newer revision) types
+export interface RestoreV5Color {
+  id: number
+  r: number
+  g: number
+  b: number
+  w: number
+  i: number
+  duration: number
+  until: 'indefinite' | string
+}
+
+export interface RestoreV5Sound {
+  id: number
+  v: number
+  mute: boolean
+  url: string
+  duration: number
+  until: 'indefinite' | string
+}
+
+export interface RestoreV5State {
+  env: 'prod' | string
+  alarmsDisabled: boolean
+  nightlightOn: boolean
+  nightlightIntensity: number
+  toddlerLockOn: boolean
+  snoozeDuration: number
+  current: {
+    srId: number
+    playing: 'none' | 'remote' | 'routine' | string
+    step: number
+    color: RestoreV5Color
+    sound: RestoreV5Sound
+    paused: boolean
+  }
+  dataVersion: string
+  sleepScene: {
+    srId: number
+    enabled: boolean
+  }
+  timer: { s: string; d: number }
+  streaming: { status: 'none' | string }
+  snooze: { active: boolean; startTime: string }
+  timezone: string
+  rF: {
+    v: string
+    i: boolean
+    u: string
+  }
+  deviceInfo: {
+    f: string
+    fR: number
+    hwVersion: string
+    powerStatus?: number
+    sdCardVersionInfo?: {
+      releaseDate: string
+      hashType: string
+      hashCode: string
+    }
+  }
+  clock: {
+    i: number
+    turnOffAt: string
+    turnOnAt: string
+    flags: number
+    turnOffMode: 'never' | string
+  }
+  toddlerLock: {
+    turnOffAt: string
+    turnOnAt: string
+    turnOnMode: 'never' | string
+  }
+  lucky: number
+  LDR: 'OK' | 'IOT_TIMEOUT' | string
+  owned: boolean
+  lastReset: 'PowerOn' | string
+  knockThreshold: number
+  knockDuration: number
+  activeTap: boolean
+  knockAxis: number
+  ota: {
+    status: 'none' | string
+    downloadProgress: number
+    installProgress: number
+  }
+  touch: {
+    flags: number
+    poll_rate_hz: number
+    refire_delay_ms: number
+    refire_rate_hz: number
+    step_size: number
+  }
+  REX: {
+    lock: number
+    key: number
+    command: 'none' | string
+    auth: number
+  }
+  rssi: number
+  connected: boolean
+  debug: number
+  hwDebugFlags: number
+  nightlightColor: {
+    id: number
+    r: number
+    g: number
+    b: number
+    w: number
+  }
+}
