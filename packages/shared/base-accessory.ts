@@ -53,15 +53,18 @@ export class BaseAccessory {
     nameSuffix?: string,
     subType?: string,
   ) {
-    let name = nameSuffix
-      ? this.device.name + ' ' + nameSuffix
-      : this.device.name
+    // Use just the suffix as display name for cleaner HomeKit labels
+    let name = nameSuffix || this.device.name
 
     if (isTestHomebridge) {
       name = 'TEST ' + name
     }
 
-    const existingService = this.accessory.getService(serviceType)
+    // Use getServiceById when subType is provided to support multiple services of same type
+    const existingService = subType
+      ? this.accessory.getServiceById(serviceType, subType)
+      : this.accessory.getService(serviceType)
+
     return (
       existingService || this.accessory.addService(serviceType, name, subType!)
     )
