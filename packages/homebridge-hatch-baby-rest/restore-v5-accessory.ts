@@ -18,7 +18,7 @@ function debounce<T>(fn: (value: T) => void, delay = 300): (value: T) => void {
  *
  * Provides three separate controls:
  * - Routine (Switch): plays/stops the first saved routine
- * - Nightlight (Lightbulb): independent light control with brightness
+ * - Nightlight (Lightbulb): independent light control with brightness and color
  * - Volume (Lightbulb): sound volume control with brightness slider
  */
 export class RestoreV5Accessory extends BaseAccessory {
@@ -45,7 +45,7 @@ export class RestoreV5Accessory extends BaseAccessory {
     )
     routineService.setPrimaryService(true)
 
-    // === Nightlight (Lightbulb) ===
+    // === Nightlight (Lightbulb with color) ===
     const nightlightService = this.getService(
       Service.Lightbulb,
       'Nightlight',
@@ -62,25 +62,48 @@ export class RestoreV5Accessory extends BaseAccessory {
     this.registerCharacteristic(
       nightlightService.getCharacteristic(Characteristic.Brightness),
       restore.onNightlightBrightness,
-      debounce((brightness: number) => restore.setNightlightBrightness(brightness), 300),
+      debounce(
+        (brightness: number) => restore.setNightlightBrightness(brightness),
+        300,
+      ),
     )
 
-    // Track current HSB for color changes
-    let currentHsb = { h: 0, s: 0, b: 50 }
+    // Track PENDING color values to avoid race conditions between H and S updates
+    let pendingHsb = { h: 0, s: 100, b: 50 }
+    let colorTimeout: ReturnType<typeof setTimeout> | null = null
+
+    // Initialize from device state (only when not actively setting)
     restore.onNightlightHsb.subscribe((hsb) => {
-      currentHsb = hsb
+      if (!colorTimeout) {
+        pendingHsb = { ...hsb }
+      }
     })
+
+    // Debounced color update - combines H and S changes into single update
+    const sendColorUpdate = () => {
+      if (colorTimeout) clearTimeout(colorTimeout)
+      colorTimeout = setTimeout(() => {
+        restore.setNightlightColor(pendingHsb)
+        colorTimeout = null
+      }, 350)
+    }
 
     this.registerCharacteristic(
       nightlightService.getCharacteristic(Characteristic.Hue),
       restore.onNightlightHue,
-      debounce((hue: number) => restore.setNightlightColor({ ...currentHsb, h: hue }), 300),
+      (hue: number) => {
+        pendingHsb.h = hue
+        sendColorUpdate()
+      },
     )
 
     this.registerCharacteristic(
       nightlightService.getCharacteristic(Characteristic.Saturation),
       restore.onNightlightSaturation,
-      debounce((saturation: number) => restore.setNightlightColor({ ...currentHsb, s: saturation }), 300),
+      (saturation: number) => {
+        pendingHsb.s = saturation
+        sendColorUpdate()
+      },
     )
 
     // === Volume (Lightbulb for slider access) ===
