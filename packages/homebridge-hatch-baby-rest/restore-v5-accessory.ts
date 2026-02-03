@@ -4,6 +4,15 @@ import { BaseAccessory } from '../shared/base-accessory.ts'
 import { logInfo } from '../shared/util.ts'
 import { RestoreV5 } from './restore-v5.ts'
 
+// Debounce helper - waits until value stops changing before calling fn
+function debounce<T>(fn: (value: T) => void, delay = 300): (value: T) => void {
+  let timeout: ReturnType<typeof setTimeout>
+  return (value: T) => {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => fn(value), delay)
+  }
+}
+
 /**
  * RestoreV5 Accessory - exposes Hatch Restore 2 (restoreV5) to HomeKit
  *
@@ -53,7 +62,7 @@ export class RestoreV5Accessory extends BaseAccessory {
     this.registerCharacteristic(
       nightlightService.getCharacteristic(Characteristic.Brightness),
       restore.onNightlightBrightness,
-      (brightness) => restore.setNightlightBrightness(brightness),
+      debounce((brightness: number) => restore.setNightlightBrightness(brightness), 300),
     )
 
     // Track current HSB for color changes
@@ -65,13 +74,13 @@ export class RestoreV5Accessory extends BaseAccessory {
     this.registerCharacteristic(
       nightlightService.getCharacteristic(Characteristic.Hue),
       restore.onNightlightHue,
-      (hue) => restore.setNightlightColor({ ...currentHsb, h: hue }),
+      debounce((hue: number) => restore.setNightlightColor({ ...currentHsb, h: hue }), 300),
     )
 
     this.registerCharacteristic(
       nightlightService.getCharacteristic(Characteristic.Saturation),
       restore.onNightlightSaturation,
-      (saturation) => restore.setNightlightColor({ ...currentHsb, s: saturation }),
+      debounce((saturation: number) => restore.setNightlightColor({ ...currentHsb, s: saturation }), 300),
     )
 
     // === Volume (Lightbulb for slider access) ===
@@ -87,7 +96,7 @@ export class RestoreV5Accessory extends BaseAccessory {
     this.registerCharacteristic(
       volumeService.getCharacteristic(Characteristic.Brightness),
       restore.onVolume,
-      (volume) => restore.setVolume(volume),
+      debounce((volume: number) => restore.setVolume(volume), 300),
     )
   }
 }
