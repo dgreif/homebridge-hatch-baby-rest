@@ -7,6 +7,7 @@ export const Product = {
   restore: 'restore',
   restoreIot: 'restoreIot',
   restoreV4: 'restoreV4',
+  restoreV5: 'restoreV5',
   alexa: 'alexa',
   grow: 'grow',
   answeredReader: 'answeredReader',
