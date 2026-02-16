@@ -266,6 +266,7 @@ export interface RestIotState {
     srId: number
     playing: 'none' | 'remote' | 'routine' | string
     step: number
+    paused: boolean
     color: {
       i: number
       id: number

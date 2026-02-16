@@ -52,6 +52,7 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
         playing,
         step,
         srId,
+        paused: false, // Must explicitly unpause or device ignores the command
       },
     })
   }
