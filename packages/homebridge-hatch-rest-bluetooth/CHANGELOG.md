@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.0.3
+
+### Patch Changes
+
+- [`d34bfe4`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/d34bfe424c21b5c34875182e15cb11a13c2ee72f) Thanks [@dgreif](https://github.com/dgreif)! - Fix light switch toggle not setting brightness to 0 when turned off
+
 ## 6.0.2
 
 ### Patch Changes

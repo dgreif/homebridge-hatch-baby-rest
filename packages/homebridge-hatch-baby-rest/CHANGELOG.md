@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.2.1
+
+### Patch Changes
+
+- [`d34bfe4`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/d34bfe424c21b5c34875182e15cb11a13c2ee72f) Thanks [@dgreif](https://github.com/dgreif)! - Fix light switch toggle not setting brightness to 0 when turned off
+
+- [`1e80701`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/1e807016c57eae449fad35caaa393078d4acd4ac) Thanks [@dgreif](https://github.com/dgreif)! - Refresh aws token every 50 minutes instead of 8 hours
+
 ## 6.2.0
 
 ### Minor Changes
