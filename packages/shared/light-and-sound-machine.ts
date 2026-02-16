@@ -35,7 +35,12 @@ export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
 
     light.onHue.subscribe((h) => (context.h = h))
     light.onSaturation.subscribe((s) => (context.s = s))
-    onBrightness.subscribe((b) => (context.b = b))
+    onBrightness.subscribe((b) => {
+      context.b = b
+      if (b > 0) {
+        context.previousBrightness = b
+      }
+    })
     onHsbSet.pipe(debounceTime(100)).subscribe(() => {
       light.setHsb(context)
     })
@@ -52,6 +57,14 @@ export class LightAndSoundMachineAccessory extends SoundMachineAccessory {
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.On),
       onBrightness.pipe(map((brightness) => Boolean(brightness))),
+      (on) => {
+        if (on) {
+          context.b = context.previousBrightness || 100
+        } else {
+          context.b = 0
+        }
+        onHsbSet.next(null)
+      },
     )
     this.registerCharacteristic(
       lightService.getCharacteristic(Characteristic.Hue),

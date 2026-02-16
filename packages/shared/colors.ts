@@ -27,6 +27,7 @@ export interface HsbColor {
   h: number // 0-360
   s: number // 0-100
   b: number // 0-100
+  previousBrightness?: number
 }
 
 export function hsbToRgb(hsb: HsbColor, maxValue = HEX_MAX): RgbColor {
