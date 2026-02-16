@@ -10,6 +10,7 @@ export const Product = {
   alexa: 'alexa',
   grow: 'grow',
   answeredReader: 'answeredReader',
+  restBaby: 'restBaby',
 } as const
 
 // eslint-disable-next-line no-redeclare
