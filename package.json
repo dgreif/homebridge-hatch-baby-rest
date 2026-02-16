@@ -20,12 +20,12 @@
     "exit-beta": "changeset pre exit && git commit -am 'Exit beta release'"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.5.1",
-    "@changesets/cli": "^2.29.7",
-    "turbo": "^2.5.8"
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.29.8",
+    "turbo": "^2.8.9"
   },
   "workspaces": [
     "packages/*"
   ],
-  "packageManager": "npm@11.6.2"
+  "packageManager": "npm@11.10.0"
 }
