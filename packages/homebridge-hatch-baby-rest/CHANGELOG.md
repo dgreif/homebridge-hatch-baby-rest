@@ -1,5 +1,19 @@
 # Changelog
 
+## 6.2.0
+
+### Minor Changes
+
+- [`199ee24`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/199ee247f6c804effd40a182dfa83793fb9b7867) Thanks [@dgreif](https://github.com/dgreif)! - Add support for the Hatch Baby (Rest Baby) device
+
+- [`86a8db1`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/86a8db13d57bb0a7994d944bcf0b4d91848f0a8e) Thanks [@dgreif](https://github.com/dgreif)! - Add support for Restore 3 (restoreV5)
+
+### Patch Changes
+
+- [`a3e7183`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/a3e718332ce26e1fdee8f51b14cfde06c9bd5029) Thanks [@dgreif](https://github.com/dgreif)! - Update dependencies
+
+- [`5f8cc47`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/5f8cc47cc7cba940696eb8a39ab0ea849fc9cf4c) Thanks [@cameronsjo](https://github.com/cameronsjo)! - Fix Restore IoT on/off commands by setting `paused` to `false`
+
 ## 6.1.0
 
 ### Minor Changes
