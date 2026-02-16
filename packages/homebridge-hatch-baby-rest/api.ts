@@ -43,7 +43,7 @@ const knownProducts: Product[] = [
     Product.grow,
     Product.answeredReader,
   ],
-  iotClientRefreshPeriod = 8 * 60 * 60 * 1000 // refresh client every 8 hours
+  iotClientRefreshPeriod = 50 * 60 * 1000 // refresh client every 50 minutes (AWS Cognito credentials expire after ~1 hour)
 
 export class HatchBabyApi {
   public readonly config
