@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.0.4
+
+### Patch Changes
+
+- [`d1503e4`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/d1503e498aa7b92c381c50b7c4cf29e79b4a52dd) Thanks [@dgreif](https://github.com/dgreif)! - Bump actions verisons for trusted npm release
+
 ## 6.0.3
 
 ### Patch Changes
