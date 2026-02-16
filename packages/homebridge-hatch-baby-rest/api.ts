@@ -33,6 +33,7 @@ const knownProducts: Product[] = [
     Product.restore,
     Product.restoreIot,
     Product.restoreV4,
+    Product.restoreV5,
     Product.restBaby,
   ],
   ignoredProducts: Product[] = [
@@ -244,6 +245,7 @@ export class HatchBabyApi {
       restores: createDevices(Product.restore, Restore),
       restoreIots: createDevices(Product.restoreIot, RestIot),
       restoreV4s: createDevices(Product.restoreV4, RestIot),
+      restoreV5s: createDevices(Product.restoreV5, RestIot),
       restBabies: createDevices(Product.restBaby, RestIot),
     }
   }

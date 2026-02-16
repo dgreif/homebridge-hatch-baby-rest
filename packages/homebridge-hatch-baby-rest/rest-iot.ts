@@ -24,6 +24,10 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
         return 'Rest+ 2nd Gen'
       case Product.restBaby:
         return 'Hatch Baby'
+      case Product.restoreV4:
+        return 'Restore 2'
+      case Product.restoreV5:
+        return 'Restore 3'
       case Product.riot:
         return 'Rest 2nd Gen'
       default:

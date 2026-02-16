@@ -75,6 +75,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         restIots,
         restIotPluses,
         restoreV4s,
+        restoreV5s,
         restBabies,
       } = hatchBabyApi
         ? await hatchBabyApi.getDevices()
@@ -86,6 +87,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
             restIotPluses: [],
             restoreIots: [],
             restoreV4s: [],
+            restoreV5s: [],
             restBabies: [],
           },
       { api } = this,
@@ -101,6 +103,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         ...restores,
         ...restoreIots,
         ...restoreV4s,
+        ...restoreV5s,
         ...restBabies,
       ]
 
