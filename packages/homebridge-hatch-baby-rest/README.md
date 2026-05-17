@@ -14,6 +14,8 @@ This homebridge plugin allows you to add the Hatch Rest, Rest+ and Rest Mini, an
 
 The Hatch Restore, Restore 2, Rest 2nd Gen and Rest+ 2nd Gen support much more complicated routines which do not map well to HomeKit controls. Because of this complexity, they are exposed as a simple switch. Turning the switch on will initiate the first step in your Bedtime routine. Turning the switch off will turn the device off no matter which routine/step you are in.
 
+The Hatch Baby (Rest Baby) exposes the routine-based on/off switch (first routine on / off), plus a Lightbulb service for brightness and color, and a Speaker service for volume. Audio track selection is not currently exposed.
+
 If you have an older bluetooth model, please see the [`homebridge-hatch-rest-bluetooth` plugin](../homebridge-hatch-rest-bluetooth)
 
 ## Easy Setup
