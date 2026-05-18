@@ -13,9 +13,15 @@ export class RestBabyAccessory extends BaseAccessory {
 
     const { Service, Characteristic } = hap,
       { name } = restBaby,
-      onOffService = this.getService(Service.Switch),
+      staleSpeaker = accessory.getService(Service.Speaker)
+
+    if (staleSpeaker) {
+      accessory.removeService(staleSpeaker)
+    }
+
+    const onOffService = this.getService(Service.Switch),
       lightService = this.getService(Service.Lightbulb, 'Light'),
-      speakerService = this.getService(Service.Speaker, 'Volume'),
+      volumeService = this.getService(Service.Fan, 'Volume'),
       onHsbSet = new Subject(),
       context = accessory.context as HsbColor,
       onBrightness = restBaby.onBrightness.pipe(startWith(context.b || 0))
@@ -87,16 +93,16 @@ export class RestBabyAccessory extends BaseAccessory {
     )
 
     this.registerCharacteristic(
-      speakerService.getCharacteristic(Characteristic.Volume),
-      restBaby.onVolume,
-      (volume) => restBaby.setVolume(volume),
+      volumeService.getCharacteristic(Characteristic.On),
+      restBaby.onVolume.pipe(map((volume) => volume > 0)),
+      (on) => {
+        restBaby.setVolume(on ? 50 : 0)
+      },
     )
     this.registerCharacteristic(
-      speakerService.getCharacteristic(Characteristic.Mute),
-      restBaby.onVolume.pipe(map((volume) => volume === 0)),
-      (mute) => {
-        restBaby.setVolume(mute ? 0 : 50)
-      },
+      volumeService.getCharacteristic(Characteristic.RotationSpeed),
+      restBaby.onVolume,
+      (volume) => restBaby.setVolume(volume),
     )
 
     onOffService.setPrimaryService(true)
