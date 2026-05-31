@@ -1,0 +1,25 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    groups:
+      all-dependencies:
+        patterns:
+          - '*'
+    # Wait 3 days after a new release before opening routine version-update PRs.
+    # This does not affect Dependabot Security Updates.
+    cooldown:
+      default-days: 3
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    groups:
+      all-actions:
+        patterns:
+          - '*'
+    cooldown:
+      default-days: 3
