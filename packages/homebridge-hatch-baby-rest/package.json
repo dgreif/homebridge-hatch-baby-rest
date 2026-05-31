@@ -37,7 +37,7 @@
     "@types/aws-iot-device-sdk": "2.2.9",
     "shared": "*",
     "tsconfig": "*",
-    "ts-essentials": "10.1.1"
+    "ts-essentials": "10.2.0"
   },
   "engines": {
     "node": "^20 || ^22 || ^24",
