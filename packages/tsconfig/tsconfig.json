@@ -12,6 +12,7 @@
     "allowImportingTsExtensions": true,
     "rewriteRelativeImportExtensions": true,
     "typeRoots": ["../../node_modules/tsconfig", "../../node_modules/@types"],
+    "skipLibCheck": true,
     "noEmit": false
   }
 }

@@ -12,7 +12,6 @@ export default [
       ecmaVersion: 2018,
       sourceType: 'module',
       parserOptions: {
-        project: './tsconfig.json',
       },
       globals: {
         Buffer: 'readonly',
@@ -30,8 +29,10 @@ export default [
         clearInterval: 'readonly',
         fetch: 'readonly',
         Request: 'readonly',
+        RequestInit: 'readonly',
         Response: 'readonly',
         Headers: 'readonly',
+        HeadersInit: 'readonly',
       },
     },
     plugins: {
