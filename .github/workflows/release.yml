@@ -17,10 +17,12 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # Enable turbo remote caching
+      # Enable turbo remote caching. The release workflow holds id-token:write
+      # (OIDC npm publishing), so it is write-only: it never restores a cache
+      # that a lower-trust run could have poisoned, but still populates it.
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      TURBO_REMOTE_ONLY: true
+      TURBO_CACHE: remote:w
 
     steps:
       - name: Checkout Repo
