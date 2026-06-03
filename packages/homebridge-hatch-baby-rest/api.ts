@@ -23,6 +23,7 @@ import { debounceTime } from 'rxjs/operators'
 
 export interface ApiConfig extends EmailAuth {
   debug?: boolean
+  disableLogging?: boolean
 }
 
 const knownProducts: Product[] = [
