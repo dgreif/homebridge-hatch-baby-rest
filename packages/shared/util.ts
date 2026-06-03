@@ -13,6 +13,7 @@ let logger: Logger = {
       console.error(message)
     },
   },
+  infoDisabled = false,
   debugEnabled = false
 
 export function logDebug(message: any) {
@@ -22,7 +23,9 @@ export function logDebug(message: any) {
 }
 
 export function logInfo(message: any) {
-  logger.logInfo(message)
+  if (!infoDisabled) {
+    logger.logInfo(message)
+  }
 }
 
 export function logError(message: any) {
@@ -35,6 +38,10 @@ export function useLogger(newLogger: Logger) {
 
 export function enableDebug() {
   debugEnabled = true
+}
+
+export function disableInfo() {
+  infoDisabled = true
 }
 
 export function delay(milliseconds: number) {
