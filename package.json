@@ -20,8 +20,8 @@
     "exit-beta": "changeset pre exit && git commit -am 'Exit beta release'"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "8.60.0",
-    "@typescript-eslint/parser": "8.60.0",
+    "@typescript-eslint/eslint-plugin": "8.60.1",
+    "@typescript-eslint/parser": "8.60.1",
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
     "eslint": "10.4.1",
