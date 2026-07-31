@@ -36,6 +36,9 @@ export class IotDevice<T> {
   }
   private onStatusToken = new Subject<string>()
   private previousUpdatePromise: Promise<any> = Promise.resolve()
+  // always the registration outcome of the newest client - assigned in the
+  // constructor via registerMqttClient before anything can read it
+  private latestRegistrationOutcome: Promise<boolean> = Promise.resolve(false)
 
   onState = this.onCurrentState.pipe(
     filter((state): state is T => state !== null),
@@ -116,28 +119,46 @@ export class IotDevice<T> {
       )
     })
 
+    const connectAndRegisterPromise = new Promise((resolve) => {
+        mqttClient.on('connect', () => {
+          mqttClient.register(thingName, {}, () => {
+            getClientToken = mqttClient.get(thingName)!
+            resolve(
+              firstValueFrom(
+                this.onStatusToken.pipe(
+                  filter((token) => token === getClientToken),
+                ),
+              ),
+            )
+          })
+        })
+      }),
+      // A client that never connects (e.g., created moments before a network
+      // outage, then replaced with fresh credentials once the outage ends)
+      // would otherwise leave connectAndRegisterPromise pending forever.
+      // Because every command is chained through previousUpdatePromise, a
+      // single such client permanently wedges the command queue while state
+      // updates continue to flow. Once a newer client exists, stop waiting.
+      supersededPromise = firstValueFrom(
+        this.onIotClient.pipe(filter((client) => client !== mqttClient)),
+      ),
+      // true once this client is fully registered, false if it was replaced
+      // first. update() uses this to wait for a client that can actually
+      // accept commands - the sdk's update() returns null (dropping the
+      // command) if called before registration completes
+      registrationOutcome = Promise.race([
+        connectAndRegisterPromise.then(() => true),
+        supersededPromise.then(() => false),
+      ])
+
+    this.latestRegistrationOutcome = registrationOutcome
+
     this.previousUpdatePromise = this.previousUpdatePromise
       .catch((_) => {
         // ignore errors, they shouldn't be possible
         void _
       })
-      .then(
-        () =>
-          new Promise((resolve) => {
-            mqttClient.on('connect', () => {
-              mqttClient.register(thingName, {}, () => {
-                getClientToken = mqttClient.get(thingName)!
-                resolve(
-                  firstValueFrom(
-                    this.onStatusToken.pipe(
-                      filter((token) => token === getClientToken),
-                    ),
-                  ),
-                )
-              })
-            })
-          }),
-      )
+      .then(() => registrationOutcome)
   }
 
   getCurrentState() {
@@ -150,7 +171,15 @@ export class IotDevice<T> {
         // ignore errors, they shouldn't be possible
         void _
       })
-      .then(() => {
+      .then(async () => {
+        while (!(await this.latestRegistrationOutcome)) {
+          // a false outcome means that client was replaced before it finished
+          // registering. The replacement installed its own outcome before the
+          // false resolved (the constructor's skip(1) subscription runs ahead
+          // of supersededPromise's subscriber), so loop to await the
+          // replacement's registration rather than dropping the command
+        }
+
         if (!this.mqttClient) {
           logError(`Unable to Update ${this.name} - No MQTT Client Registered`)
           return
