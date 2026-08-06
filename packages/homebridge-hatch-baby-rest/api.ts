@@ -17,6 +17,7 @@ import { RestPlus } from './rest-plus.ts'
 import { RestIot } from './rest-iot.ts'
 import { RestMini } from './rest-mini.ts'
 import { Restore } from './restore.ts'
+import { RestBaby } from './rest-baby.ts'
 import { BehaviorSubject } from 'rxjs'
 import { IotDevice } from './iot-device.ts'
 import { debounceTime } from 'rxjs/operators'
@@ -246,7 +247,7 @@ export class HatchBabyApi {
       restoreIots: createDevices(Product.restoreIot, RestIot),
       restoreV4s: createDevices(Product.restoreV4, RestIot),
       restoreV5s: createDevices(Product.restoreV5, RestIot),
-      restBabies: createDevices(Product.restBaby, RestIot),
+      restBabies: createDevices(Product.restBaby, RestBaby),
     }
   }
 }
