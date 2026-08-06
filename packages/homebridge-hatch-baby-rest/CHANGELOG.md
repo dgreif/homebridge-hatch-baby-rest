@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.2.3
+
+### Patch Changes
+
+- [#171](https://github.com/dgreif/homebridge-hatch-baby-rest/pull/171) [`942d3be`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/942d3be22fcc20a649c435a70155c1752a055f98) Thanks [@dgreif](https://github.com/dgreif)! - Updated dependencies.
+
 ## 6.2.2
 
 ### Patch Changes
