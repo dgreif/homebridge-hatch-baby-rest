@@ -1,5 +1,5 @@
 import { hap, isTestHomebridge } from '../shared/hap.ts'
-import { useLogger } from '../shared/util.ts'
+import { disableInfo, logInfo, useLogger } from '../shared/util.ts'
 import { stripMacAddress } from './util.ts'
 import { LightAndSoundMachineAccessory } from '../shared/light-and-sound-machine.ts'
 import type {
@@ -51,8 +51,12 @@ export class HatchRestBluetoothPlatform implements DynamicPlatformPlugin {
     })
 
     if (!config) {
-      this.log.info('No configuration found for platform HatchBabyRest')
+      this.log.warn('No configuration found for platform HatchBabyRest')
       return
+    }
+
+    if (this.config.disableLogging === true) {
+      disableInfo()
     }
 
     this.api.on('didFinishLaunching', () => {
@@ -64,7 +68,7 @@ export class HatchRestBluetoothPlatform implements DynamicPlatformPlugin {
   }
 
   configureAccessory(accessory: PlatformAccessory) {
-    this.log.info(
+    logInfo(
       `Configuring cached accessory ${accessory.UUID} ${accessory.displayName}`,
     )
     this.log.debug('%j', accessory)
@@ -83,7 +87,7 @@ export class HatchRestBluetoothPlatform implements DynamicPlatformPlugin {
       debugPrefix = isTestHomebridge ? 'TEST ' : '',
       devices = restLights
 
-    this.log.info(`Configuring ${restLights.length} Rest Sound Machines`)
+    logInfo(`Configuring ${restLights.length} Rest Sound Machines`)
 
     devices.forEach((device) => {
       const id = stripMacAddress(device.macAddress),

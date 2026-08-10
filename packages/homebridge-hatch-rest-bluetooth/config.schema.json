@@ -25,6 +25,12 @@
             }
           }
         }
+      },
+      "disableLogging": {
+        "title": "Disable Logging",
+        "description": "Silences routine logging such as device configuration and state changes",
+        "type": "boolean",
+        "required": false
       }
     }
   }

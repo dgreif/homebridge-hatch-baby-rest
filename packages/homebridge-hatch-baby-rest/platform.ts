@@ -1,6 +1,6 @@
 import { ApiConfig, HatchBabyApi } from './api.ts'
 import { hap, isTestHomebridge } from '../shared/hap.ts'
-import { useLogger } from '../shared/util.ts'
+import { disableInfo, logInfo, useLogger } from '../shared/util.ts'
 import { LightAndSoundMachineAccessory } from '../shared/light-and-sound-machine.ts'
 import { SoundMachineAccessory } from '../shared/sound-machine.ts'
 import type {
@@ -39,8 +39,12 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
     })
 
     if (!config) {
-      this.log.info('No configuration found for platform HatchBabyRest')
+      this.log.warn('No configuration found for platform HatchBabyRest')
       return
+    }
+
+    if (this.config.disableLogging === true) {
+      disableInfo()
     }
 
     this.api.on('didFinishLaunching', () => {
@@ -55,7 +59,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
   }
 
   configureAccessory(accessory: PlatformAccessory) {
-    this.log.info(
+    logInfo(
       `Configuring cached accessory ${accessory.UUID} ${accessory.displayName}`,
     )
     this.log.debug('%j', accessory)
@@ -107,7 +111,7 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         ...restBabies,
       ]
 
-    this.log.info('Configuring Hatch Devices:')
+    logInfo('Configuring Hatch Devices:')
 
     if (devices.length) {
       const countByModel = devices.reduce(
@@ -120,10 +124,10 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
       )
 
       Object.entries(countByModel).forEach(([model, count]) => {
-        this.log.info(`  ${model}: ${count}`)
+        logInfo(`  ${model}: ${count}`)
       })
     } else {
-      this.log.info('  No supported devices found')
+      this.log.warn('  No supported devices found')
     }
 
     devices.forEach((device) => {
