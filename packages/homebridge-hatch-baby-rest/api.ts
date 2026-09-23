@@ -12,13 +12,13 @@ import {
   Product,
 } from '../shared/hatch-sleep-types.ts'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
-import { logDebug, logError, logInfo } from '../shared/util.ts'
+import { logError, logInfo } from '../shared/util.ts'
 import { RestPlus } from './rest-plus.ts'
 import { RestIot } from './rest-iot.ts'
 import { RestMini } from './rest-mini.ts'
 import { Restore } from './restore.ts'
-import { BehaviorSubject } from 'rxjs'
 import { IotDevice } from './iot-device.ts'
+import { IotClientLifecycle } from './iot-client-lifecycle.ts'
 
 export interface ApiConfig extends EmailAuth {
   debug?: boolean
@@ -41,16 +41,7 @@ const knownProducts: Product[] = [
     Product.alexa,
     Product.grow,
     Product.answeredReader,
-  ],
-  iotClientRefreshPeriod = 50 * 60 * 1000, // refresh client every 50 minutes (AWS Cognito credentials expire after ~1 hour)
-  iotClientInitialRetryDelay = 30 * 1000,
-  iotClientMaxRetryDelay = 5 * 60 * 1000,
-  // How long a client may sit disconnected (close/offline without a
-  // subsequent connect) before we stop trusting the SDK's built-in
-  // reconnect - its retries reuse the original signed websocket URL,
-  // whose Cognito credentials expire, so extended outages need a fresh
-  // client with fresh credentials
-  iotClientDeadConnectionTimeout = 10 * 60 * 1000
+  ]
 
 export class HatchBabyApi {
   public readonly config
@@ -117,138 +108,12 @@ export class HatchBabyApi {
     return mqttClient
   }
 
-  async getOnIotClient() {
-    // eslint-disable-next-line prefer-const
-    let onIotClient: BehaviorSubject<AwsIotDevice> | undefined,
-      recreateInProgress = false,
-      retryDelay = iotClientInitialRetryDelay,
-      retryTimer: ReturnType<typeof setTimeout> | undefined,
-      deadConnectionTimer: ReturnType<typeof setTimeout> | undefined
+  getOnIotClient() {
+    const lifecycle = new IotClientLifecycle({
+      createClient: () => this.createAwsIotClient(),
+    })
 
-    const clearDeadConnectionTimer = () => {
-        if (deadConnectionTimer) {
-          clearTimeout(deadConnectionTimer)
-          deadConnectionTimer = undefined
-        }
-      },
-      attachLifecycleHandlers = (mqttClient: AwsIotDevice) => {
-        // Events from an ended, replaced client must not drive recovery for
-        // the current one. Before the subject exists this client is the one
-        // being created, so treat it as current.
-        const isCurrent = () =>
-          !onIotClient || onIotClient.getValue() === mqttClient
-
-        mqttClient.on('connect', () => {
-          if (!isCurrent()) {
-            return
-          }
-          clearDeadConnectionTimer()
-          retryDelay = iotClientInitialRetryDelay
-        })
-
-        const armDeadConnectionTimer = (event: string) => {
-          if (!isCurrent() || deadConnectionTimer) {
-            return
-          }
-          deadConnectionTimer = setTimeout(() => {
-            deadConnectionTimer = undefined
-            logError(
-              `MQTT connection still down ${Math.round(iotClientDeadConnectionTimeout / 60000)} minutes after '${event}', recreating client with fresh credentials`,
-            )
-            // eslint-disable-next-line no-use-before-define
-            recreateIotClient()
-          }, iotClientDeadConnectionTimeout)
-        }
-
-        mqttClient.on('close', () => armDeadConnectionTimer('close'))
-        mqttClient.on('offline', () => armDeadConnectionTimer('offline'))
-
-        mqttClient.on('error', (error) => {
-          if (error.message.includes('(403)')) {
-            logError('MQTT Client No Longer Authorized')
-          } else {
-            logError('MQTT Error:')
-            logError(error)
-          }
-
-          if (isCurrent()) {
-            // eslint-disable-next-line no-use-before-define
-            recreateIotClient()
-          }
-        })
-      },
-      createNewIotClient = async (): Promise<AwsIotDevice> => {
-        try {
-          logDebug('Creating new MQTT Client')
-
-          // Create the replacement BEFORE ending the previous client: if
-          // creation fails mid-outage, the old client keeps the SDK's own
-          // reconnect loop alive instead of leaving no client at all. The
-          // old shape (end first, then create) is how the Feb 2026 outage
-          // went silent for 5 days - creation failed after the only client
-          // had already been ended, and nothing ever retried.
-          const mqttClient = await this.createAwsIotClient()
-          attachLifecycleHandlers(mqttClient)
-
-          const previousMqttClient = onIotClient?.getValue()
-          if (previousMqttClient) {
-            try {
-              previousMqttClient.end()
-            } catch (e: unknown) {
-              logError('Failed to end previous MQTT Client')
-              logError(e)
-            }
-          }
-
-          logDebug('Created new MQTT Client')
-          return mqttClient
-        } catch (e) {
-          logError('Failed to Create an MQTT Client')
-          logError(e)
-          throw e
-        }
-      },
-      recreateIotClient = async () => {
-        if (recreateInProgress) {
-          return
-        }
-        recreateInProgress = true
-        if (retryTimer) {
-          clearTimeout(retryTimer)
-          retryTimer = undefined
-        }
-        clearDeadConnectionTimer()
-
-        try {
-          const client = await createNewIotClient()
-          retryDelay = iotClientInitialRetryDelay
-          onIotClient?.next(client)
-        } catch (_) {
-          // already logged; retry with backoff, forever - an extended outage
-          // must not permanently kill the client
-          logError(
-            `Retrying MQTT client creation in ${Math.round(retryDelay / 1000)}s`,
-          )
-          retryTimer = setTimeout(() => {
-            retryTimer = undefined
-            recreateIotClient()
-          }, retryDelay)
-          retryDelay = Math.min(retryDelay * 2, iotClientMaxRetryDelay)
-        } finally {
-          recreateInProgress = false
-        }
-      }
-
-    onIotClient = new BehaviorSubject<AwsIotDevice>(await createNewIotClient())
-
-    // Proactive credential rotation. A plain interval (not debounceTime on
-    // the subject) so one failed refresh cannot permanently end the cycle,
-    // and recreateIotClient retries failures with backoff on its own.
-    setInterval(() => {
-      recreateIotClient()
-    }, iotClientRefreshPeriod)
-
-    return onIotClient
+    return lifecycle.start()
   }
 
   async getDevices() {

@@ -36,6 +36,9 @@ export class IotDevice<T> {
   }
   private onStatusToken = new Subject<string>()
   private previousUpdatePromise: Promise<any> = Promise.resolve()
+  // Always the registration outcome of the newest client - assigned in the
+  // constructor via registerMqttClient before anything can read it
+  private latestRegistrationOutcome: Promise<boolean> = Promise.resolve(false)
 
   onState = this.onCurrentState.pipe(
     filter((state): state is T => state !== null),
@@ -119,47 +122,67 @@ export class IotDevice<T> {
     // Attach connect handler synchronously to avoid missing the event.
     // Previously this was deferred behind previousUpdatePromise, causing a
     // race where 'connect' fired before the listener was registered.
-    const connectPromise = new Promise<void>((resolve) => {
-      let registered = false
-      mqttClient.on('connect', () => {
-        if (registered) {
-          // SDK-internal reconnect on the same client: the thing is already
-          // registered (re-registering errors), but the shadow may have
-          // changed while we were disconnected - fetch it fresh
-          const refetchToken = mqttClient.get(thingName)
-          if (refetchToken) {
-            getClientToken = refetchToken
-            logInfo(
-              `[IotDevice] Re-fetching shadow after reconnect for ${this.name} (token: ${refetchToken})`,
-            )
-          } else {
-            logError(
-              `[IotDevice] Shadow re-fetch after reconnect returned no token for ${this.name} (operation in progress?)`,
-            )
+    let registered = false
+    const connectAndRegisterPromise = new Promise<void>((resolve) => {
+        mqttClient.on('connect', () => {
+          if (registered) {
+            // SDK-internal reconnect on the same client: the thing is already
+            // registered (re-registering errors), but the shadow may have
+            // changed while we were disconnected - fetch it fresh
+            const refetchToken = mqttClient.get(thingName)
+            if (refetchToken) {
+              getClientToken = refetchToken
+              logInfo(
+                `[IotDevice] Re-fetching shadow after reconnect for ${this.name} (token: ${refetchToken})`,
+              )
+            } else {
+              logError(
+                `[IotDevice] Shadow re-fetch after reconnect returned no token for ${this.name} (operation in progress?)`,
+              )
+            }
+            return
           }
-          return
-        }
-        registered = true
+          registered = true
 
-        mqttClient.register(thingName, {}, () => {
-          getClientToken = mqttClient.get(thingName)!
-          resolve(
-            firstValueFrom(
-              this.onStatusToken.pipe(
-                filter((token) => token === getClientToken),
-              ),
-            ) as Promise<any>,
-          )
+          mqttClient.register(thingName, {}, () => {
+            getClientToken = mqttClient.get(thingName)!
+            resolve(
+              firstValueFrom(
+                this.onStatusToken.pipe(
+                  filter((token) => token === getClientToken),
+                ),
+              ) as Promise<any>,
+            )
+          })
         })
-      })
-    })
+      }),
+      // A client that never connects (e.g. created moments before a network
+      // outage, then replaced with fresh credentials once the outage ends)
+      // would otherwise leave connectAndRegisterPromise pending forever.
+      // Because every command is chained through previousUpdatePromise, a
+      // single such client would permanently wedge the command queue while
+      // state updates continue to flow through the other listeners above.
+      // Once a newer client exists, stop waiting on this one.
+      supersededPromise = firstValueFrom(
+        this.onIotClient.pipe(filter((client) => client !== mqttClient)),
+      ),
+      // true once this client is fully registered, false if it was replaced
+      // first. update() uses this to wait for a client that can actually
+      // accept commands - the sdk's update() returns null (dropping the
+      // command) if called before registration completes
+      registrationOutcome = Promise.race([
+        connectAndRegisterPromise.then(() => true),
+        supersededPromise.then(() => false),
+      ])
+
+    this.latestRegistrationOutcome = registrationOutcome
 
     this.previousUpdatePromise = this.previousUpdatePromise
       .catch((_) => {
         // ignore errors, they shouldn't be possible
         void _
       })
-      .then(() => connectPromise)
+      .then(() => registrationOutcome)
   }
 
   getCurrentState() {
@@ -172,7 +195,16 @@ export class IotDevice<T> {
         // ignore errors, they shouldn't be possible
         void _
       })
-      .then(() => {
+      .then(async () => {
+        while (!(await this.latestRegistrationOutcome)) {
+          // a false outcome means that client was replaced before it
+          // finished registering. The replacement installs its own outcome
+          // before the false resolved (the constructor's skip(1)
+          // subscription runs ahead of supersededPromise's subscriber), so
+          // loop to await the replacement's registration rather than
+          // dropping the command
+        }
+
         if (!this.mqttClient) {
           logError(`Unable to Update ${this.name} - No MQTT Client Registered`)
           return
