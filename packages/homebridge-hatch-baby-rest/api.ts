@@ -12,14 +12,13 @@ import {
   Product,
 } from '../shared/hatch-sleep-types.ts'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
-import { logDebug, logError, logInfo } from '../shared/util.ts'
+import { logError, logInfo } from '../shared/util.ts'
 import { RestPlus } from './rest-plus.ts'
 import { RestIot } from './rest-iot.ts'
 import { RestMini } from './rest-mini.ts'
 import { Restore } from './restore.ts'
-import { BehaviorSubject } from 'rxjs'
 import { IotDevice } from './iot-device.ts'
-import { debounceTime } from 'rxjs/operators'
+import { IotClientLifecycle } from './iot-client-lifecycle.ts'
 
 export interface ApiConfig extends EmailAuth {
   debug?: boolean
@@ -42,8 +41,7 @@ const knownProducts: Product[] = [
     Product.alexa,
     Product.grow,
     Product.answeredReader,
-  ],
-  iotClientRefreshPeriod = 50 * 60 * 1000 // refresh client every 50 minutes (AWS Cognito credentials expire after ~1 hour)
+  ]
 
 export class HatchBabyApi {
   public readonly config
@@ -110,59 +108,12 @@ export class HatchBabyApi {
     return mqttClient
   }
 
-  async getOnIotClient() {
-    // eslint-disable-next-line prefer-const
-    let onIotClient: BehaviorSubject<AwsIotDevice> | undefined
-
-    const createNewIotClient = async (): Promise<AwsIotDevice> => {
-      try {
-        const previousMqttClient = onIotClient?.getValue()
-        if (previousMqttClient) {
-          try {
-            previousMqttClient.end()
-          } catch (e: unknown) {
-            logError('Failed to end previous MQTT Client')
-            logError(e)
-          }
-        }
-
-        logDebug('Creating new MQTT Client')
-
-        const mqttClient = await this.createAwsIotClient()
-
-        mqttClient.on('error', async (error) => {
-          if (error.message.includes('(403)')) {
-            logError('MQTT Client No Longer Authorized')
-          } else {
-            logError('MQTT Error:')
-            logError(error)
-          }
-
-          try {
-            onIotClient?.next(await createNewIotClient())
-          } catch (_) {
-            // ignore, already logged
-          }
-        })
-
-        logDebug('Created new MQTT Client')
-        return mqttClient
-      } catch (e) {
-        logError('Failed to Create an MQTT Client')
-        logError(e)
-        throw e
-      }
-    }
-
-    onIotClient = new BehaviorSubject<AwsIotDevice>(await createNewIotClient())
-
-    onIotClient.pipe(debounceTime(iotClientRefreshPeriod)).subscribe(() => {
-      createNewIotClient()
-        .then((client) => onIotClient?.next(client))
-        .catch(logError)
+  getOnIotClient() {
+    const lifecycle = new IotClientLifecycle({
+      createClient: () => this.createAwsIotClient(),
     })
 
-    return onIotClient
+    return lifecycle.start()
   }
 
   async getDevices() {
