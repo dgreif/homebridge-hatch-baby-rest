@@ -50,10 +50,12 @@ export class IotClientLifecycle {
   private onClientSubject: BehaviorSubject<AwsIotDevice> | undefined
   private onFirstClientReady: (() => void) | undefined
   private recreateInProgress = false
+  private disposed = false
   private retryDelay: number
   private retryTimer: ReturnType<typeof setTimeout> | undefined
   private deadConnectionTimer: ReturnType<typeof setTimeout> | undefined
   private refreshInterval: ReturnType<typeof setInterval> | undefined
+  private floorWaiters: Array<() => void> = []
 
   constructor(options: IotClientLifecycleOptions) {
     this.createClient = options.createClient
@@ -84,6 +86,14 @@ export class IotClientLifecycle {
     })
     this.onFirstClientReady = undefined
 
+    if (this.disposed) {
+      // stop() already ended any client we published. Do not arm refresh.
+      return (
+        this.onClientSubject ??
+        new Promise<BehaviorSubject<AwsIotDevice>>(() => {})
+      )
+    }
+
     // Proactive credential rotation. A plain interval (not debounced on the
     // subject) so one failed refresh cannot permanently end the cycle -
     // recreate() retries its own failures with backoff.
@@ -94,16 +104,31 @@ export class IotClientLifecycle {
     return this.onClientSubject!
   }
 
-  /** Stops all timers. Intended for tests; there is no runtime shutdown path. */
+  /**
+   * Abandons this lifecycle. Cancels timers, ends the current client, and
+   * ignores a create that is still in flight: that client is ended when it
+   * arrives and is not published. `getDevices()` calls this when a sibling
+   * request fails so the platform launch retry does not leave another
+   * session behind. Safe to call more than once.
+   */
   stop() {
-    if (this.retryTimer) {
-      clearTimeout(this.retryTimer)
-      this.retryTimer = undefined
-    }
+    this.disposed = true
+    this.clearRetryTimer()
     this.clearDeadConnectionTimer()
     if (this.refreshInterval) {
       clearInterval(this.refreshInterval)
       this.refreshInterval = undefined
+    }
+
+    const waiters = this.floorWaiters
+    this.floorWaiters = []
+    for (const resume of waiters) {
+      resume()
+    }
+
+    const client = this.current
+    if (client) {
+      this.endClient(client)
     }
   }
 
@@ -120,8 +145,24 @@ export class IotClientLifecycle {
     }
   }
 
+  private clearRetryTimer() {
+    if (this.retryTimer) {
+      clearTimeout(this.retryTimer)
+      this.retryTimer = undefined
+    }
+  }
+
+  private endClient(client: AwsIotDevice) {
+    try {
+      client.end()
+    } catch (e: unknown) {
+      logError('Failed to end previous MQTT Client')
+      logError(e)
+    }
+  }
+
   private armDeadConnectionTimer(client: AwsIotDevice, event: string) {
-    if (!this.isCurrent(client) || this.deadConnectionTimer) {
+    if (this.disposed || !this.isCurrent(client) || this.deadConnectionTimer) {
       return
     }
     this.deadConnectionTimer = setTimeout(() => {
@@ -135,7 +176,7 @@ export class IotClientLifecycle {
 
   private attachHandlers(client: AwsIotDevice) {
     client.on('connect', () => {
-      if (!this.isCurrent(client)) {
+      if (this.disposed || !this.isCurrent(client)) {
         return
       }
       this.clearDeadConnectionTimer()
@@ -153,8 +194,10 @@ export class IotClientLifecycle {
         logError(error)
       }
 
-      if (this.isCurrent(client)) {
-        this.recreate()
+      if (!this.disposed && this.isCurrent(client)) {
+        // floorDelay so a persistent 403 cannot tight-loop token fetches.
+        // Creation failures take the backoff path in recreate() instead.
+        this.recreate({ floorDelay: true })
       }
     })
   }
@@ -174,12 +217,7 @@ export class IotClientLifecycle {
 
       const previousClient = this.current
       if (previousClient) {
-        try {
-          previousClient.end()
-        } catch (e: unknown) {
-          logError('Failed to end previous MQTT Client')
-          logError(e)
-        }
+        this.endClient(previousClient)
       }
 
       logDebug('Created new MQTT Client')
@@ -191,19 +229,46 @@ export class IotClientLifecycle {
     }
   }
 
-  private async recreate() {
-    if (this.recreateInProgress) {
+  private waitForFloor() {
+    return new Promise<void>((resolve) => {
+      const resume = () => {
+        this.floorWaiters = this.floorWaiters.filter(
+          (waiter) => waiter !== resume,
+        )
+        resolve()
+      }
+      this.floorWaiters.push(resume)
+      this.retryTimer = setTimeout(() => {
+        this.retryTimer = undefined
+        resume()
+      }, this.initialRetryDelay)
+    })
+  }
+
+  private async recreate(options?: { floorDelay?: boolean }) {
+    if (this.disposed || this.recreateInProgress) {
       return
     }
     this.recreateInProgress = true
-    if (this.retryTimer) {
-      clearTimeout(this.retryTimer)
-      this.retryTimer = undefined
-    }
+    this.clearRetryTimer()
     this.clearDeadConnectionTimer()
 
     try {
+      if (options?.floorDelay) {
+        await this.waitForFloor()
+        if (this.disposed) {
+          return
+        }
+      }
+
       const client = await this.createReplacement()
+      if (this.disposed) {
+        // In-flight create finished after stop(). Do not publish it and do
+        // not leave the socket up.
+        this.endClient(client)
+        return
+      }
+
       this.retryDelay = this.initialRetryDelay
 
       if (this.onClientSubject) {
@@ -213,6 +278,9 @@ export class IotClientLifecycle {
         this.onFirstClientReady?.()
       }
     } catch (_) {
+      if (this.disposed) {
+        return
+      }
       // already logged; retry with backoff, forever - an extended outage
       // must not permanently kill the client
       logError(
@@ -220,7 +288,9 @@ export class IotClientLifecycle {
       )
       this.retryTimer = setTimeout(() => {
         this.retryTimer = undefined
-        this.recreate()
+        if (!this.disposed) {
+          this.recreate()
+        }
       }, this.retryDelay)
       this.retryDelay = Math.min(this.retryDelay * 2, this.maxRetryDelay)
     } finally {

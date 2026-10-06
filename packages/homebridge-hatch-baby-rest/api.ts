@@ -108,19 +108,35 @@ export class HatchBabyApi {
     return mqttClient
   }
 
-  getOnIotClient() {
-    const lifecycle = new IotClientLifecycle({
+  private newIotLifecycle() {
+    return new IotClientLifecycle({
       createClient: () => this.createAwsIotClient(),
     })
+  }
 
-    return lifecycle.start()
+  getOnIotClient() {
+    return this.newIotLifecycle().start()
   }
 
   async getDevices() {
+    const lifecycle = this.newIotLifecycle()
+
+    try {
+      return await this.getDevicesFromLifecycle(lifecycle)
+    } catch (error) {
+      // start() retries forever and does not reject. A failed member or
+      // device fetch would otherwise leave that lifecycle running while
+      // the platform launch loop starts another one.
+      lifecycle.stop()
+      throw error
+    }
+  }
+
+  private async getDevicesFromLifecycle(lifecycle: IotClientLifecycle) {
     const [devices, member, onIotClient] = await Promise.all([
         this.getIotDevices(...knownProducts),
         this.getMember(),
-        this.getOnIotClient(),
+        lifecycle.start(),
       ]),
       createDevices = <T extends IotDevice<any>>(
         product: Product,
