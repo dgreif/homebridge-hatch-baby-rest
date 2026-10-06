@@ -1,5 +1,15 @@
 # Changelog
 
+## 6.2.3
+
+### Patch Changes
+
+- [#171](https://github.com/dgreif/homebridge-hatch-baby-rest/pull/171) [`942d3be`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/942d3be22fcc20a649c435a70155c1752a055f98) Thanks [@dgreif](https://github.com/dgreif)! - Updated dependencies.
+
+- [#205](https://github.com/dgreif/homebridge-hatch-baby-rest/pull/205) [`0c96363`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/0c96363320f2bf3e4d46aab412bcc6542fe09715) Thanks [@dgreif](https://github.com/dgreif)! - Improve AWS IoT lifecycle and command-queue resilience across outages, reconnects, credential rotation, and failed startup connections.
+
+- [#204](https://github.com/dgreif/homebridge-hatch-baby-rest/pull/204) [`f9612ca`](https://github.com/dgreif/homebridge-hatch-baby-rest/commit/f9612ca1fe65ed77645d247a5efd067bef421d8b) Thanks [@dgreif](https://github.com/dgreif)! - Updated dependencies
+
 ## 6.2.2
 
 ### Patch Changes
