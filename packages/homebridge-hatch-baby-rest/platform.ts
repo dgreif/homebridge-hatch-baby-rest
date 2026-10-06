@@ -1,6 +1,6 @@
 import { ApiConfig, HatchBabyApi } from './api.ts'
 import { hap, isTestHomebridge } from '../shared/hap.ts'
-import { useLogger } from '../shared/util.ts'
+import { delay, useLogger } from '../shared/util.ts'
 import { LightAndSoundMachineAccessory } from '../shared/light-and-sound-machine.ts'
 import { SoundMachineAccessory } from '../shared/sound-machine.ts'
 import type {
@@ -16,6 +16,9 @@ import { Restore } from './restore.ts'
 
 export const pluginName = 'homebridge-hatch-baby-rest'
 export const platformName = 'HatchBabyRest'
+
+const initialConnectRetryDelay = 30 * 1000,
+  maxConnectRetryDelay = 10 * 60 * 1000
 
 export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
   public log
@@ -45,13 +48,36 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
 
     this.api.on('didFinishLaunching', () => {
       this.log.debug('didFinishLaunching')
-      this.connectToApi().catch((e) => {
+      this.connectToApiWithRetry().catch((e) => {
         this.log.error('Error connecting to API')
         this.log.error(e)
       })
     })
 
     this.homebridgeAccessories = {}
+  }
+
+  private async connectToApiWithRetry() {
+    let retryDelay = initialConnectRetryDelay
+
+    for (;;) {
+      try {
+        await this.connectToApi()
+        return
+      } catch (e) {
+        // The rest client only retries network-level failures - an HTTP
+        // error response at boot (e.g. a 429 from login, or a 5xx from the
+        // Hatch API) lands here. Without a retry, cached accessories would
+        // sit in HomeKit responding to nothing until homebridge is restarted
+        this.log.error('Error connecting to API')
+        this.log.error(e as unknown as string)
+        this.log.error(
+          `Retrying connection in ${Math.round(retryDelay / 1000)}s`,
+        )
+        await delay(retryDelay)
+        retryDelay = Math.min(retryDelay * 2, maxConnectRetryDelay)
+      }
+    }
   }
 
   configureAccessory(accessory: PlatformAccessory) {

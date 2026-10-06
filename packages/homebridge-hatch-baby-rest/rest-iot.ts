@@ -10,6 +10,7 @@ import { IotDevice } from './iot-device.ts'
 import { BehaviorSubject } from 'rxjs'
 import { thingShadow as AwsIotDevice } from 'aws-iot-device-sdk'
 import { apiPath, RestClient } from './rest-client.ts'
+import { logError } from '../shared/util.ts'
 
 export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
   public readonly info
@@ -70,6 +71,14 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
 
   async turnOnRoutine() {
     const routines = await this.fetchRoutines()
+
+    if (!routines.length) {
+      logError(
+        `Unable to turn on ${this.name} - no touch ring routines found.  Please create a favorite routine in the Hatch app`,
+      )
+      return
+    }
+
     this.setCurrent('routine', 1, routines[0].id)
   }
 
