@@ -45,4 +45,6 @@ jobs:
           publish-script: npm run release
           github-token: ${{ secrets.GH_TOKEN_CHANGESETS }}
         env:
+          # The changelog generator reads the token from the environment.
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_CHANGESETS }}
           NPM_CONFIG_PROVENANCE: true
